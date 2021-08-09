@@ -1,5 +1,8 @@
 (setq inhibit-startup-message t)
 
+;; Redirect custom output
+(setq custom-file (concat user-emacs-directory "emacs-custom.el"))
+
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
 (tooltip-mode -1)           ; Disable tooltips
@@ -10,7 +13,9 @@
 ;; Set up the visible bell
 (setq visible-bell t)
 
+;; sets fixed-width font
 (set-face-attribute 'default nil :font "FiraCode NerdFont" :height 115)
+(defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 
 
 ;; Disables the visual bell
@@ -40,8 +45,7 @@
 
 (use-package ivy
   :diminish
-  :bind (("C-s" . swiper)
-	 :map ivy-minibuffer-map
+  :bind (:map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)	
          ("C-l" . ivy-alt-done)
          ("C-j" . ivy-next-line)
@@ -111,41 +115,115 @@
   :config
   (load-theme 'doom-challenger-deep t))
 
+
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  :config
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  :bind
+  ([remap evil-search-forward] . swiper))
+(evil-mode)
+
 (use-package general
   :config
   (general-evil-setup t)
-  (general-create-definer leader-def
+  (general-create-definer my/leader-def
 			  :keymaps '(normal insert visual emacs)
 			  :prefix "SPC"
-			  :global-prefix "C-SPC"))
+			  :non-normal-prefix "C-SPC"
+			  :prefix-command 'my-leader-command
+			  :prefix-map 'my-leader-map)
+  (my/leader-def
+    "f"   '(nil :which-key "file system")
+    "f f" '(counsel-find-file :which-key "save-file")
+    "f s" '(save-buffer :which-key "save file")
+    "h"   '(nil :which-key "config options")
+    "h f" '((lambda () (interactive) (find-file (concat user-emacs-directory "init.el"))) :which-key "open config file")
+    "a"   '(eshell :which-key "eshell")
+    ":"   '(counsel-M-x :which-key "M-x")))
 
 
-(use-package evil
-  :init
-  (setq evil-want-integration t
-	evil-want-keybinding nil
-	evil-vsplit-window-right t
-	evil-split-window-below t)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join))
 
 (use-package evil-collection
   :after evil
   :config
   (evil-collection-init)) 
 
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(evil-collection evil general doom-themes helpful counsel ivy-rich which-key rainbow-delimiters doom-modeline swiper ivy use-package)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+;; (use-package hydra)
+
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/devel")
+    (setq projectile-project-search-path '("~/devel"))))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
+  :config
+  (define-key my-leader-map "g" '("magit" . ())) 
+  :general
+  (my-leader-map
+    "g g" '(magit :which-key "status")))
+
+;; NOTE: Make sure to configure a GitHub token before using this package!
+;; - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+;; - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+;; (use-package forge)
+
+(defun my/org-mode-setup ()
+  (org-indent-mode)
+  (visual-line-mode 1))
+(defun my/org-font-setup ()
+(dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+
+(use-package org
+  :hook (org-mode . my/org-mode-setup)
+  :config
+  (setq org-ellipsis " ▾")
+  (my/org-font-setup))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(defun my/org-mode-visual-fill ()
+  (setq visual-fill-column-width 115
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . my/org-mode-visual-fill))
+
+(load custom-file :noerror)
