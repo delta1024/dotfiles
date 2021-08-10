@@ -4,7 +4,7 @@
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
-For a very comprehensive configuratoin example please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]].
+For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]].
 
 #+begin_src emacs-lisp
 
@@ -15,7 +15,8 @@ For a very comprehensive configuratoin example please check out the [[https://ww
   (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
   (defvar my/font-size 115 "font size for emacs")
   (defvar my/emacs-file "Emacs.org" "emacs user file name")
-  (defvar my/user-emacs-directory "~/.dotfiles/emacs/.config/emacs/" "Hard coded path to my emacs config")
+  (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
+    "hard coded emacs dir")
 #+end_src
 
 * UI Improvements
@@ -156,7 +157,7 @@ Automatically tangle our Emacs.org config file when we save it
 #+begin_src emacs-lisp 
 (defun my/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name (concat user-emacs-directory my/emacs-file)))
+                      (expand-file-name (concat my/user-emacs-directory my/emacs-file)))
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
@@ -164,7 +165,105 @@ Automatically tangle our Emacs.org config file when we save it
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
 #+end_src
 
-* Other Packages
+* Keyboard
+** Evil
+
+#+begin_src emacs-lisp
+(use-package evil
+  :ensure t
+  :demand t
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  :config
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (evil-mode)
+  :bind
+  ([remap evil-search-forward] . swiper)
+  ([remap evil-search-backward] . swiper-backward))
+#+end_src
+
+*** Evil Collection
+
+#+begin_src emacs-lisp
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init)) 
+#+end_src
+
+** General
+
+#+begin_src emacs-lisp
+  (use-package general
+    :config
+    (general-evil-setup t)
+    (general-create-definer my/leader-def
+                            :keymaps '(normal insert visual emacs)
+                            :prefix "SPC"
+                            :non-normal-prefix "C-SPC"
+                            :prefix-command 'my-leader-command
+                            :prefix-map 'my-leader-map)
+    (my/leader-def
+      "f"   '(nil :which-key "file system")
+      "f f" '(counsel-find-file :which-key "save-file")
+      "f s" '(save-buffer :which-key "save file")
+      "h"   '(nil :which-key "config options")
+      "h f" '((lambda () (interactive)
+                (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+      "a"   '(eshell :which-key "eshell")
+      ":"   '(counsel-M-x :which-key "M-x")
+      "b" '(counsel-switch-buffer :wk "switch buffers")))
+#+end_src
+
+** TODO Hydra
+
+#+begin_src  emacs-lisp :tangle no
+(use-package hydra)
+#+end_src
+
+** Which-key
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3))
+#+end_src
+
+* Productivity
+** Ivy and Counsel
+
+#+begin_src emacs-lisp
+  (use-package ivy
+    :diminish
+    :bind (:map ivy-minibuffer-map
+           ("TAB" . ivy-alt-done)	
+           ("C-l" . ivy-alt-done)
+           ("C-j" . ivy-next-line)
+           ("C-k" . ivy-previous-line)
+           :map ivy-switch-buffer-map
+           ("C-k" . ivy-previous-line)
+           ("C-l" . ivy-done)
+           ("C-d" . ivy-switch-buffer-kill)
+           :map ivy-reverse-i-search-map
+           ("C-k" . ivy-previous-line)
+           ("C-d" . ivy-reverse-i-search-kill))
+    :config)
+
+  (use-package counsel
+    :after general
+    :bind (("M-x" . counsel-M-x)
+           ("C-x b" . counsel-switch-buffer-other-window)))
+
+  (use-package ivy-rich
+    :init
+    (ivy-rich-mode 1))
+#+end_src
+
 ** Projectile
 
 #+begin_src emacs-lisp
@@ -206,98 +305,7 @@ Automatically tangle our Emacs.org config file when we save it
  (use-package forge)
  #+end_src
 
-** Evil
-
-#+begin_src emacs-lisp
-(use-package evil
-  :ensure t
-  :demand t
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  :config
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (evil-mode)
-  :bind
-  ([remap evil-search-forward] . swiper)
-  ([remap evil-search-backward] . swiper-backward))
-#+end_src
-
-*** Evil Collection
-
-#+begin_src emacs-lisp
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init)) 
-#+end_src
-
-;; (use-package hydra)
-
-** General
-
-#+begin_src emacs-lisp
-(use-package general
-  :config
-  (general-evil-setup t)
-  (general-create-definer my/leader-def
-			  :keymaps '(normal insert visual emacs)
-			  :prefix "SPC"
-			  :non-normal-prefix "C-SPC"
-			  :prefix-command 'my-leader-command
-			  :prefix-map 'my-leader-map)
-  (my/leader-def
-    "f"   '(nil :which-key "file system")
-    "f f" '(counsel-find-file :which-key "save-file")
-    "f s" '(save-buffer :which-key "save file")
-    "h"   '(nil :which-key "config options")
-    "h f" '((lambda () (interactive) (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
-    "a"   '(eshell :which-key "eshell")
-    ":"   '(counsel-M-x :which-key "M-x")
-    "b" '(counsel-switch-buffer :wk "switch buffers")
-#+end_src
-
-** Ivy and Counsel
-
-#+begin_src emacs-lisp
-  (use-package ivy
-    :diminish
-    :bind (:map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)	
-           ("C-l" . ivy-alt-done)
-           ("C-j" . ivy-next-line)
-           ("C-k" . ivy-previous-line)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
-    :config)
-
-  (use-package counsel
-    :after general
-    :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-switch-buffer-other-window)))
-
-  (use-package ivy-rich
-    :init
-    (ivy-rich-mode 1))
-#+end_src
-
-** Which-key
-
-#+begin_src emacs-lisp
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.3))
-#+end_src
-
+* Misc 
 ** helpful
 
 #+begin_src emacs-lisp

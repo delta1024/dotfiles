@@ -5,7 +5,8 @@
 (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
 (defvar my/font-size 115 "font size for emacs")
 (defvar my/emacs-file "Emacs.org" "emacs user file name")
-(defvar my/user-emacs-directory "~/.dotfiles/emacs/.config/emacs/" "Hard coded path to my emacs config")
+(defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
+  "hard coded emacs dir")
 
 (setq inhibit-startup-message t)
 
@@ -111,33 +112,12 @@
 
 (defun my/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name (concat user-emacs-directory my/emacs-file)))
+                      (expand-file-name (concat my/user-emacs-directory my/emacs-file)))
     ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
-
-(use-package projectile
-  :diminish projectile-mode
-  :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
-  ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/devel")
-    (setq projectile-project-search-path '("~/devel"))))
-
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
-
-(use-package magit
-  :config
-  (define-key my-leader-map "g" '("magit" . ()))
-  :general
-  (my-leader-map
-    "g g" '(magit :which-key "status")))
 
 (use-package evil
   :ensure t
@@ -163,20 +143,27 @@
   :config
   (general-evil-setup t)
   (general-create-definer my/leader-def
-			  :keymaps '(normal insert visual emacs)
-			  :prefix "SPC"
-			  :non-normal-prefix "C-SPC"
-			  :prefix-command 'my-leader-command
-			  :prefix-map 'my-leader-map)
+                          :keymaps '(normal insert visual emacs)
+                          :prefix "SPC"
+                          :non-normal-prefix "C-SPC"
+                          :prefix-command 'my-leader-command
+                          :prefix-map 'my-leader-map)
   (my/leader-def
     "f"   '(nil :which-key "file system")
     "f f" '(counsel-find-file :which-key "save-file")
     "f s" '(save-buffer :which-key "save file")
     "h"   '(nil :which-key "config options")
-    "h f" '((lambda () (interactive) (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+    "h f" '((lambda () (interactive)
+              (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
     "a"   '(eshell :which-key "eshell")
     ":"   '(counsel-M-x :which-key "M-x")
-    "b" '(counsel-switch-buffer :wk "switch buffers")
+    "b" '(counsel-switch-buffer :wk "switch buffers")))
+
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 0.3))
 
 (use-package ivy
   :diminish
@@ -203,11 +190,26 @@
   :init
   (ivy-rich-mode 1))
 
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
+(use-package projectile
+  :diminish projectile-mode
+  :config (projectile-mode)
+  :custom ((projectile-completion-system 'ivy))
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
+  :init
+  ;; NOTE: Set this to the folder where you keep your Git repos!
+  (when (file-directory-p "~/devel")
+    (setq projectile-project-search-path '("~/devel"))))
+
+(use-package counsel-projectile
+  :config (counsel-projectile-mode))
+
+(use-package magit
   :config
-  (setq which-key-idle-delay 0.3))
+  (define-key my-leader-map "g" '("magit" . ()))
+  :general
+  (my-leader-map
+    "g g" '(magit :which-key "status")))
 
 (use-package helpful
   :custom
