@@ -16,7 +16,7 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
   (defvar my/font-size 115 "font size for emacs")
   (defvar my/emacs-file "Emacs.org" "emacs user file name")
   (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
-    "hard coded emacs dir")
+    "hard coded emacs dir for file comparison")
 #+end_src
 
 * UI Improvements
@@ -33,9 +33,6 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
   (set-fringe-mode 10)        ; Give some breathing room
 
   (menu-bar-mode -1)            ; Disable the menu bar
-
-  ;; Set up the visible bell
-  (setq visible-bell t)
 
   ;; sets fixed-width font
   (set-face-attribute 'default nil :font my/user-font :height my/font-size)
@@ -79,7 +76,8 @@ Packages maintained by =use-package=.
   (use-package swiper)
 #+end_src
 
-* Org Mode
+* TODO Org Mode
+** Use Package
 
 #+begin_src emacs-lisp
 (use-package org
@@ -89,7 +87,7 @@ Packages maintained by =use-package=.
     (visual-line-mode 1))
 #+end_src
 
-** Org Font Setup
+*** Org Font Setup
 
   #+begin_src emacs-lisp
   (defun my/org-font-setup ()
@@ -113,38 +111,19 @@ Packages maintained by =use-package=.
       (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
   #+end_src
 
-** Hooks and Config
+*** Hooks and Config
 
   #+begin_src emacs-lisp
-  :hook (org-mode . my/org-mode-setup)
-  :config
-  (setq org-ellipsis " ▾")
-  (setq org-hide-emphasis-markers t)
-  (my/org-font-setup))
+    :hook (org-mode . my/org-mode-setup)
+    :config
+    (setq org-ellipsis " ▾")
+    (setq org-hide-emphasis-markers t)
+
+    (my/org-font-setup))
   #+end_src
   
-** Org Bullets
-
-#+begin_src emacs-lisp
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-#+end_src
-
-** Visual Fill Colum
-#+begin_src emacs-lisp
-(use-package visual-fill-column
-  :init
-  (defun my/org-mode-visual-fill () 
-    (setq visual-fill-column-width 115
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-  :hook (org-mode . my/org-mode-visual-fill))
-#+end_src
-
 ** Org Babel
+
 #+begin_src emacs-lisp
 (org-babel-do-load-languages
   'org-babel-load-languages
@@ -165,6 +144,31 @@ Automatically tangle our Emacs.org config file when we save it
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
 #+end_src
 
+** Packages  
+*** Org Bullets
+
+#+begin_src emacs-lisp
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+#+end_src
+
+*** Visual Fill Colum
+
+#+begin_src emacs-lisp
+(use-package visual-fill-column
+  :init
+  (defun my/org-mode-visual-fill () 
+    (setq visual-fill-column-width 115
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+  :hook (org-mode . my/org-mode-visual-fill))
+#+end_src
+
+*** TODO Org Roam
+For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 * Keyboard
 ** Evil
 
@@ -292,7 +296,7 @@ Automatically tangle our Emacs.org config file when we save it
   :config
   (define-key my-leader-map "g" '("magit" . ()))
   :general
-  (my-leader-map
+  (my-leader-map 
     "g g" '(magit :which-key "status")))
 #+end_src
 

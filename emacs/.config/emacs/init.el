@@ -6,7 +6,7 @@
 (defvar my/font-size 115 "font size for emacs")
 (defvar my/emacs-file "Emacs.org" "emacs user file name")
 (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
-  "hard coded emacs dir")
+  "hard coded emacs dir for file comparison")
 
 (setq inhibit-startup-message t)
 
@@ -19,9 +19,6 @@
 (set-fringe-mode 10)        ; Give some breathing room
 
 (menu-bar-mode -1)            ; Disable the menu bar
-
-;; Set up the visible bell
-(setq visible-bell t)
 
 ;; sets fixed-width font
 (set-face-attribute 'default nil :font my/user-font :height my/font-size)
@@ -89,21 +86,8 @@
 :config
 (setq org-ellipsis " ▾")
 (setq org-hide-emphasis-markers t)
+
 (my/org-font-setup))
-
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
-(use-package visual-fill-column
-  :init
-  (defun my/org-mode-visual-fill () 
-    (setq visual-fill-column-width 115
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-  :hook (org-mode . my/org-mode-visual-fill))
 
 (org-babel-do-load-languages
   'org-babel-load-languages
@@ -118,6 +102,20 @@
       (org-babel-tangle))))
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+
+(use-package org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :custom
+  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+(use-package visual-fill-column
+  :init
+  (defun my/org-mode-visual-fill () 
+    (setq visual-fill-column-width 115
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+  :hook (org-mode . my/org-mode-visual-fill))
 
 (use-package evil
   :ensure t
@@ -208,7 +206,7 @@
   :config
   (define-key my-leader-map "g" '("magit" . ()))
   :general
-  (my-leader-map
+  (my-leader-map 
     "g g" '(magit :which-key "status")))
 
 (use-package helpful
