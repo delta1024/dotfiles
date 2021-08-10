@@ -1,2 +1,2 @@
-(("default" . ((user-emacs-directory . "~/.emacs-old")))
- ("newconfig" . ((user-emacs-directory . "~/.config/emacs"))))
+(("oldconfig" . ((user-emacs-directory . "~/.emacs-old")))
+ ("default" . ((user-emacs-directory . "~/.config/emacs"))))
