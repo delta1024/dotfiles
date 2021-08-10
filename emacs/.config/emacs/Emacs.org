@@ -4,7 +4,7 @@
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
-For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]].
+For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]]([[https://github.com/daviwil/emacs-from-scratch][github]]) on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]], or chekc out the. 
 
 #+begin_src emacs-lisp
 
@@ -19,7 +19,13 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
     "hard coded emacs dir for file comparison")
 #+end_src
 
-* UI Improvements
+* Initial Buffer
+
+#+begin_src emacs-lisp
+  (setq initial-buffer-choice (lambda () (find-file (concat user-emacs-directory my/emacs-file))))
+#+end_src
+
+* Basic UI Improvements
 
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
@@ -39,7 +45,7 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
 
 
   ;; Disables the visual bell
-  (setq visible-bell ())
+  (setq visible-bell t)
 
   ;; Make ESC quit prompts
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -76,49 +82,52 @@ Packages maintained by =use-package=.
   (use-package swiper)
 #+end_src
 
-* TODO Org Mode
+* Org Mode
 ** Use Package
 
 #+begin_src emacs-lisp
-(use-package org
-  :init
-  (defun my/org-mode-setup ()
-    (org-indent-mode)
-    (visual-line-mode 1))
+    (use-package org
+      :init
+      (defun org-file-open (&optional a) "Opens the file in `org-directory'"
+         (interactive "sWhat file would you like to open? ")
+          (find-file (concat org-directory "/" a)))
+      (defun my/org-mode-setup ()
+        (org-indent-mode)
+        (visual-line-mode 1))
 #+end_src
 
 *** Org Font Setup
 
   #+begin_src emacs-lisp
-  (defun my/org-font-setup ()
-    (dolist (face '((org-level-1 . 1.2)
-                      (org-level-2 . 1.1)
-                      (org-level-3 . 1.05)
-                      (org-level-4 . 1.0)
-                      (org-level-5 . 1.1)
-                      (org-level-6 . 1.1)
-                      (org-level-7 . 1.1)
-                      (org-level-8 . 1.1)))
-        (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
+    (defun my/org-font-setup ()
+      (dolist (face '((org-level-1 . 1.2)
+                        (org-level-2 . 1.1)
+                        (org-level-3 . 1.05)
+                        (org-level-4 . 1.0)
+                        (org-level-5 . 1.1)
+                        (org-level-6 . 1.1)
+                        (org-level-7 . 1.1)
+                        (org-level-8 . 1.1)))
+          (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
 
-      ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-      (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-      (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-      (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-      (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-      (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-      (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-      (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+        ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+        (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+        (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
   #+end_src
 
-*** Hooks and Config
+*** Hooks  and  Config
 
   #+begin_src emacs-lisp
     :hook (org-mode . my/org-mode-setup)
     :config
+    (setq org-directory "~/Documents/org")
     (setq org-ellipsis " ▾")
     (setq org-hide-emphasis-markers t)
-
     (my/org-font-setup))
   #+end_src
   
@@ -144,6 +153,8 @@ Automatically tangle our Emacs.org config file when we save it
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
 #+end_src
 
+** TODO Productivity
+[[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
 ** Packages  
 *** Org Bullets
 
@@ -198,7 +209,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   (evil-collection-init)) 
 #+end_src
 
-** General
+** Generjl
 
 #+begin_src emacs-lisp
   (use-package general
@@ -207,7 +218,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     (general-create-definer my/leader-def
                             :keymaps '(normal insert visual emacs)
                             :prefix "SPC"
-                            :non-normal-prefix "C-SPC"
+                            :global-prefix "C-SPC"
                             :prefix-command 'my-leader-command
                             :prefix-map 'my-leader-map)
     (my/leader-def
@@ -228,7 +239,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 (use-package hydra)
 #+end_src
 
-** Which-key
+** Which-Key
 
 #+begin_src emacs-lisp
 (use-package which-key
@@ -292,12 +303,11 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Magit
 
 #+begin_src emacs-lisp
-(use-package magit
-  :config
-  (define-key my-leader-map "g" '("magit" . ()))
-  :general
-  (my-leader-map 
-    "g g" '(magit :which-key "status")))
+  (use-package magit
+    :defer nil
+    :general
+    (:prefix-map 'my-leader-map
+     "g" '(magit :which-key "Status")))
 #+end_src
 
 *** TODO Forge
@@ -309,8 +319,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
  (use-package forge)
  #+end_src
 
+* TODO Development
+** TODO LSP Mode
+[[https://github.com/emacs-lsp/lsp-mode][github]]
+** TODO Rustic Mode
+[[https://github.com/brotzeit/rustic][github]]
 * Misc 
-** helpful
+** Helpful
 
 #+begin_src emacs-lisp
 (use-package helpful

@@ -8,6 +8,8 @@
 (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
   "hard coded emacs dir for file comparison")
 
+(setq initial-buffer-choice (lambda () (find-file (concat user-emacs-directory my/emacs-file))))
+
 (setq inhibit-startup-message t)
 
 ;; Redirect custom output
@@ -25,7 +27,7 @@
 
 
 ;; Disables the visual bell
-(setq visible-bell ())
+(setq visible-bell t)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -58,6 +60,9 @@
 
 (use-package org
   :init
+  (defun org-file-open (&optional a) "Opens the file in `org-directory'"
+     (interactive "sWhat file would you like to open? ")
+      (find-file (concat org-directory "/" a)))
   (defun my/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1))
@@ -84,9 +89,9 @@
 
 :hook (org-mode . my/org-mode-setup)
 :config
+(setq org-directory "~/Documents/org")
 (setq org-ellipsis " ▾")
 (setq org-hide-emphasis-markers t)
-
 (my/org-font-setup))
 
 (org-babel-do-load-languages
@@ -143,7 +148,7 @@
   (general-create-definer my/leader-def
                           :keymaps '(normal insert visual emacs)
                           :prefix "SPC"
-                          :non-normal-prefix "C-SPC"
+                          :global-prefix "C-SPC"
                           :prefix-command 'my-leader-command
                           :prefix-map 'my-leader-map)
   (my/leader-def
@@ -203,11 +208,10 @@
   :config (counsel-projectile-mode))
 
 (use-package magit
-  :config
-  (define-key my-leader-map "g" '("magit" . ()))
+  :defer nil
   :general
-  (my-leader-map 
-    "g g" '(magit :which-key "status")))
+  (:prefix-map 'my-leader-map
+   "g" '(magit :which-key "Status")))
 
 (use-package helpful
   :custom
