@@ -1,3 +1,16 @@
+(defvar emacs-start-time 
+         (format "%.2f seconds"
+                 (float-time
+                 (time-subtract after-init-time before-init-time))) "Emacs start up time")
+(defun my/display-startup-time ()
+  (message "Emacs loaded in %s."
+            emacs-start-time
+           ))
+
+(add-hook 'emacs-startup-hook #'my/display-startup-time)
+
+(setq gc-cons-threshold (* 50 1000 1000))
+
 ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
  ;;       in Emacs and init.el will be generated automatically!
 
@@ -8,7 +21,7 @@
 (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
   "hard coded emacs dir for file comparison")
 
-(setq initial-buffer-choice (lambda () (find-file (concat user-emacs-directory my/emacs-file))))
+(setq initial-buffer-choice (lambda () (switch-to-buffer "*Messages*")))
 
 (setq inhibit-startup-message t)
 
@@ -36,7 +49,8 @@
 (global-display-line-numbers-mode t)
 (dolist (mode '(org-mode-hook
                 term-mode-hook
-                eshell-mode-hook))
+                eshell-mode-hook
+                dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 (require 'package)
@@ -54,18 +68,16 @@
   (package-install 'use-package))
 
 (require 'use-package)
-(setq use-package-always-ensure t)
-
-(use-package swiper)
+(setq use-package-always-ensure t
+        use-package-always-defer t)
 
 (use-package org
-  :init
-  (defun org-file-open (&optional a) "Opens the file in `org-directory'"
-     (interactive "sWhat file would you like to open? ")
-      (find-file (concat org-directory "/" a)))
-  (defun my/org-mode-setup ()
-    (org-indent-mode)
-    (visual-line-mode 1))
+  :no-require t
+
+:hook ((org-mode . my/org-mode-setup)
+        (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
+
+:config
 
 (defun my/org-font-setup ()
   (dolist (face '((org-level-1 . 1.2)
@@ -87,26 +99,25 @@
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
-:hook (org-mode . my/org-mode-setup)
-:config
-(setq org-directory "~/Documents/org")
-(setq org-ellipsis " ▾")
-(setq org-hide-emphasis-markers t)
-(my/org-font-setup))
-
-(org-babel-do-load-languages
-  'org-babel-load-languages
-  '((emacs-lisp . t)))
-(setq org-confirm-babel-evaluate nil)
+(defun my/org-mode-setup ()
+  (org-indent-mode)
+  (visual-line-mode 1))
+  (setq org-directory "~/Documents/org")
+  (setq org-ellipsis " ▾")
+  (setq org-hide-emphasis-markers t)
+  (setq org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+    'org-babel-load-languages
+    '((emacs-lisp . t)))
 
 (defun my/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                      (expand-file-name (concat my/user-emacs-directory my/emacs-file)))
-    ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
+                  (expand-file-name (concat my/user-emacs-directory my/emacs-file)))
+;; Dynamic scoping to the rescue
+  (let ((org-confirm-babel-evaluate nil))
+  (org-babel-tangle))))
 
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+(my/org-font-setup))
 
 (use-package org-bullets
   :after org
@@ -115,7 +126,8 @@
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (use-package visual-fill-column
-  :init
+  :after org
+  :config
   (defun my/org-mode-visual-fill () 
     (setq visual-fill-column-width 115
           visual-fill-column-center-text t)
@@ -123,7 +135,6 @@
   :hook (org-mode . my/org-mode-visual-fill))
 
 (use-package evil
-  :ensure t
   :demand t
   :init
   (setq evil-want-integration t)
@@ -137,12 +148,17 @@
   ([remap evil-search-forward] . swiper)
   ([remap evil-search-backward] . swiper-backward))
 
+(use-package swiper
+  :after evil)
+
 (use-package evil-collection
   :after evil
-  :config
-  (evil-collection-init))
+  :hook (evil-mode . evil-collection-init)
+          (dired-mode . evil-colletion-dired-setup)
+          (magit-mode . evil-collection-dired-setup))
 
 (use-package general
+  :after evil
   :config
   (general-evil-setup t)
   (general-create-definer my/leader-def
@@ -163,7 +179,6 @@
     "b" '(counsel-switch-buffer :wk "switch buffers")))
 
 (use-package which-key
-  :init (which-key-mode)
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 0.3))
@@ -185,30 +200,25 @@
   :config)
 
 (use-package counsel
-  :after general
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-switch-buffer-other-window)))
 
 (use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
+  :after ivy)
 
 (use-package projectile
   :diminish projectile-mode
-  :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
+  ("C-c p" . projectile-command-map))
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/devel")
-    (setq projectile-project-search-path '("~/devel"))))
 
 (use-package counsel-projectile
+  :after projectile
   :config (counsel-projectile-mode))
 
 (use-package magit
-  :defer nil
+  :config (evil-collection-init)
   :general
   (:prefix-map 'my-leader-map
    "g" '(magit :which-key "Status")))
@@ -224,7 +234,7 @@
   ([remap describe-key] . helpful-key))
 
 (use-package doom-themes
-  :config
+  :init
   (load-theme 'doom-challenger-deep t))
 
 (use-package all-the-icons)
@@ -236,5 +246,7 @@
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+(setq gc-cons-threshold (* 2 1000 1000))
 
 (load custom-file :noerror)

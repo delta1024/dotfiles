@@ -6,6 +6,27 @@ The following is my emacs config, feel free to take as much or as little as you 
 
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]]([[https://github.com/daviwil/emacs-from-scratch][github]]) on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]], or chekc out the. 
 
+* Startup Optimization
+For debugging
+#+begin_src emacs-lisp 
+  (defvar emacs-start-time 
+           (format "%.2f seconds"
+                   (float-time
+                   (time-subtract after-init-time before-init-time))) "Emacs start up time")
+  (defun my/display-startup-time ()
+    (message "Emacs loaded in %s."
+              emacs-start-time
+             ))
+
+  (add-hook 'emacs-startup-hook #'my/display-startup-time)
+#+end_src
+
+Gives a memeory boost at startup
+#+begin_src emacs-lisp
+(setq gc-cons-threshold (* 50 1000 1000))
+#+end_src
+
+* Variables
 #+begin_src emacs-lisp
 
    ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
@@ -21,8 +42,8 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
 
 * Initial Buffer
 
-#+begin_src emacs-lisp
-  (setq initial-buffer-choice (lambda () (find-file (concat user-emacs-directory my/emacs-file))))
+#+begin_src emacs-lisp 
+  (setq initial-buffer-choice (lambda () (switch-to-buffer "*Messages*")))
 #+end_src
 
 * Basic UI Improvements
@@ -54,7 +75,8 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
   (global-display-line-numbers-mode t)
   (dolist (mode '(org-mode-hook
                   term-mode-hook
-                  eshell-mode-hook))
+                  eshell-mode-hook
+                  dired-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
@@ -77,9 +99,8 @@ Packages maintained by =use-package=.
     (package-install 'use-package))
 
   (require 'use-package)
-  (setq use-package-always-ensure t)
-
-  (use-package swiper)
+  (setq use-package-always-ensure t
+          use-package-always-defer t)
 #+end_src
 
 * Org Mode
@@ -87,76 +108,92 @@ Packages maintained by =use-package=.
 
 #+begin_src emacs-lisp
     (use-package org
-      :init
-      (defun org-file-open (&optional a) "Opens the file in `org-directory'"
-         (interactive "sWhat file would you like to open? ")
-          (find-file (concat org-directory "/" a)))
-      (defun my/org-mode-setup ()
-        (org-indent-mode)
-        (visual-line-mode 1))
+      :no-require t
 #+end_src
 
-*** Org Font Setup
+*** Hooks
 
   #+begin_src emacs-lisp
-    (defun my/org-font-setup ()
-      (dolist (face '((org-level-1 . 1.2)
-                        (org-level-2 . 1.1)
-                        (org-level-3 . 1.05)
-                        (org-level-4 . 1.0)
-                        (org-level-5 . 1.1)
-                        (org-level-6 . 1.1)
-                        (org-level-7 . 1.1)
-                        (org-level-8 . 1.1)))
-          (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
-
-        ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-        (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-        (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-        (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-        (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-        (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-        (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-        (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+    :hook ((org-mode . my/org-mode-setup)
+            (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
   #+end_src
 
-*** Hooks  and  Config
+*** Config
 
   #+begin_src emacs-lisp
-    :hook (org-mode . my/org-mode-setup)
     :config
+#+end_src
+
+**** org-font-setup
+
+#+begin_src emacs-lisp
+  (defun my/org-font-setup ()
+    (dolist (face '((org-level-1 . 1.2)
+                      (org-level-2 . 1.1)
+                      (org-level-3 . 1.05)
+                      (org-level-4 . 1.0)
+                      (org-level-5 . 1.1)
+                      (org-level-6 . 1.1)
+                      (org-level-7 . 1.1)
+                      (org-level-8 . 1.1)))
+        (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
+
+      ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+      (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+      (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+      (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+      (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+      (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+#+end_src
+
+**** org-file-open
+
+#+begin_src emacs-lisp :tangle no
+  (defun org-file-open () "Opens the file in `org-directory'"
+    (interactive)
+
+    (find-file (concat org-directory "/" a)))
+#+end_src
+
+**** org-mode-setup
+
+#+begin_src emacs-lisp
+  (defun my/org-mode-setup ()
+    (org-indent-mode)
+    (visual-line-mode 1))
     (setq org-directory "~/Documents/org")
     (setq org-ellipsis " ▾")
     (setq org-hide-emphasis-markers t)
-    (my/org-font-setup))
-  #+end_src
-  
-** Org Babel
+    (setq org-confirm-babel-evaluate nil)
+    (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((emacs-lisp . t)))
+#+end_src
+
+**** Auto Tangle Config
 
 #+begin_src emacs-lisp
-(org-babel-do-load-languages
-  'org-babel-load-languages
-  '((emacs-lisp . t)))
-(setq org-confirm-babel-evaluate nil)
-#+end_src
-
-** Org Config
-Automatically tangle our Emacs.org config file when we save it
-#+begin_src emacs-lisp 
-(defun my/org-babel-tangle-config ()
-  (when (string-equal (buffer-file-name)
-                      (expand-file-name (concat my/user-emacs-directory my/emacs-file)))
-    ;; Dynamic scoping to the rescue
+  (defun my/org-babel-tangle-config ()
+    (when (string-equal (buffer-file-name)
+                    (expand-file-name (concat my/user-emacs-directory my/emacs-file)))
+  ;; Dynamic scoping to the rescue
     (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
-
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+    (org-babel-tangle))))
 #+end_src
+
+*** DELIM
+
+#+begin_src emacs-lisp
+  (my/org-font-setup))
+  #+end_src
+  
 
 ** TODO Productivity
 [[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
 ** Packages  
-*** Org Bullets
+**** Org Bullets
 
 #+begin_src emacs-lisp
 (use-package org-bullets
@@ -166,26 +203,26 @@ Automatically tangle our Emacs.org config file when we save it
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
 
-*** Visual Fill Colum
+**** Visual Fill Colum
 
 #+begin_src emacs-lisp
-(use-package visual-fill-column
-  :init
-  (defun my/org-mode-visual-fill () 
-    (setq visual-fill-column-width 115
-          visual-fill-column-center-text t)
-    (visual-fill-column-mode 1))
-  :hook (org-mode . my/org-mode-visual-fill))
+  (use-package visual-fill-column
+    :after org
+    :config
+    (defun my/org-mode-visual-fill () 
+      (setq visual-fill-column-width 115
+            visual-fill-column-center-text t)
+      (visual-fill-column-mode 1))
+    :hook (org-mode . my/org-mode-visual-fill))
 #+end_src
 
-*** TODO Org Roam
+**** TODO Org Roam
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 * Keyboard
 ** Evil
 
 #+begin_src emacs-lisp
 (use-package evil
-  :ensure t
   :demand t
   :init
   (setq evil-want-integration t)
@@ -200,19 +237,29 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   ([remap evil-search-backward] . swiper-backward))
 #+end_src
 
+*** Swiper
+
+ #+begin_src emacs-lisp
+ (use-package swiper
+   :after evil)
+ #+end_src
+
 *** Evil Collection
 
 #+begin_src emacs-lisp
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init)) 
+    (use-package evil-collection
+      :after evil
+      :hook (evil-mode . evil-collection-init)
+              (dired-mode . evil-colletion-dired-setup)
+              (magit-mode . evil-collection-dired-setup))
+
 #+end_src
 
-** Generjl
+** General
 
 #+begin_src emacs-lisp
   (use-package general
+    :after evil
     :config
     (general-evil-setup t)
     (general-create-definer my/leader-def
@@ -242,11 +289,10 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Which-Key
 
 #+begin_src emacs-lisp
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.3))
+  (use-package which-key
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 0.3))
 #+end_src
 
 * Productivity
@@ -270,13 +316,12 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :config)
 
   (use-package counsel
-    :after general
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-switch-buffer-other-window)))
 
   (use-package ivy-rich
-    :init
-    (ivy-rich-mode 1))
+    :after ivy)
+
 #+end_src
 
 ** Projectile
@@ -284,27 +329,24 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
 (use-package projectile
   :diminish projectile-mode
-  :config (projectile-mode)
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :init
+  ("C-c p" . projectile-command-map))
   ;; NOTE: Set this to the folder where you keep your Git repos!
-  (when (file-directory-p "~/devel")
-    (setq projectile-project-search-path '("~/devel"))))
 #+end_src
 
 *** Counsel-Projectile
 #+begin_src emacs-lisp
-(use-package counsel-projectile
-  :config (counsel-projectile-mode))
+  (use-package counsel-projectile
+    :after projectile
+    :config (counsel-projectile-mode))
 #+end_src
 
 ** Magit
 
 #+begin_src emacs-lisp
   (use-package magit
-    :defer nil
+    :config (evil-collection-init)
     :general
     (:prefix-map 'my-leader-map
      "g" '(magit :which-key "Status")))
@@ -344,7 +386,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 #+begin_src emacs-lisp
 (use-package doom-themes
-  :config
+  :init
   (load-theme 'doom-challenger-deep t))
 #+end_src
 
@@ -370,6 +412,12 @@ display correctly:
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+* Runtime Optimization
+
+#+begin_src emacs-lisp
+(setq gc-cons-threshold (* 2 1000 1000))
 #+end_src
 
 * Custom
