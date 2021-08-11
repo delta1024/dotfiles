@@ -1,13 +1,13 @@
 ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
 ;;       in Emacs and init.el will be generated automatically!
 
-(defvar emacs-start-time 
+(defvar emacs-startup-time 
          (format "%.2f seconds"
                  (float-time
                  (time-subtract after-init-time before-init-time))) "Emacs start up time")
 (defun my/display-startup-time ()
   (message "Emacs loaded in %s."
-            emacs-start-time
+            emacs-startup-time
            ))
 
 (add-hook 'emacs-startup-hook #'my/display-startup-time)
@@ -16,7 +16,7 @@
 
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
-(defvar my/font-size 115 "font size for emacs")
+(defvar my/font-size 120 "font size for emacs")
 (defvar my/emacs-file "Emacs.org" "emacs user file name")
 (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
   "hard coded emacs dir for file comparison")
@@ -94,17 +94,18 @@
   :config
   (general-evil-setup t)
   (general-create-definer my/leader-def
-			  :keymaps '(normal insert visual emacs)
-			  :prefix "SPC"
-			  :non-normal-prefix "C-SPC"
-			  :prefix-command 'my-leader-command
-			  :prefix-map 'my-leader-map)
+                          :keymaps '(normal insert visual emacs)
+                          :prefix "SPC"
+                          :non-normal-prefix "C-SPC"
+                          :prefix-command 'my-leader-command
+                          :prefix-map 'my-leader-map)
   (my/leader-def
     "f"   '(nil :which-key "file system")
     "f f" '(counsel-find-file :which-key "save-file")
     "f s" '(save-buffer :which-key "save file")
     "h"   '(nil :which-key "config options")
-    "h f" '((lambda () (interactive) (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+    "h f" '((lambda () (interactive)
+              (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
     "a"   '(eshell :which-key "eshell")
     ":"   '(counsel-M-x :which-key "M-x")
     "b" '(counsel-switch-buffer :wk "switch buffers")))
@@ -229,7 +230,7 @@
 
 (use-package doom-themes
   :init
-  (load-theme 'doom-challenger-deep t))
+  (load-theme 'doom-dark+ t))
 
 (use-package all-the-icons)
 
