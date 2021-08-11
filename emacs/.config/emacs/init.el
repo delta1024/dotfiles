@@ -90,13 +90,19 @@
   :config
   (evil-collection-init))
 
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
 (use-package general
   :config
   (general-evil-setup t)
   (general-create-definer my/leader-def
                           :keymaps '(normal insert visual emacs)
                           :prefix "SPC"
-                          :non-normal-prefix "C-SPC"
+                          :global-prefix "C-SPC"
                           :prefix-command 'my-leader-command
                           :prefix-map 'my-leader-map)
   (my/leader-def

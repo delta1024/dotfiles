@@ -133,7 +133,23 @@ Gives a memeory boost at startup
   (evil-collection-init)) 
 #+end_src
 
+*** Which-Key
+
+#+begin_src emacs-lisp
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+#+end_src
+
+*** Hydra
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+#+begin_src emacs-lisp
 ;; (use-package hydra)
+#+end_src
 
 ** General
 
@@ -144,7 +160,7 @@ Gives a memeory boost at startup
     (general-create-definer my/leader-def
                             :keymaps '(normal insert visual emacs)
                             :prefix "SPC"
-                            :non-normal-prefix "C-SPC"
+                            :global-prefix "C-SPC"
                             :prefix-command 'my-leader-command
                             :prefix-map 'my-leader-map)
     (my/leader-def
@@ -159,7 +175,7 @@ Gives a memeory boost at startup
       "b" '(counsel-switch-buffer :wk "switch buffers")))
 #+end_src
 
-* Org Mode
+* TODO Org Mode
 ** Use Package
 
 #+begin_src emacs-lisp
@@ -173,6 +189,17 @@ Gives a memeory boost at startup
     :hook ((org-mode . my/org-mode-setup)
             (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
   #+end_src
+
+*** Keybindings
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+  :general
+  (:prefix-map my-leader-map
+              "o" 'counsel-outline)
+#+end_src
 
 *** Config
 
@@ -237,24 +264,15 @@ Gives a memeory boost at startup
 
  * Wrap any code to eval in a =eval-after-load= block.
   
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
           (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
-          (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)"))
-        )
+          (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)")))
 
 #+end_src
 
-*** Keybindings
-
-#+begin_src emacs-lisp :tangle no
-  :general
-  (:prefix-map my-leader-map
-              "o" 'org-todo)
-#+end_src
-
-*** Auto Tangle Config
+**** Auto Tangle Config
 
 #+begin_src emacs-lisp
   (defun my/org-babel-tangle-config ()
@@ -265,7 +283,7 @@ Gives a memeory boost at startup
     (org-babel-tangle))))
 #+end_src
 
-*** DELIM
+**** DELIM
 
 #+begin_src emacs-lisp
   (my/org-font-setup))
@@ -424,6 +442,9 @@ display correctly:
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
+
+** TODO Dashboard
+[[https://github.com/emacs-dashboard/emacs-dashboard][Github]]
 
 * Runtime Optimization
 
