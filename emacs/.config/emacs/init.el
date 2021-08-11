@@ -193,7 +193,7 @@
   ;;         (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
   ;;         (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)"))))
 (setq org-todo-keywords
-  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+  '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
     (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 
 (use-package dired

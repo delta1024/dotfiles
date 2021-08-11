@@ -201,11 +201,13 @@ Gives a memeory boost at startup
   #+end_src
 
 *** Keybindings
+
 #+begin_src emacs-lisp
   :general
   (:prefix-map 'my-leader-map
     "o" '(counsel-outline :wk "Org Headings"))
 #+end_src
+
 *** Config
 
   #+begin_src emacs-lisp
@@ -272,7 +274,7 @@ Gives a memeory boost at startup
     (org-babel-tangle))))
 #+end_src
 
-**** DELIM
+*** DELIM
 
 #+begin_src emacs-lisp
   (my/org-font-setup))
