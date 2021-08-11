@@ -12,7 +12,6 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
 #+end_src
 
 * Startup Optimization
-For debugging
 #+begin_src emacs-lisp 
   (defvar emacs-startup-time 
            (format "%.2f seconds"
@@ -29,6 +28,14 @@ For debugging
 Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (setq gc-cons-threshold (* 50 1000 1000))
+#+end_src
+
+** Debugging
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+#+begin_src emacs-lisp
+(setq use-package-verbose t)
 #+end_src
 
 * Variables
@@ -192,6 +199,7 @@ Gives a memeory boost at startup
             (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
   #+end_src
 
+
 *** Config
 
   #+begin_src emacs-lisp
@@ -296,11 +304,15 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
  * Wrap any code to eval in a =eval-after-load= block.
 
   
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
+    ;; (setq org-todo-keywords
+    ;;       '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+    ;;         (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
+    ;;         (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)"))))
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
-          (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
-          (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)")))
+    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+      (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
+
 
 #+end_src
 

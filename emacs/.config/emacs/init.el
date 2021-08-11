@@ -184,6 +184,14 @@
     (visual-fill-column-mode 1))
   :hook (org-mode . my/org-mode-visual-fill))
 
+;; (setq org-todo-keywords
+  ;;       '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+  ;;         (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
+  ;;         (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)"))))
+(setq org-todo-keywords
+  '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+    (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
+
 (use-package dired
   :ensure nil
   :after evil
