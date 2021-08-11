@@ -114,6 +114,8 @@
   "h"   '(nil :which-key "config options")
   "h f" '((lambda () (interactive)
             (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+  "h M-f" '((lambda () (interactive)
+               (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
   "a"   '(eshell :which-key "eshell")
   ":"   '(counsel-M-x :which-key "M-x")
   "w f" '(delete-frame :wk "delete fram")
@@ -239,7 +241,7 @@
 
 (use-package doom-themes
   :init
-  (load-theme 'doom-1337 t))
+  (load-theme 'doom-one t))
 
 (use-package all-the-icons)
 
