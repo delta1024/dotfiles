@@ -127,6 +127,10 @@
 :hook ((org-mode . my/org-mode-setup)
         (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
 
+:general
+(:prefix-map 'my-leader-map
+  "o" '(counsel-outline :wk "Org Headings"))
+
 :config
 
 (defun my/org-font-setup ()
