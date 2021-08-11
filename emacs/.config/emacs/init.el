@@ -1,3 +1,6 @@
+;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
+;;       in Emacs and init.el will be generated automatically!
+
 (defvar emacs-start-time 
          (format "%.2f seconds"
                  (float-time
@@ -10,9 +13,6 @@
 (add-hook 'emacs-startup-hook #'my/display-startup-time)
 
 (setq gc-cons-threshold (* 50 1000 1000))
-
-;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
- ;;       in Emacs and init.el will be generated automatically!
 
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
@@ -68,8 +68,46 @@
   (package-install 'use-package))
 
 (require 'use-package)
-(setq use-package-always-ensure t
-        use-package-always-defer t)
+(setq use-package-always-ensure t)
+
+(use-package evil
+  :ensure t
+  :demand t
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-vsplit-window-right t)
+  (setq evil-split-window-below t)
+  :config
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (evil-mode)
+  :bind
+  ([remap evil-search-forward] . swiper)
+  ([remap evil-search-backward] . swiper-backward))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+(use-package general
+  :config
+  (general-evil-setup t)
+  (general-create-definer my/leader-def
+			  :keymaps '(normal insert visual emacs)
+			  :prefix "SPC"
+			  :non-normal-prefix "C-SPC"
+			  :prefix-command 'my-leader-command
+			  :prefix-map 'my-leader-map)
+  (my/leader-def
+    "f"   '(nil :which-key "file system")
+    "f f" '(counsel-find-file :which-key "save-file")
+    "f s" '(save-buffer :which-key "save file")
+    "h"   '(nil :which-key "config options")
+    "h f" '((lambda () (interactive) (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+    "a"   '(eshell :which-key "eshell")
+    ":"   '(counsel-M-x :which-key "M-x")
+    "b" '(counsel-switch-buffer :wk "switch buffers")))
 
 (use-package org
   :no-require t
@@ -134,54 +172,10 @@
     (visual-fill-column-mode 1))
   :hook (org-mode . my/org-mode-visual-fill))
 
-(use-package evil
-  :demand t
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  :config
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (evil-mode)
-  :bind
-  ([remap evil-search-forward] . swiper)
-  ([remap evil-search-backward] . swiper-backward))
-
-(use-package swiper
-  :after evil)
-
-(use-package evil-collection
+(use-package dired
+  :ensure nil
   :after evil
-  :hook (evil-mode . evil-collection-init)
-          (dired-mode . evil-colletion-dired-setup)
-          (magit-mode . evil-collection-dired-setup))
-
-(use-package general
-  :after evil
-  :config
-  (general-evil-setup t)
-  (general-create-definer my/leader-def
-                          :keymaps '(normal insert visual emacs)
-                          :prefix "SPC"
-                          :global-prefix "C-SPC"
-                          :prefix-command 'my-leader-command
-                          :prefix-map 'my-leader-map)
-  (my/leader-def
-    "f"   '(nil :which-key "file system")
-    "f f" '(counsel-find-file :which-key "save-file")
-    "f s" '(save-buffer :which-key "save file")
-    "h"   '(nil :which-key "config options")
-    "h f" '((lambda () (interactive)
-              (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
-    "a"   '(eshell :which-key "eshell")
-    ":"   '(counsel-M-x :which-key "M-x")
-    "b" '(counsel-switch-buffer :wk "switch buffers")))
-
-(use-package which-key
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 0.3))
+  :demand t)
 
 (use-package ivy
   :diminish
@@ -218,7 +212,7 @@
   :config (counsel-projectile-mode))
 
 (use-package magit
-  :config (evil-collection-init)
+  :config (evil-collection-magit-setup)
   :general
   (:prefix-map 'my-leader-map
    "g" '(magit :which-key "Status")))
