@@ -1,6 +1,6 @@
 #+TITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
-#+PROPERTY: header-args :tangle init.el 
+#+PROPERTY: header-args :tangle ./init.el 
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
@@ -144,10 +144,7 @@ Gives a memeory boost at startup
 #+end_src
 
 *** Hydra
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 ;; (use-package hydra)
 #+end_src
 
@@ -155,24 +152,27 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package general
+    :after evil
     :config
-    (general-evil-setup t)
-    (general-create-definer my/leader-def
-                            :keymaps '(normal insert visual emacs)
-                            :prefix "SPC"
-                            :global-prefix "C-SPC"
-                            :prefix-command 'my-leader-command
-                            :prefix-map 'my-leader-map)
-    (my/leader-def
-      "f"   '(nil :which-key "file system")
-      "f f" '(counsel-find-file :which-key "save-file")
-      "f s" '(save-buffer :which-key "save file")
-      "h"   '(nil :which-key "config options")
-      "h f" '((lambda () (interactive)
-                (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
-      "a"   '(eshell :which-key "eshell")
-      ":"   '(counsel-M-x :which-key "M-x")
-      "b" '(counsel-switch-buffer :wk "switch buffers")))
+    (general-evil-setup t))
+
+  (general-create-definer my/leader-def
+                          :keymaps '(normal insert visual emacs)
+                          :prefix "SPC"
+                          :global-prefix "C-SPC"
+                          :prefix-command 'my-leader-command
+                          :prefix-map 'my-leader-map)
+  (my/leader-def
+    "f"   '(nil :which-key "file system")
+    "f f" '(counsel-find-file :which-key "save-file")
+    "f s" '(save-buffer :which-key "save file")
+    "h"   '(nil :which-key "config options")
+    "h f" '((lambda () (interactive)
+              (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+    "a"   '(eshell :which-key "eshell")
+    ":"   '(counsel-M-x :which-key "M-x")
+    "w f" '(delete-frame :wk "delete fram")
+    "b" '(counsel-switch-buffer :wk "switch buffers"))
 #+end_src
 
 * TODO Org Mode
@@ -189,17 +189,6 @@ Gives a memeory boost at startup
     :hook ((org-mode . my/org-mode-setup)
             (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
   #+end_src
-
-*** Keybindings
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-  :general
-  (:prefix-map my-leader-map
-              "o" 'counsel-outline)
-#+end_src
 
 *** Config
 
@@ -256,22 +245,6 @@ Gives a memeory boost at startup
       '((emacs-lisp . t)))
 #+end_src
 
-**** TODO Productivity
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-[[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
-
- * Wrap any code to eval in a =eval-after-load= block.
-  
-#+begin_src emacs-lisp
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
-          (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
-          (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)")))
-
-#+end_src
-
 **** Auto Tangle Config
 
 #+begin_src emacs-lisp
@@ -315,6 +288,20 @@ Gives a memeory boost at startup
 
 **** TODO Org Roam
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
+** TODO Productivity
+[[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
+
+ * Wrap any code to eval in a =eval-after-load= block.
+
+  
+#+begin_src emacs-lisp :tangle no
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+          (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
+          (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)")))
+
+#+end_src
+
 * Files
 
 #+begin_src emacs-lisp
@@ -416,7 +403,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   (use-package doom-themes
     :init
-    (load-theme 'doom-dark+ t))
+    (load-theme 'doom-1337 t))
 #+end_src
 
 *** Doom Modeline 

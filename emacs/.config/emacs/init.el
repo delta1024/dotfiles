@@ -97,24 +97,27 @@
   (setq which-key-idle-delay 1))
 
 (use-package general
+  :after evil
   :config
-  (general-evil-setup t)
-  (general-create-definer my/leader-def
-                          :keymaps '(normal insert visual emacs)
-                          :prefix "SPC"
-                          :global-prefix "C-SPC"
-                          :prefix-command 'my-leader-command
-                          :prefix-map 'my-leader-map)
-  (my/leader-def
-    "f"   '(nil :which-key "file system")
-    "f f" '(counsel-find-file :which-key "save-file")
-    "f s" '(save-buffer :which-key "save file")
-    "h"   '(nil :which-key "config options")
-    "h f" '((lambda () (interactive)
-              (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
-    "a"   '(eshell :which-key "eshell")
-    ":"   '(counsel-M-x :which-key "M-x")
-    "b" '(counsel-switch-buffer :wk "switch buffers")))
+  (general-evil-setup t))
+
+(general-create-definer my/leader-def
+                        :keymaps '(normal insert visual emacs)
+                        :prefix "SPC"
+                        :global-prefix "C-SPC"
+                        :prefix-command 'my-leader-command
+                        :prefix-map 'my-leader-map)
+(my/leader-def
+  "f"   '(nil :which-key "file system")
+  "f f" '(counsel-find-file :which-key "save-file")
+  "f s" '(save-buffer :which-key "save file")
+  "h"   '(nil :which-key "config options")
+  "h f" '((lambda () (interactive)
+            (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+  "a"   '(eshell :which-key "eshell")
+  ":"   '(counsel-M-x :which-key "M-x")
+  "w f" '(delete-frame :wk "delete fram")
+  "b" '(counsel-switch-buffer :wk "switch buffers"))
 
 (use-package org
   :no-require t
@@ -236,7 +239,7 @@
 
 (use-package doom-themes
   :init
-  (load-theme 'doom-dark+ t))
+  (load-theme 'doom-1337 t))
 
 (use-package all-the-icons)
 
