@@ -1,0 +1,4 @@
+#+TITLE: Dotfiles Todo List
+
+* TODO create submodule for emacs
+* TODO Create worktree for emacs 

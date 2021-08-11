@@ -193,6 +193,7 @@ Gives a memeory boost at startup
 #+end_src
 
 *** Hooks
+**** Function Definitions
 
   #+begin_src emacs-lisp
     :hook ((org-mode . my/org-mode-setup)
@@ -305,17 +306,15 @@ Gives a memeory boost at startup
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 ** TODO Productivity
 [[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
-
- * Wrap any code to eval in a =eval-after-load= block.
-
-  
+ * Wrap any code to eval in a =with-eval-after-load= block.
+*** Todo 
 #+begin_src emacs-lisp
     ;; (setq org-todo-keywords
     ;;       '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
     ;;         (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
     ;;         (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)"))))
   (setq org-todo-keywords
-    '((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d!)")
+    '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
       (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 
 
