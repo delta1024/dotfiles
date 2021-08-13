@@ -7,7 +7,7 @@
 (with-eval-after-load 'org
   (defun my/org-babel-tangle-desktop ()
     (when (string-equal (buffer-file-name)
-                    (expand-file-name (concat user-emacs-directory my/exwm-config)))
+                    (expand-file-name (concat my/user-emacs-directory my/exwm-config)))
       (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook

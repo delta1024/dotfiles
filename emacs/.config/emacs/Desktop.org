@@ -18,7 +18,7 @@ https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Deskto
 (with-eval-after-load 'org
   (defun my/org-babel-tangle-desktop ()
     (when (string-equal (buffer-file-name)
-                    (expand-file-name (concat user-emacs-directory my/exwm-config)))
+                    (expand-file-name (concat my/user-emacs-directory my/exwm-config)))
       (let ((org-confirm-babel-evaluate nil))
       (org-babel-tangle))))
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
@@ -118,3 +118,4 @@ https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Deskto
   (my/post-config)
 #+end_src
 * System Configuration Requirements
+Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
