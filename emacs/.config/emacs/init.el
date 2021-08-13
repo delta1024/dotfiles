@@ -5,6 +5,8 @@
          (format "%.2f seconds"
                  (float-time
                  (time-subtract after-init-time before-init-time))) "Emacs start up time")
+(defvar emacs-startup-gc
+        gcs-done "Number of garbage collections done at statup")
 (defun my/display-startup-time ()
   (message "Emacs loaded in %s."
             emacs-startup-time
@@ -16,12 +18,11 @@
 
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
-(defvar my/font-size 120 "font size for emacs")
+(defvar my/font-size 150 "font size for emacs")
 (defvar my/emacs-file "Emacs.org" "emacs user file name")
+(defvar my/alpha-value 90 "EXWM default alpha value")
 (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
   "hard coded emacs dir for file comparison")
-
-(setq initial-buffer-choice (lambda () (switch-to-buffer "*Messages*")))
 
 (setq inhibit-startup-message t)
 
@@ -41,10 +42,6 @@
 
 ;; Disables the visual bell
 (setq visible-bell t)
-
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
 (column-number-mode)
 (global-display-line-numbers-mode t)
 (dolist (mode '(org-mode-hook
@@ -80,6 +77,8 @@
   (setq evil-split-window-below t)
   :config
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-visual-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-replace-state-map (kbd "C-g") 'evil-normal-state)
   (evil-mode)
   :bind
   ([remap evil-search-forward] . swiper)
@@ -108,28 +107,27 @@
                         :prefix-command 'my-leader-command
                         :prefix-map 'my-leader-map)
 (my/leader-def
-  "f"   '(nil :which-key "file system")
-  "f f" '(counsel-find-file :which-key "save-file")
-  "f s" '(save-buffer :which-key "save file")
-  "h"   '(nil :which-key "config options")
-  "h f" '((lambda () (interactive)
-            (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open config file")
+  "f"     '(nil :which-key "file system")
+  "f f"   '(counsel-find-file :which-key "save-file")
+  "f s"   '(save-buffer :which-key "save file")
+  "h"     '(nil :which-key "config options")
+  "h f"   '((lambda () (interactive)
+            (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open emacs configuration")
   "h M-f" '((lambda () (interactive)
                (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
-  "a"   '(eshell :which-key "eshell")
-  ":"   '(counsel-M-x :which-key "M-x")
-  "w f" '(delete-frame :wk "delete fram")
-  "b" '(counsel-switch-buffer :wk "switch buffers"))
+  "a"     '(eshell :which-key "eshell")
+  ";"     '(counsel-M-x :which-key "M-x")
+  "w f"   '(delete-frame :wk "delete fram")
+  "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
+  "M-b"   '(ivy-switch-buffer :wk "switch buffer"))
 
 (use-package org
   :no-require t
 
+:bind ("C-c o" . counsel-outline)
+
 :hook ((org-mode . my/org-mode-setup)
         (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
-
-:general
-(:prefix-map 'my-leader-map
-  "o" '(counsel-outline :wk "Org Headings"))
 
 :config
 
@@ -188,10 +186,6 @@
     (visual-fill-column-mode 1))
   :hook (org-mode . my/org-mode-visual-fill))
 
-;; (setq org-todo-keywords
-  ;;       '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
-  ;;         (sequence "BRANCHED(b)" "NEEDS TESTING(n)" "|" "IMPLEMENTED(i)")
-  ;;         (sequence "ON HOLD(h)" "|"  "DROPED(D)" "(c)"))))
 (setq org-todo-keywords
   '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
     (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
@@ -265,6 +259,21 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(setq gc-cons-threshold (* 2 1000 1000))
+(defun my/exwm-load (switch)
+  (load-file (concat user-emacs-directory "desktop.el")))
+(add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
-(load custom-file :noerror)
+(defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
+(setq gc-cons-threshold (* 2 1000 1000))
+  ;; We're going to load custom here becaus it makes more
+  ;; sense to do so here with how EXWM is loaded
+  (load custom-file :noerror))
+
+;; Returns nil if switch is abset
+(defun found-custom-arg (switch) "Returns nil if switch is absent"
+  (let ((found-switch (member switch command-line-args)))
+     found-switch))
+
+;; if exwm isn't running set custom variables
+(unless (found-custom-arg "-exwm")
+  (my/post-config))
