@@ -103,6 +103,7 @@
 (general-create-definer my/leader-def
                         :keymaps '(normal insert visual emacs)
                         :prefix "SPC"
+                        :prefix "C-SPC"
                         :global-prefix "C-SPC"
                         :prefix-command 'my-leader-command
                         :prefix-map 'my-leader-map)
