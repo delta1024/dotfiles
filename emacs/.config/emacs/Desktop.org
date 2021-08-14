@@ -20,9 +20,11 @@ https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Deskto
 #+begin_src emacs-lisp
   (defvar my/exwm-config "Desktop.org" "EXWM Configuration file name")
   (add-to-list 'default-frame-alist '(alpha 90 90)
+  (add-to-list 'default-frame-alist '(alpha 90 90))
   (my/leader-def
     "h C-f" '((lambda () (interactive)
                  (find-file (expand-file-name my/exwm-config))) :wk "open desktop configuration")) 
+                 (find-file (concat my/user-emacs-directory my/exwm-config))) :wk "open desktop configuration")) 
 #+end_src
 
 ** Autosave Hook
