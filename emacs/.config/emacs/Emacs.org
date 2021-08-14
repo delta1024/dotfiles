@@ -44,13 +44,13 @@ Gives a memeory boost at startup
 
 * Variables
 #+begin_src emacs-lisp
-  (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
-  (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
-  (defvar my/font-size 150 "font size for emacs")
-  (defvar my/emacs-file "Emacs.org" "emacs user file name")
-  (defvar my/alpha-value (90 . 90) "EXWM default alpha value")
-  (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
-    "hard coded emacs dir for file comparison")
+    (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
+    (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
+    (defvar my/font-size 150 "font size for emacs")
+    (defvar my/emacs-file "Emacs.org" "emacs user file name")
+    (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
+    (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
+      "hard coded emacs dir for file comparison")
 #+end_src
 
 * Initial Buffer
@@ -325,10 +325,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   (setq org-todo-keywords
     '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
       (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
-    '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!)")
-      (sequence "HOLD(h)" "|" "COAPLETED(c)" "DROED(d@)")))
-
-
 #+end_src
 
 * Files

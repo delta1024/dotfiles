@@ -1,21 +1,27 @@
+;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
+;;       in Emacs and desktop.el will be generated automatically!
+
 (defvar my/exwm-config "Desktop.org" "EXWM Configuration file name")
 (add-to-list 'default-frame-alist '(alpha 90 90))
 (my/leader-def
   "h C-f" '((lambda () (interactive)
-               (find-file (concat user-emacs-directory my/exwm-config))) :wk "open desktop configuration"))
+               (find-file (expand-file-name my/exwm-config))) :wk "open desktop configuration"))
 
 (with-eval-after-load 'org
   (defun my/org-babel-tangle-desktop ()
     (when (string-equal (buffer-file-name)
-                    (expand-file-name (concat my/user-emacs-directory my/exwm-config)))
+                    (expand-file-name my/exwm-config))
       (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
+        (org-babel-tangle))
+        (byte-compile-file (expand-file-name "desktop.el"))))
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
                                         #'my/org-babel-tangle-desktop))))
 
+(defvar my/exwm-auto-start-apps '(("xmodmap" . "xmodmap ~/.Xmodmap")))
+
 (defun my/exwm-auto-start ()
  (interactive)
- (dolist (process '(("xmodmap" . "xmodmap ~/.Xmodmap")))
+ (dolist (process my/exwm-auto-start-apps)
    (start-process-shell-command (car process) nil (cdr process))))
 
 (defun my/exwm-update-class ()

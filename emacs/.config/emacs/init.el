@@ -20,7 +20,7 @@
 (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
 (defvar my/font-size 150 "font size for emacs")
 (defvar my/emacs-file "Emacs.org" "emacs user file name")
-(defvar my/alpha-value 90 "EXWM default alpha value")
+(defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
 (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
   "hard coded emacs dir for file comparison")
 
@@ -170,6 +170,9 @@
   (org-babel-tangle))))
 
 (my/org-font-setup))
+
+(my/leader-def 'org-mode-map
+ "'" '(org-edit-special :wk "edit block"))
 
 (use-package org-bullets
   :after org
