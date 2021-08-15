@@ -250,10 +250,9 @@ Gives a memeory boost at startup
 ***** TODO org-file-open
 
 #+begin_src emacs-lisp 
-  (defun org-file-open (a) "Opens the file in `org-directory'"
+  (defun org-open-file (a) "Opens the file in `org-directory'"
          (interactive "sOrg File Name:")
-
-         (find-file (concat org-directory "/" a)))
+         (find-file (concat org-directory "/" a ".org")))
 #+end_src
 
 ***** org-mode-setup

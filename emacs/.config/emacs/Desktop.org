@@ -15,7 +15,9 @@
 - [X] Power Off
 - [X] Restart
 - [X] Suspend
+** Dotfiles repo
 * Preamble
+[[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
   ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
   ;;       in Emacs and desktop.el will be generated automatically!
@@ -188,7 +190,7 @@ exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
 keycode  23 = BackSpace BackSpace BackSpace BackSpace
 keycode  22 = Tab ISO_Left_Tab Tab ISO_Left_Tab
 #+end_src
-*** =/etc/X11/xorg.conf.d//90-custom-kdb.conf=
+*** =/etc/X11/xorg.conf.d/90-custom-kbd.conf=
 #+begin_src conf-space :tangle no
 Section "InputClass"
     Identifier "keyboard defaults"

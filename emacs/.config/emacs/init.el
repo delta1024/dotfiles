@@ -151,10 +151,9 @@
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
-(defun org-file-open (a) "Opens the file in `org-directory'"
+(defun org-open-file (a) "Opens the file in `org-directory'"
        (interactive "sOrg File Name:")
-
-       (find-file (concat org-directory "/" a)))
+       (find-file (concat org-directory "/" a ".org")))
 
 (defun my/org-mode-setup ()
   (org-indent-mode)
