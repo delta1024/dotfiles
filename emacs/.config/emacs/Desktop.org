@@ -1,16 +1,21 @@
 #+TITLE: Desktop
 #+SUBTITLE: Requires Emacs.org
 #+PROPERTY: header-args :tangle ./desktop.el
-* Todo
-** TODO crete helper functions for power control 
-- Power Off
-- Restart
-- Suspend
-** TODO Keybindings
-- Bind power helper functoins to keymaps
+* Inbox
+** TODO Polybar
+** TODO Check =EXWM= =gcs-done= and increase threshold if nesisarry
+- [ ] Capture exwm start =gcs-done=.
+- [ ] Capture exwm finish =gcs-done=.
+- [ ] Subtract the two values into a new variable
+** DONE crete helper functions for power control 
+- [X] Power Off
+- [X] Restart
+- [X] Suspend
+*** DONE Keybindings
+- [X] Power Off
+- [X] Restart
+- [X] Suspend
 * Preamble
-https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-01.org 
-
 #+begin_src emacs-lisp
   ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
   ;;       in Emacs and desktop.el will be generated automatically!
@@ -38,9 +43,9 @@ https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Deskto
                                             #'my/org-babel-tangle-desktop))))
 #+end_src
 
-
 *  EXWM
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-02.org][Emacs Desktop Part 2 Show Notes]]
+[[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
 ** Autostart
 
 #+begin_src emacs-lisp
@@ -122,13 +127,43 @@ https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Deskto
                     (number-sequence 0 9))))
 
   (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app)
-#+end_src
 
+  (defun exwm-poweroff ()
+    (interactive)
+    (when (yes-or-no-p "Power down system? ")
+      (start-process-shell-command "systemctl" nil "systemctl poweroff")))
+  (exwm-input-set-key (kbd "C-s-p") 'exwm-poweroff)
+
+  (defun exwm-suspend ()
+    (interactive)
+    (when (y-or-n-p "Suspend systeM? ")
+      (start-process-shell-command "systemctl" nil "systemctl suspend")))
+  (exwm-input-set-key (kbd "s-p") 'exwm-suspend)
+
+  (defun exem-sys-restart () "Restarts the operating system"
+         (interactive)
+         (when (yes-or-no-p "Restart system? ")
+           (start-process-shell-command "systemctl" nil "systemctl restart")))
+  (exwm-input-set-key (kbd "M-s-p") 'exwm-sys-restart)
+  (exwm-input-set-key (kbd "s-q") 'exwm-restart)
+
+#+end_src
 *** DELIM
 
 #+begin_src emacs-lisp
   (exwm-enable)
   (my/exwm-auto-start))
+#+end_src
+
+** Status Bar
+#+begin_src emacs-lisp
+  ;; Show battery status in the mode line
+  (display-battery-mode 1)
+
+  ;; Show the time and date in modeline
+  (setq display-time-day-and-date t)
+  (display-time-mode 1)
+  ;; Also take a look at display-time-format and format-time-string
 #+end_src
 
 * Runtime Optimization
@@ -137,3 +172,27 @@ https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Deskto
 #+end_src
 * System Configuration Requirements
 Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
+** Xinirc
+#+begin_src conf-unix :tangle no
+dunst &
+picom &
+xclip &
+/usr/libexec/polkit-mate-authentication-agent-1 &
+cbatticon &
+$HOME/.scripts/wallpaper.sh draw
+exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
+#+end_src
+** Ctrl and CapsLock Switch
+*** Xmodmap
+#+begin_src conf-space :tangle no
+keycode  23 = BackSpace BackSpace BackSpace BackSpace
+keycode  22 = Tab ISO_Left_Tab Tab ISO_Left_Tab
+#+end_src
+*** =/etc/X11/xorg.conf.d//90-custom-kdb.conf=
+#+begin_src conf-space :tangle no
+Section "InputClass"
+    Identifier "keyboard defaults"
+    MatchIsKeyboard "on"
+    Option "XkbOptions" "ctrl:swapcaps"
+EndSection
+#+end_src

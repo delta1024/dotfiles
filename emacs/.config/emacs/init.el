@@ -2,14 +2,14 @@
 ;;       in Emacs and init.el will be generated automatically!
 
 (defvar emacs-startup-time 
-         (format "%.2f seconds"
-                 (float-time
-                 (time-subtract after-init-time before-init-time))) "Emacs start up time")
+  (format "%.2f seconds"
+          (float-time
+           (time-subtract after-init-time before-init-time))) "Emacs start up time")
 (defvar emacs-startup-gc
-        gcs-done "Number of garbage collections done at statup")
+  gcs-done "Number of garbage collections done at statup")
 (defun my/display-startup-time ()
   (message "Emacs loaded in %s."
-            emacs-startup-time
+           emacs-startup-time
            ))
 
 (add-hook 'emacs-startup-hook #'my/display-startup-time)
@@ -101,21 +101,20 @@
   (general-evil-setup t))
 
 (general-create-definer my/leader-def
-                        :keymaps '(normal insert visual emacs)
-                        :prefix "SPC"
-                        :prefix "C-SPC"
-                        :global-prefix "C-SPC"
-                        :prefix-command 'my-leader-command
-                        :prefix-map 'my-leader-map)
+  :keymaps '(normal insert visual emacs)
+  :prefix "C-SPC"
+  :global-prefix "C-SPC"
+  :prefix-command 'my-leader-command
+  :prefix-map 'my-leader-map)
 (my/leader-def
   "f"     '(nil :which-key "file system")
   "f f"   '(counsel-find-file :which-key "save-file")
   "f s"   '(save-buffer :which-key "save file")
   "h"     '(nil :which-key "config options")
   "h f"   '((lambda () (interactive)
-            (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open emacs configuration")
+              (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open emacs configuration")
   "h M-f" '((lambda () (interactive)
-               (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
+              (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
   "a"     '(eshell :which-key "eshell")
   ";"     '(counsel-M-x :which-key "M-x")
   "w f"   '(delete-frame :wk "delete fram")
@@ -127,30 +126,35 @@
 
 :bind ("C-c o" . counsel-outline)
 
-:hook ((org-mode . my/org-mode-setup)
-        (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config))))
+:hook (org-mode . my/org-mode-setup)
+(org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
 
 :config
 
 (defun my/org-font-setup ()
   (dolist (face '((org-level-1 . 1.2)
-                    (org-level-2 . 1.1)
-                    (org-level-3 . 1.05)
-                    (org-level-4 . 1.0)
-                    (org-level-5 . 1.1)
-                    (org-level-6 . 1.1)
-                    (org-level-7 . 1.1)
-                    (org-level-8 . 1.1)))
-      (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
 
-    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+
+(defun org-file-open (a) "Opens the file in `org-directory'"
+       (interactive "sOrg File Name:")
+
+       (find-file (concat org-directory "/" a)))
 
 (defun my/org-mode-setup ()
   (org-indent-mode)
@@ -171,9 +175,6 @@
   (org-babel-tangle))))
 
 (my/org-font-setup))
-
-(my/leader-def 'org-mode-map
- "'" '(org-edit-special :wk "edit block"))
 
 (use-package org-bullets
   :after org
@@ -265,18 +266,19 @@
 
 (defun my/exwm-load (switch)
   (load-file (concat user-emacs-directory "desktop.el")))
+
 (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
 (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
-(setq gc-cons-threshold (* 2 1000 1000))
-  ;; We're going to load custom here becaus it makes more
-  ;; sense to do so here with how EXWM is loaded
-  (load custom-file :noerror))
+       (setq gc-cons-threshold (* 2 1000 1000))
+       ;; We're going to load custom here becaus it makes more
+       ;; sense to do so here with how EXWM is loaded
+       (load custom-file :noerror))
 
 ;; Returns nil if switch is abset
 (defun found-custom-arg (switch) "Returns nil if switch is absent"
-  (let ((found-switch (member switch command-line-args)))
-     found-switch))
+       (let ((found-switch (member switch command-line-args)))
+         found-switch))
 
 ;; if exwm isn't running set custom variables
 (unless (found-custom-arg "-exwm")

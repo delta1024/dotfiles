@@ -5,15 +5,14 @@
 (add-to-list 'default-frame-alist '(alpha 90 90))
 (my/leader-def
   "h C-f" '((lambda () (interactive)
-               (find-file (expand-file-name my/exwm-config))) :wk "open desktop configuration"))
+               (find-file (concat my/user-emacs-directory my/exwm-config))) :wk "open desktop configuration"))
 
 (with-eval-after-load 'org
   (defun my/org-babel-tangle-desktop ()
     (when (string-equal (buffer-file-name)
                     (expand-file-name my/exwm-config))
       (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))
-        (byte-compile-file (expand-file-name "desktop.el"))))
+        (org-babel-tangle))))
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
                                         #'my/org-babel-tangle-desktop))))
 
@@ -81,7 +80,34 @@
 
 (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app)
 
+(defun exwm-poweroff ()
+  (interactive)
+  (when (yes-or-no-p "Power down system? ")
+    (start-process-shell-command "systemctl" nil "systemctl poweroff")))
+(exwm-input-set-key (kbd "C-s-p") 'exwm-poweroff)
+
+(defun exwm-suspend ()
+  (interactive)
+  (when (y-or-n-p "Suspend systeM? ")
+    (start-process-shell-command "systemctl" nil "systemctl suspend")))
+(exwm-input-set-key (kbd "s-p") 'exwm-suspend)
+
+(defun exem-sys-restart () "Restarts the operating system"
+       (interactive)
+       (when (yes-or-no-p "Restart system? ")
+         (start-process-shell-command "systemctl" nil "systemctl restart")))
+(exwm-input-set-key (kbd "M-s-p") 'exwm-sys-restart)
+(exwm-input-set-key (kbd "s-q") 'exwm-restart)
+
 (exwm-enable)
 (my/exwm-auto-start))
+
+;; Show battery status in the mode line
+(display-battery-mode 1)
+
+;; Show the time and date in modeline
+(setq display-time-day-and-date t)
+(display-time-mode 1)
+;; Also take a look at display-time-format and format-time-string
 
 (my/post-config)
