@@ -5,7 +5,7 @@
 (add-to-list 'default-frame-alist '(alpha 90 90))
 (my/leader-def
   "h C-f" '((lambda () (interactive)
-               (find-file my/exwm-config)) :wk "open desktop configuration")
+               (find-file my/exwm-config)) :wk "open desktop configuration"))
 
 (with-eval-after-load 'org
   (defun my/org-babel-tangle-desktop ()
@@ -14,7 +14,7 @@
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
-                                              #'my/org-babel-tangle-desktop)))
+                                              #'my/org-babel-tangle-desktop))))
 
 (defvar my/exwm-auto-start-apps '(("xmodmap" . "xmodmap ~/.Xmodmap")))
 
