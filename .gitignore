@@ -3,3 +3,6 @@ config/.config/emacs/elpa/*
 config/.config/emacs/transient/*
 config/.config/emacs/emacs-custom.el
 config/.config/emacs/projectile-bookmarks.eld
+config/.config/polybar/scripts/*
+config/.config/zsh/.zcompdump
+config/.config/zsh/.zshenv
