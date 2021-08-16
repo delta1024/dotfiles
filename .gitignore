@@ -1,1 +1,5 @@
-emacs/.config
+config/.config/emacs/auto-save-list/*
+config/.config/emacs/elpa/*
+config/.config/emacs/transient/*
+config/.config/emacs/emacs-custom.el
+config/.config/emacs/projectile-bookmarks.eld
