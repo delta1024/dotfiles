@@ -1,6 +1,6 @@
 #+TITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
-#+PROPERTY: header-args :tangle ./init.el 
+#+PROPERTY: header-args :tangle ./config/.config/emacs/init.el 
 * Inbox
 ** TODO =org-mode= structure templates
 * Preamble
@@ -49,7 +49,7 @@ Gives a memeory boost at startup
   (defvar my/font-size 150 "font size for emacs")
   (defvar my/emacs-file "Emacs.org" "emacs user file name")
   (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
-  (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/emacs/.config/emacs/")
+  (defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/config/.config/emacs/")
     "hard coded emacs dir for file comparison")
 #+end_src
 
@@ -185,7 +185,7 @@ Gives a memeory boost at startup
     "f s"   '(save-buffer :which-key "save file")
     "h"     '(nil :which-key "config options")
     "h f"   '((lambda () (interactive)
-                (find-file (concat user-emacs-directory my/emacs-file))) :which-key "open emacs configuration")
+                (find-file (concat (getenv"HOME") "/.dotfiles/Emacs.org")) :which-key "open emacs configuration")
     "h M-f" '((lambda () (interactive)
                 (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
     "a"     '(eshell :which-key "eshell")
