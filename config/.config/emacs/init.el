@@ -167,7 +167,7 @@
 
 (defun my/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                  )
+                 (concat (getenv "HOME") "/.dotfiles/Emacs.org"))
 ;; Dynamic scoping to the rescue
   (let ((org-confirm-babel-evaluate nil))
   (org-babel-tangle))))

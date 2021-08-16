@@ -29,7 +29,7 @@
   (add-to-list 'default-frame-alist '(alpha 90 90))
   (my/leader-def
     "h C-f" '((lambda () (interactive)
-                 (find-file my/exwm-config))) :wk "open desktop configuration")
+                 (find-file my/exwm-config)) :wk "open desktop configuration")
 #+end_src
 
 ** Autosave Hook
@@ -38,11 +38,11 @@
   (with-eval-after-load 'org
     (defun my/org-babel-tangle-desktop ()
       (when (string-equal (buffer-file-name)
-                      my/exwm-config)
+                          (concat (getenv "HOME") "/.dotfiles/Desktop.org"))
         (let ((org-confirm-babel-evaluate nil))
           (org-babel-tangle))))
-    (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
-                                          #'my/org-babel-tangle-desktop))))
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
+                                                #'my/org-babel-tangle-desktop)))
 #+end_src
 
 *  EXWM

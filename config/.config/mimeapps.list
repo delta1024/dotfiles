@@ -1,0 +1,4 @@
+[Default Applications]
+application/pdf=org.pwmt.zathura-pdf-mupdf.desktop;
+x-scheme-handler/mailto=brave-browser.desktop
+text/html=brave-browser.desktop;
