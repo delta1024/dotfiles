@@ -19,15 +19,13 @@
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
 (defvar my/font-size 150 "font size for emacs")
-(defvar my/emacs-file "Emacs.org" "emacs user file name")
+(defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
 (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
-(defvar my/user-emacs-directory (concat (getenv "HOME") "/.dotfiles/config/.config/emacs/")
-  "hard coded emacs dir for file comparison")
 
 (setq inhibit-startup-message t)
 
 ;; Redirect custom output
-(setq custom-file (concat user-emacs-directory "emacs-custom.el"))
+(setq custom-file (expand-file-name "emacs-custom.el"))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
@@ -106,13 +104,14 @@
   :global-prefix "C-SPC"
   :prefix-command 'my-leader-command
   :prefix-map 'my-leader-map)
+
 (my/leader-def
   "f"     '(nil :which-key "file system")
   "f f"   '(counsel-find-file :which-key "save-file")
   "f s"   '(save-buffer :which-key "save file")
   "h"     '(nil :which-key "config options")
   "h f"   '((lambda () (interactive)
-              (find-file (concat (getenv"HOME") "/.dotfiles/Emacs.org")) :which-key "open emacs configuration")
+              (find-file my/emacs-file)) :which-key "open emacs configuration")
   "h M-f" '((lambda () (interactive)
               (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
   "a"     '(eshell :which-key "eshell")
@@ -168,7 +167,7 @@
 
 (defun my/org-babel-tangle-config ()
   (when (string-equal (buffer-file-name)
-                  (concat (getenv "HOME") "/.dotfiles/Emacs.org"))
+                  )
 ;; Dynamic scoping to the rescue
   (let ((org-confirm-babel-evaluate nil))
   (org-babel-tangle))))

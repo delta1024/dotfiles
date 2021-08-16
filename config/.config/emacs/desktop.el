@@ -1,16 +1,16 @@
 ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
 ;;       in Emacs and desktop.el will be generated automatically!
 
-(defvar my/exwm-config "Desktop.org" "EXWM Configuration file name")
+(defvar my/exwm-config (concat (getenv "HOME") "/.dotfiles/Desktop.org") "EXWM Configuration file name")
 (add-to-list 'default-frame-alist '(alpha 90 90))
 (my/leader-def
   "h C-f" '((lambda () (interactive)
-               (find-file (concat my/user-emacs-directory my/exwm-config))) :wk "open desktop configuration"))
+               (find-file my/exwm-config))) :wk "open desktop configuration")
 
 (with-eval-after-load 'org
   (defun my/org-babel-tangle-desktop ()
     (when (string-equal (buffer-file-name)
-                    (expand-file-name my/exwm-config))
+                    my/exwm-config)
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
