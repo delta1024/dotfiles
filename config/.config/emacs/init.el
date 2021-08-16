@@ -118,11 +118,16 @@
   ";"     '(counsel-M-x :which-key "M-x")
   "w f"   '(delete-frame :wk "delete fram")
   "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
-  "M-b"   '(ivy-switch-buffer :wk "switch buffer"))
+  "M-b"   '(ivy-switch-buffer :wk "switch buffer")
+  "o"     '(org-open-file :wk "open org file"))
 
 (defun org-open-file (a) "Opens the file in `org-directory'"
        (interactive "sOrg File Name:")
        (find-file (concat "~/Documents/org/" a ".org")))
+(with-eval-after-load 'org
+  (defun org-open-file (a) "Opens the file in `org-directory'"
+         (interactive "sOrg File Name:")
+         (find-file (concat "~/Documents/org/" a ".org"))))
 
 (use-package org
   :no-require t

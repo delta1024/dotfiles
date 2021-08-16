@@ -2,13 +2,14 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el 
 * Inbox
-** TODO =org-mode= structure templates
-** set =consel-linux-app= custom variable.
+** TODO setup =org-mode= structure templates
+** TODO bind =org-open-file= to keyboard
+** TODO set =consel-linux-app= custom variable.
 
 * preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
-For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]]([[https://github.com/daviwil/emacs-from-scratch][github]]) on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]]. 
+For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 
 #+begin_src emacs-lisp
   ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
@@ -193,16 +194,21 @@ Gives a memeory boost at startup
     ";"     '(counsel-M-x :which-key "M-x")
     "w f"   '(delete-frame :wk "delete fram")
     "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
-    "M-b"   '(ivy-switch-buffer :wk "switch buffer"))
+    "M-b"   '(ivy-switch-buffer :wk "switch buffer")
+    "o"     '(org-open-file :wk "open org file"))
 #+end_src
 
 * TODO Org Mode
 ** org-open-file
 
   #+begin_src emacs-lisp
-  (defun org-open-file (a) "Opens the file in `org-directory'"
-         (interactive "sOrg File Name:")
-         (find-file (concat "~/Documents/org/" a ".org")))
+    (defun org-open-file (a) "Opens the file in `org-directory'"
+           (interactive "sOrg File Name:")
+           (find-file (concat "~/Documents/org/" a ".org")))
+    (with-eval-after-load 'org
+      (defun org-open-file (a) "Opens the file in `org-directory'"
+             (interactive "sOrg File Name:")
+             (find-file (concat "~/Documents/org/" a ".org"))))
   #+end_src
 
 ** Use Package
