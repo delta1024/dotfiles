@@ -224,7 +224,9 @@
 
 (use-package counsel
   :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-switch-buffer-other-window)))
+         ("C-x b" . counsel-switch-buffer-other-window))
+  :custom
+   ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
 (use-package ivy-rich
   :after ivy)

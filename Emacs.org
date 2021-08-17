@@ -349,28 +349,30 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Ivy and Counsel
 
 #+begin_src emacs-lisp
-  (use-package ivy
-    :diminish
-    :bind (:map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)	
-           ("C-l" . ivy-alt-done)
-           ("C-j" . ivy-next-line)
-           ("C-k" . ivy-previous-line)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
-    :config)
+      (use-package ivy
+        :diminish
+        :bind (:map ivy-minibuffer-map
+               ("TAB" . ivy-alt-done)	
+               ("C-l" . ivy-alt-done)
+               ("C-j" . ivy-next-line)
+               ("C-k" . ivy-previous-line)
+               :map ivy-switch-buffer-map
+               ("C-k" . ivy-previous-line)
+               ("C-l" . ivy-done)
+               ("C-d" . ivy-switch-buffer-kill)
+               :map ivy-reverse-i-search-map
+               ("C-k" . ivy-previous-line)
+               ("C-d" . ivy-reverse-i-search-kill))
+        :config)
 
-  (use-package counsel
-    :bind (("M-x" . counsel-M-x)
-           ("C-x b" . counsel-switch-buffer-other-window)))
+      (use-package counsel
+        :bind (("M-x" . counsel-M-x)
+               ("C-x b" . counsel-switch-buffer-other-window))
+        :custom
+         ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
-  (use-package ivy-rich
-    :after ivy)
+      (use-package ivy-rich
+        :after ivy)
 
 #+end_src
 
