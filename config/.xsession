@@ -1,9 +1,5 @@
 export ZDOTDIR="$HOME/.config/zsh"
-export GUIX_PROFILE="$HOME/.guix-profile"
-. "$GUIX_PROFILE/etc/profile"
-export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
-export GUIX_PROFILE="$HOME/.config/guix/current"
-. "$GUIX_PROFILE/etc/profile"
+. "$HOME/.config/guix/active-profiles"
 dunst &
 picom &
 # sxhkd &
