@@ -25,7 +25,7 @@
 (setq inhibit-startup-message t)
 
 ;; Redirect custom output
-(setq custom-file (expand-file-name "emacs-custom.el"))
+(setq custom-file (concat user-emacs-directory "emacs-custom.el"))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
@@ -119,13 +119,13 @@
   "w f"   '(delete-frame :wk "delete fram")
   "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
   "M-b"   '(ivy-switch-buffer :wk "switch buffer")
-  "o"     '(org-open-file :wk "open org file"))
+  "o"     '(my/org-open-file :wk "open org file"))
 
-(defun org-open-file (a) "Opens the file in `org-directory'"
-       (interactive "sOrg File Name:")
+(defun my/org-open-file (a) "Opens the file in `org-directory'"
+       (interactive "sOrg File Name: ")
        (find-file (concat "~/Documents/org/" a ".org")))
 (with-eval-after-load 'org
-  (defun org-open-file (a) "Opens the file in `org-directory'"
+  (defun my/org-open-file (a) "Opens the file in `org-directory'"
          (interactive "sOrg File Name:")
          (find-file (concat "~/Documents/org/" a ".org"))))
 

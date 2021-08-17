@@ -69,7 +69,7 @@ Gives a memeory boost at startup
   (setq inhibit-startup-message t)
 
   ;; Redirect custom output
-  (setq custom-file (expand-file-name "emacs-custom.el"))
+  (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
 
   (scroll-bar-mode -1)        ; Disable visible scrollbar
   (tool-bar-mode -1)          ; Disable the toolbar
@@ -203,7 +203,7 @@ Gives a memeory boost at startup
 
   #+begin_src emacs-lisp
     (defun my/org-open-file (a) "Opens the file in `org-directory'"
-           (interactive "sOrg File Name:")
+           (interactive "sOrg File Name: ")
            (find-file (concat "~/Documents/org/" a ".org")))
     (with-eval-after-load 'org
       (defun my/org-open-file (a) "Opens the file in `org-directory'"
