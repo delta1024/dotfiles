@@ -53,7 +53,6 @@
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                          ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
-
 (package-initialize)
 (unless package-archive-contents
   (package-refresh-contents))
@@ -115,20 +114,18 @@
               (find-file my/emacs-file)) :which-key "open emacs configuration")
   "h M-f" '((lambda () (interactive)
               (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
-  "a"     '(eshell :which-key "eshell")
+  "a"     '((lambda () (interactive)
+             (start-process-shell-command "alacritty" nil "alacritty $HOME")) :which-key "alacritty")
   ";"     '(counsel-M-x :which-key "M-x")
   "w f"   '(delete-frame :wk "delete fram")
   "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
   "M-b"   '(ivy-switch-buffer :wk "switch buffer")
   "o"     '(my/org-open-file :wk "open org file"))
 
+(setq org-directory "~/Documents/org")
 (defun my/org-open-file (a) "Opens the file in `org-directory'"
        (interactive "sOrg File Name: ")
-       (find-file (concat "~/Documents/org/" a ".org")))
-(with-eval-after-load 'org
-  (defun my/org-open-file (a) "Opens the file in `org-directory'"
-         (interactive "sOrg File Name:")
-         (find-file (concat "~/Documents/org/" a ".org"))))
+       (find-file (concat org-directory a ".org")))
 
 (use-package org
   :no-require t
@@ -160,12 +157,9 @@
   (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
   (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 
-
-
 (defun my/org-mode-setup ()
   (org-indent-mode)
   (visual-line-mode 1))
-  (setq org-directory "~/Documents/org")
   (setq org-ellipsis " ▾")
   (setq org-hide-emphasis-markers t)
   (setq org-confirm-babel-evaluate nil)

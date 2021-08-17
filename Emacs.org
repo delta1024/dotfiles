@@ -102,7 +102,6 @@ Gives a memeory boost at startup
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("org" . "https://orgmode.org/elpa/")
                            ("elpa" . "https://elpa.gnu.org/packages/")))
-
   (package-initialize)
   (unless package-archive-contents
     (package-refresh-contents))
@@ -202,13 +201,10 @@ Gives a memeory boost at startup
 ** org-open-file
 
   #+begin_src emacs-lisp
+    (setq org-directory "~/Documents/org")
     (defun my/org-open-file (a) "Opens the file in `org-directory'"
            (interactive "sOrg File Name: ")
-           (find-file (concat "~/Documents/org/" a ".org")))
-    (with-eval-after-load 'org
-      (defun my/org-open-file (a) "Opens the file in `org-directory'"
-             (interactive "sOrg File Name:")
-             (find-file (concat "~/Documents/org/" a ".org"))))
+           (find-file (concat org-directory a ".org")))
   #+end_src
 
 ** Use Package
@@ -262,18 +258,12 @@ Gives a memeory boost at startup
     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 #+end_src
 
-***** TODO org-file-open
-
-#+begin_src emacs-lisp 
-#+end_src
-
 ***** org-mode-setup
 
 #+begin_src emacs-lisp
   (defun my/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1))
-    (setq org-directory "~/Documents/org")
     (setq org-ellipsis " ▾")
     (setq org-hide-emphasis-markers t)
     (setq org-confirm-babel-evaluate nil)
