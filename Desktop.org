@@ -15,7 +15,6 @@
 - [X] Power Off
 - [X] Restart
 - [X] Suspend
-** Dotfiles repo
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp

@@ -6,7 +6,7 @@
 ** DONE bind =org-open-file= to keyboard
 ** TODO set =consel-linux-app= custom variable.
 
-* preamble
+* Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
@@ -48,7 +48,7 @@ Gives a memeory boost at startup
 * Variables
 #+begin_src emacs-lisp
   (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
-  (defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
+  (defvar my/user-font "Fira Code" "emacs's fixed width font")
   (defvar my/font-size 150 "font size for emacs")
   (defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
   (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
@@ -65,23 +65,24 @@ Gives a memeory boost at startup
 
 * Basic UI Improvements
 
+
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
-
+  
   ;; Redirect custom output
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
-
+  
   (scroll-bar-mode -1)        ; Disable visible scrollbar
   (tool-bar-mode -1)          ; Disable the toolbar
   (tooltip-mode -1)           ; Disable tooltips
   (set-fringe-mode 10)        ; Give some breathing room
-
+  
   (menu-bar-mode -1)            ; Disable the menu bar
-
+  
   ;; sets fixed-width font
   (set-face-attribute 'default nil :font my/user-font :height my/font-size)
-
-
+  
+  
   ;; Disables the visual bell
   (setq visible-bell t)
   (column-number-mode)
@@ -93,6 +94,16 @@ Gives a memeory boost at startup
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
+** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme :noweb-ref packages 
+        "font-abattis-cantarell"
+        "font-fira-code"
+#+end_src
+
+
 * Package and Use-Package
 =use-package= setup. 
 
@@ -100,19 +111,19 @@ Gives a memeory boost at startup
   (require 'package)
 
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
                            ("elpa" . "https://elpa.gnu.org/packages/")))
-  (package-initialize)
-  (unless package-archive-contents
-    (package-refresh-contents))
-
-
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
 
   (require 'use-package)
   (setq use-package-always-ensure t)
 
+#+end_src
+
+** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-use-package"
 #+end_src
 
 * Keyboard
@@ -137,6 +148,14 @@ Gives a memeory boost at startup
     ([remap evil-search-backward] . swiper-backward))
 #+end_src
 
+**** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
+
 *** Evil Collection
 
 #+begin_src emacs-lisp
@@ -144,6 +163,14 @@ Gives a memeory boost at startup
   :after evil
   :config
   (evil-collection-init)) 
+#+end_src
+
+**** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
 #+end_src
 
 *** Which-Key
@@ -155,6 +182,15 @@ Gives a memeory boost at startup
   :config
   (setq which-key-idle-delay 1))
 #+end_src
+
+**** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
+
 
 *** Hydra
 :PROPERTIES:
@@ -197,11 +233,19 @@ Gives a memeory boost at startup
     "o"     '(my/org-open-file :wk "open org file"))
 #+end_src
 
+*** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
+
 * TODO Org Mode
 ** org-open-file
 
   #+begin_src emacs-lisp
-    (setq org-directory "~/Documents/org")
+    (setq org-directory "~/Documents/org/")
     (defun my/org-open-file (a) "Opens the file in `org-directory'"
            (interactive "sOrg File Name: ")
            (find-file (concat org-directory a ".org")))
@@ -211,9 +255,17 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package org
+    :ensure nil
     :no-require t
 #+end_src
 
+**** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-org"
+#+end_src
 *** Keybindings
 
 #+begin_src emacs-lisp
@@ -294,13 +346,20 @@ Gives a memeory boost at startup
 **** Org Bullets
 
 #+begin_src emacs-lisp
-(use-package org-bullets
-  :after org
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+  (use-package org-bullets
+    :after org
+    :ensure nil
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
-
+***** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-org-bullets"
+#+end_src
 **** Visual Fill Colum
 
 #+begin_src emacs-lisp
@@ -313,20 +372,27 @@ Gives a memeory boost at startup
       (visual-fill-column-mode 1))
     :hook (org-mode . my/org-mode-visual-fill))
 #+end_src
+***** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
 
 **** TODO Org Roam
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 ** TODO Productivity
 [[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
  * Wrap any code to eval in a =with-eval-after-load= block.
-*** Todo 
+*** Todo Keywords
 #+begin_src emacs-lisp
   (setq org-todo-keywords
     '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
       (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 #+end_src
 
-* Files
+* Dired
 
 #+begin_src emacs-lisp
   (use-package dired
@@ -336,33 +402,64 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+end_src
 
 * Productivity
-** Ivy and Counsel
+** Ivy 
 
 #+begin_src emacs-lisp
-      (use-package ivy
-        :diminish
-        :bind (:map ivy-minibuffer-map
-               ("TAB" . ivy-alt-done)	
-               ("C-l" . ivy-alt-done)
-               ("C-j" . ivy-next-line)
-               ("C-k" . ivy-previous-line)
-               :map ivy-switch-buffer-map
-               ("C-k" . ivy-previous-line)
-               ("C-l" . ivy-done)
-               ("C-d" . ivy-switch-buffer-kill)
-               :map ivy-reverse-i-search-map
-               ("C-k" . ivy-previous-line)
-               ("C-d" . ivy-reverse-i-search-kill))
-        :config)
+  (use-package ivy
+    :ensure nil
+    :diminish
+    :bind (:map ivy-minibuffer-map
+           ("TAB" . ivy-alt-done)	
+           ("C-l" . ivy-alt-done)
+           ("C-j" . ivy-next-line)
+           ("C-k" . ivy-previous-line)
+           :map ivy-switch-buffer-map
+           ("C-k" . ivy-previous-line)
+           ("C-l" . ivy-done)
+           ("C-d" . ivy-switch-buffer-kill)
+           :map ivy-reverse-i-search-map
+           ("C-k" . ivy-previous-line)
+           ("C-d" . ivy-reverse-i-search-kill))
+    :config)
+  
+#+end_src
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-ivy"
+#+end_src
 
-      (use-package counsel
-        :bind (("M-x" . counsel-M-x)
-               ("C-x b" . counsel-switch-buffer-other-window))
-        :custom
-         ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
+** Counsel
+#+begin_src emacs-lisp
+  (use-package counsel
+    :bind (("M-x" . counsel-M-x)
+           ("C-x b" . counsel-switch-buffer-other-window))
+    :custom
+     ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
-      (use-package ivy-rich
-        :after ivy)
+#+end_src
+
+*** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
+** Ivy Rich
+#+begin_src emacs-lisp
+  
+  (use-package ivy-rich
+    :after ivy)
+  
+#+end_src
+*** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
 
 #+end_src
 
@@ -384,14 +481,31 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :config (counsel-projectile-mode))
 #+end_src
 
+**** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
+
 ** Magit
 
 #+begin_src emacs-lisp
   (use-package magit
+    :ensure nil
     :config (evil-collection-magit-setup)
     :general
     (:prefix-map 'my-leader-map
      "g" '(magit :which-key "Status")))
+#+end_src
+
+**** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+ "emacs-magit"
 #+end_src
 
 *** TODO Forge
@@ -402,6 +516,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
  #+begin_src emacs-lisp :tangle no
  (use-package forge)
  #+end_src
+
 
 * TODO Development
 ** TODO LSP Mode
@@ -422,14 +537,29 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   ([remap describe-variable] . counsel-describe-variable)
   ([remap describe-key] . helpful-key))
 #+end_src
+*** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
+#+end_src
 
 ** Doom
 *** Doom Themes
 
 #+begin_src emacs-lisp
   (use-package doom-themes
+    :ensure nil
     :init
     (load-theme 'doom-one t))
+#+end_src
+**** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-doom-themes"
 #+end_src
 
 *** Doom Modeline 
@@ -441,12 +571,22 @@ display correctly:
 =M-x all-the-icons-install-fonts=
 
 #+begin_src emacs-lisp
-  (use-package all-the-icons)
+    (use-package all-the-icons
+      :ensure nil)
+  
+    (use-package doom-modeline
+      :ensure nil
+      :init (doom-modeline-mode t)
+      :custom ((doom-mode-line-height 13)))
+#+end_src
 
-  (use-package doom-modeline
-    :ensure t
-    :init (doom-modeline-mode t)
-    :custom ((doom-mode-line-height 13)))
+**** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-all-the-icons"
+  "emacs-doom-modeline"
 #+end_src
 
 ** Rainbow Delimiters
@@ -454,6 +594,14 @@ display correctly:
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
+
+*** TODO Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+
 #+end_src
 
 * EXWM
@@ -483,5 +631,16 @@ Returns the garbage collector to a sane value.
   ;; if exwm isn't running set custom variables
   (unless (found-custom-arg "-exwm")
     (my/post-config))
+#+end_src
+
+* Manifest
+:PROPERTIES:
+:header-args: :noweb yes :tangle ./config/.config/guix/profiles/emacs.scm
+:END:
+#+begin_src scheme 
+    (specifications->manifest
+      (list "emacs"
+             <<packages>>
+        ))
 #+end_src
 

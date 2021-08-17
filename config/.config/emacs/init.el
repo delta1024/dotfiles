@@ -17,7 +17,7 @@
 (setq gc-cons-threshold (* 50 1000 1000))
 
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
-(defvar my/user-font "FiraCode NerdFont" "emacs's fixed width font")
+(defvar my/user-font "Fira Code" "emacs's fixed width font")
 (defvar my/font-size 150 "font size for emacs")
 (defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
 (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
@@ -51,15 +51,7 @@
 (require 'package)
 
 (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
                          ("elpa" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
-(unless package-archive-contents
-  (package-refresh-contents))
-
-
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -121,12 +113,13 @@
   "M-b"   '(ivy-switch-buffer :wk "switch buffer")
   "o"     '(my/org-open-file :wk "open org file"))
 
-(setq org-directory "~/Documents/org")
+(setq org-directory "~/Documents/org/")
 (defun my/org-open-file (a) "Opens the file in `org-directory'"
        (interactive "sOrg File Name: ")
        (find-file (concat org-directory a ".org")))
 
 (use-package org
+  :ensure nil
   :no-require t
 
 :bind ("C-c o" . counsel-outline)
@@ -177,6 +170,7 @@
 
 (use-package org-bullets
   :after org
+  :ensure nil
   :hook (org-mode . org-bullets-mode)
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
@@ -200,6 +194,7 @@
   :demand t)
 
 (use-package ivy
+  :ensure nil
   :diminish
   :bind (:map ivy-minibuffer-map
          ("TAB" . ivy-alt-done)	
@@ -236,6 +231,7 @@
   :config (counsel-projectile-mode))
 
 (use-package magit
+  :ensure nil
   :config (evil-collection-magit-setup)
   :general
   (:prefix-map 'my-leader-map
@@ -252,13 +248,15 @@
   ([remap describe-key] . helpful-key))
 
 (use-package doom-themes
+  :ensure nil
   :init
   (load-theme 'doom-one t))
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :ensure nil)
 
 (use-package doom-modeline
-  :ensure t
+  :ensure nil
   :init (doom-modeline-mode t)
   :custom ((doom-mode-line-height 13)))
 
