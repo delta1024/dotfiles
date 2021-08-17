@@ -1,6 +1,5 @@
 [[ `whoami` == root ]] && source /root/.config/zsh/.zshrc
 export PATH="$PATH:$HOME/.scripts/:$HOME/.scripts/web:$HOME/.scripts/status-modules:$HOME/.cargo/bin"
-export GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
 export EDITOR="/usr/bin/nvim"
 GPG_TTY=$(tty)
 export GPG_TTY

@@ -109,6 +109,7 @@
   "f"     '(nil :which-key "file system")
   "f f"   '(counsel-find-file :which-key "save-file")
   "f s"   '(save-buffer :which-key "save file")
+  "f r"   '((lambda () (interactive) (counsel-find-file "/sudo::")) :which-key "open file as root")
   "h"     '(nil :which-key "config options")
   "h f"   '((lambda () (interactive)
               (find-file my/emacs-file)) :which-key "open emacs configuration")
