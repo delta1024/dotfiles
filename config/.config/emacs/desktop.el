@@ -17,6 +17,10 @@
                                               #'my/org-babel-tangle-desktop))))
 
 (defvar my/exwm-auto-start-apps '(("xmodmap" . "xmodmap ~/.Xmodmap")))
+                                  ;; ("wallpaper" . "~/.scripts/wallpaper.sh draw"))
+                                  ;; ("picom" . "picom")
+                                  ;; ("xclip" . "xclip"))
+                                  ;;("auth" . "/usr/lib/polkit-mate-authentication-agent-1"))
 
 (defun my/exwm-auto-start ()
  (interactive)
@@ -27,6 +31,7 @@
   (exwm-workspace-rename-buffer exwm-class-name))
 
 (use-package exwm
+  :ensure nil
   :config
   ;; Set the default number of workspaces
   (setq exwm-workspace-number 5)
@@ -93,7 +98,7 @@
     (start-process-shell-command "systemctl" nil "systemctl suspend")))
 (exwm-input-set-key (kbd "s-p") 'exwm-suspend)
 
-(defun exem-sys-restart () "Restarts the operating system"
+(defun exwm-sys-restart () "Restarts the operating system"
        (interactive)
        (when (yes-or-no-p "Restart system? ")
          (start-process-shell-command "systemctl" nil "systemctl restart")))

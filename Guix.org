@@ -1,0 +1,52 @@
+#+TITLE: Guix User System Configuration
+#+AUTHOR: Jacob Stannix
+
+* Manifests
+** Desktop
+:PROPERTIES:
+:header-args: :tangle ./config/.config/guix/profiles/desktop.scm
+:END:
+#+begin_src scheme
+  (specifications->manifest
+    (list "emacs-exwm"
+          "dunst"
+          "picom"
+          "xclip"
+          "xwallpaper"
+          "sxiv"))
+#+end_src
+** Applications
+:PROPERTIES:
+:header-args: :tangle config/.config/guix/profiles/applications.scm
+:END:
+#+begin_src scheme
+  (specifications->manifest
+   (list "alacritty"
+         "qutebrowser"))
+#+end_src
+* Profiles
+:PROPERTIES:
+:header-args: :tangle config/.config/guix/active-profiles
+:END:
+** Guix Profile
+
+#+begin_src sh
+export GUIX_PROFILE="$HOME/.config/guix/current"
+. "$GUIX_PROFILE/etc/profile"
+export GUIX_PROFILE="$HOME/.guix-profile"
+. "$GUIX_PROFILE/etc/profile"
+export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+#+end_src
+** Active Profiles
+#+begin_src sh 
+GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+for i in $GUIX_EXTRA_PROFILES/*; do
+  profile=$i/$(basename "$i")
+  if [ -f "$profile"/etc/profile ]; then
+    GUIX_PROFILE="$profile"
+    . "$GUIX_PROFILE"/etc/profile
+  fi
+  unset profile
+done
+#+end_src
+

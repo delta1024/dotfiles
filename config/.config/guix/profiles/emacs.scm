@@ -1,23 +1,26 @@
 (specifications->manifest
   (list "emacs"
+        "emacs-guix"
          "font-abattis-cantarell"
          "font-fira-code"
          "emacs-use-package"
-         
-         
-         
-         
+         "emacs-evil"
+         "emacs-evil-collection"
+         "emacs-which-key"
+         "emacs-general"
+         "emacs-swiper"
          "emacs-org"
          "emacs-org-bullets"
-         
+         "emacs-visual-fill-column"
          "emacs-ivy"
-         
-         
-         
+         "emacs-counsel"
+         "emacs-ivy-rich"
+         "emacs-projectile"
+         "emacs-counsel-projectile"
          "emacs-magit"
-         
+         "emacs-helpful"
          "emacs-doom-themes"
          "emacs-all-the-icons"
          "emacs-doom-modeline"
-         
+         "emacs-rainbow-delimiters"
     ))

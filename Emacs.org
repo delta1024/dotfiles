@@ -94,7 +94,7 @@ Gives a memeory boost at startup
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
-** TODO Guix
+** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
@@ -102,7 +102,6 @@ Gives a memeory boost at startup
         "font-abattis-cantarell"
         "font-fira-code"
 #+end_src
-
 
 * Package and Use-Package
 =use-package= setup. 
@@ -131,7 +130,7 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package evil
-    :ensure t
+    :ensure nil
     :demand t
     :init
     (setq evil-want-integration t)
@@ -148,49 +147,50 @@ Gives a memeory boost at startup
     ([remap evil-search-backward] . swiper-backward))
 #+end_src
 
-**** TODO Guix
+**** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-evil"
 #+end_src
 
 *** Evil Collection
 
 #+begin_src emacs-lisp
-(use-package evil-collection
-  :after evil
-  :config
-  (evil-collection-init)) 
+  (use-package evil-collection
+    :ensure nil
+    :after evil
+    :config
+    (evil-collection-init)) 
 #+end_src
 
-**** TODO Guix
+**** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-evil-collection"
 #+end_src
 
 *** Which-Key
 
 #+begin_src emacs-lisp
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
+  (use-package which-key
+    :ensure nil
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
 #+end_src
 
-**** TODO Guix
+**** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-which-key"
 #+end_src
-
 
 *** Hydra
 :PROPERTIES:
@@ -204,17 +204,18 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package general
+    :ensure nil
     :after evil
     :config
     (general-evil-setup t))
-
+  
   (general-create-definer my/leader-def
     :keymaps '(normal insert visual emacs)
     :prefix "C-SPC"
     :global-prefix "C-SPC"
     :prefix-command 'my-leader-command
     :prefix-map 'my-leader-map)
-
+  
   (my/leader-def
     "f"     '(nil :which-key "file system")
     "f f"   '(counsel-find-file :which-key "save-file")
@@ -233,12 +234,25 @@ Gives a memeory boost at startup
     "o"     '(my/org-open-file :wk "open org file"))
 #+end_src
 
-*** TODO Guix
+*** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
+  "emacs-general"
+#+end_src
 
+** Swiper
+#+begin_src emacs-lisp
+  (require 'swiper)
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-swiper"
 #+end_src
 
 * TODO Org Mode
@@ -341,7 +355,6 @@ Gives a memeory boost at startup
   (my/org-font-setup))
   #+end_src
   
-** Packages  
 ** TODO Packages  
 **** Org Bullets
 
@@ -364,6 +377,7 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package visual-fill-column
+    :ensure nil
     :after org
     :config
     (defun my/org-mode-visual-fill () 
@@ -372,12 +386,12 @@ Gives a memeory boost at startup
       (visual-fill-column-mode 1))
     :hook (org-mode . my/org-mode-visual-fill))
 #+end_src
-***** TODO Guix
+***** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-visual-fill-column"
 #+end_src
 
 **** TODO Org Roam
@@ -434,37 +448,38 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Counsel
 #+begin_src emacs-lisp
   (use-package counsel
+    :ensure nil
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-switch-buffer-other-window))
     :custom
      ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
-
+  
 #+end_src
 
-*** TODO Guix
+*** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-counsel"
 #+end_src
 ** Ivy Rich
 #+begin_src emacs-lisp
   
   (use-package ivy-rich
+    :ensure nil
     :after ivy)
   
 #+end_src
-*** TODO Guix
+*** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-ivy-rich"
 #+end_src
 
 ** Projectile
-
 #+begin_src emacs-lisp
 (use-package projectile
   :diminish projectile-mode
@@ -474,19 +489,27 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   ;; NOTE: Set this to the folder where you keep your Git repos!
 #+end_src
 
-*** Counsel-Projectile
-#+begin_src emacs-lisp
-  (use-package counsel-projectile
-    :after projectile
-    :config (counsel-projectile-mode))
-#+end_src
-
-**** TODO Guix
+**** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
+  "emacs-projectile"
+#+end_src
+*** Counsel-Projectile
+#+begin_src emacs-lisp
+  (use-package counsel-projectile
+    :ensure nil
+    :after projectile
+    :config (counsel-projectile-mode))
+#+end_src
 
+**** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-counsel-projectile"
 #+end_src
 
 ** Magit
@@ -517,7 +540,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
  (use-package forge)
  #+end_src
 
-
 * TODO Development
 ** TODO LSP Mode
 [[https://github.com/emacs-lsp/lsp-mode][github]]
@@ -527,22 +549,23 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Helpful
 
 #+begin_src emacs-lisp
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
+  (use-package helpful
+    :ensure nil
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
 #+end_src
-*** TODO Guix
+*** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-helpful"
 #+end_src
 
 ** Doom
@@ -593,15 +616,16 @@ display correctly:
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
+    :ensure nil
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
-*** TODO Guix
+*** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
-
+  "emacs-rainbow-delimiters"
 #+end_src
 
 * EXWM
@@ -638,9 +662,10 @@ Returns the garbage collector to a sane value.
 :header-args: :noweb yes :tangle ./config/.config/guix/profiles/emacs.scm
 :END:
 #+begin_src scheme 
-    (specifications->manifest
-      (list "emacs"
-             <<packages>>
-        ))
+  (specifications->manifest
+    (list "emacs"
+          "emacs-guix"
+           <<packages>>
+      ))
 #+end_src
 

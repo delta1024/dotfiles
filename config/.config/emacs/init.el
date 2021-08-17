@@ -57,7 +57,7 @@
 (setq use-package-always-ensure t)
 
 (use-package evil
-  :ensure t
+  :ensure nil
   :demand t
   :init
   (setq evil-want-integration t)
@@ -74,17 +74,20 @@
   ([remap evil-search-backward] . swiper-backward))
 
 (use-package evil-collection
+  :ensure nil
   :after evil
   :config
   (evil-collection-init))
 
 (use-package which-key
+  :ensure nil
   :init (which-key-mode)
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 1))
 
 (use-package general
+  :ensure nil
   :after evil
   :config
   (general-evil-setup t))
@@ -112,6 +115,8 @@
   "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
   "M-b"   '(ivy-switch-buffer :wk "switch buffer")
   "o"     '(my/org-open-file :wk "open org file"))
+
+(require 'swiper)
 
 (setq org-directory "~/Documents/org/")
 (defun my/org-open-file (a) "Opens the file in `org-directory'"
@@ -176,6 +181,7 @@
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (use-package visual-fill-column
+  :ensure nil
   :after org
   :config
   (defun my/org-mode-visual-fill () 
@@ -211,12 +217,14 @@
   :config)
 
 (use-package counsel
+  :ensure nil
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-switch-buffer-other-window))
   :custom
    ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
 (use-package ivy-rich
+  :ensure nil
   :after ivy)
 
 (use-package projectile
@@ -227,6 +235,7 @@
   ;; NOTE: Set this to the folder where you keep your Git repos!
 
 (use-package counsel-projectile
+  :ensure nil
   :after projectile
   :config (counsel-projectile-mode))
 
@@ -238,6 +247,7 @@
    "g" '(magit :which-key "Status")))
 
 (use-package helpful
+  :ensure nil
   :custom
   (counsel-describe-function-function #'helpful-callable)
   (counsel-describe-variable-function #'helpful-variable)
@@ -261,6 +271,7 @@
   :custom ((doom-mode-line-height 13)))
 
 (use-package rainbow-delimiters
+  :ensure nil
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (defun my/exwm-load (switch)

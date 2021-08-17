@@ -2,6 +2,7 @@
 #+PROPERTY: header-args :tangle ./config/.config/emacs/desktop.el
 * Inbox
 ** TODO Polybar
+** TODO Grab launcher function from efs and integrate
 ** DONE Add keybinding for changing the wallpaper
 ** TODO Check =EXWM= =gcs-done= and increase threshold if nesisarry
 - [ ] Capture exwm start =gcs-done=.
@@ -51,12 +52,16 @@
 
 #+begin_src emacs-lisp
   (defvar my/exwm-auto-start-apps '(("xmodmap" . "xmodmap ~/.Xmodmap")))
-
+                                    ;; ("wallpaper" . "~/.scripts/wallpaper.sh draw"))
+                                    ;; ("picom" . "picom")
+                                    ;; ("xclip" . "xclip"))
+                                    ;;("auth" . "/usr/lib/polkit-mate-authentication-agent-1"))
+  
   (defun my/exwm-auto-start ()
    (interactive)
    (dolist (process my/exwm-auto-start-apps)
      (start-process-shell-command (car process) nil (cdr process))))
-
+  
 #+end_src
 
 ** WM
@@ -64,15 +69,16 @@
 #+begin_src emacs-lisp
   (defun my/exwm-update-class ()
     (exwm-workspace-rename-buffer exwm-class-name))
-
+  
   (use-package exwm
+    :ensure nil
     :config
     ;; Set the default number of workspaces
     (setq exwm-workspace-number 5)
-
+  
     ;; When window "class" updates, use it to set the buffer name
     (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
-
+  
 #+end_src
 
 *** Input Prefix Keys
@@ -142,7 +148,7 @@
       (start-process-shell-command "systemctl" nil "systemctl suspend")))
   (exwm-input-set-key (kbd "s-p") 'exwm-suspend)
 
-  (defun exem-sys-restart () "Restarts the operating system"
+  (defun exwm-sys-restart () "Restarts the operating system"
          (interactive)
          (when (yes-or-no-p "Restart system? ")
            (start-process-shell-command "systemctl" nil "systemctl restart")))
@@ -184,7 +190,6 @@ dunst &
 picom &
 xclip &
 /usr/libexec/polkit-mate-authentication-agent-1 &
-cbatticon &
 $HOME/.scripts/wallpaper.sh draw
 exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
 #+end_src
