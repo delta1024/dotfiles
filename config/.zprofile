@@ -5,7 +5,7 @@ export GUIX_PROFILE="$HOME/.config/guix/current"
 . "$GUIX_PROFILE/etc/profile"
 export GUIX_PROFILE="$HOME/.guix-profile"
 . "$GUIX_PROFILE/etc/profile"
-export GUIX_LOCPATH="/root/.guix-profile/lib/locale"
+export GUIX_LOCPATH="$HOME/.guix-profile/lib/locale"
 GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
 #doas rc-service ntp-client start &
 for i in $GUIX_EXTRA_PROFILES/*; do
