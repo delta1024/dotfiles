@@ -98,6 +98,10 @@
          (start-process-shell-command "systemctl" nil "systemctl restart")))
 (exwm-input-set-key (kbd "M-s-p") 'exwm-sys-restart)
 (exwm-input-set-key (kbd "s-q") 'exwm-restart)
+(defun exwm-change-wallpaper () "Changes the Wallpaper"
+  (interactive)
+  (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
+(exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
 
 (exwm-enable)
 (my/exwm-auto-start))

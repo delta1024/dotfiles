@@ -2,7 +2,7 @@
 #+PROPERTY: header-args :tangle ./config/.config/emacs/desktop.el
 * Inbox
 ** TODO Polybar
-** TODO Add keybinding for changing the wallpaper
+** DONE Add keybinding for changing the wallpaper
 ** TODO Check =EXWM= =gcs-done= and increase threshold if nesisarry
 - [ ] Capture exwm start =gcs-done=.
 - [ ] Capture exwm finish =gcs-done=.
@@ -148,6 +148,10 @@
            (start-process-shell-command "systemctl" nil "systemctl restart")))
   (exwm-input-set-key (kbd "M-s-p") 'exwm-sys-restart)
   (exwm-input-set-key (kbd "s-q") 'exwm-restart)
+  (defun exwm-change-wallpaper () "Changes the Wallpaper"
+    (interactive)
+    (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
+  (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
 
 #+end_src
 *** DELIM
