@@ -209,22 +209,23 @@ Gives a memeory boost at startup
     :prefix-map 'my-leader-map)
   
   (my/leader-def
-    "f"     '(nil :which-key "file system")
-    "f f"   '(counsel-find-file :which-key "save-file")
-    "f s"   '(save-buffer :which-key "save file")
-    "f r"   '((lambda () (interactive) (counsel-find-file "/sudo::")) :which-key "open file as root")
-    "h"     '(nil :which-key "config options")
+    "f"     '(nil                                                     :wk "file system")
+    "f f"   '(counsel-find-file                                       :wk "save-file")
+    "f s"   '(save-buffer                                             :wk "save file")
+    "f r"   '((lambda () (interactive) (counsel-find-file "/sudo::")) :wk "open file as root")
+    "h"     '(nil                                                     :wk "config options")
     "h f"   '((lambda () (interactive)
-                (find-file my/emacs-file)) :which-key "open emacs configuration")
+                (find-file my/emacs-file))                            :wk "open emacs configuration")
     "h M-f" '((lambda () (interactive)
-                (find-file my/guix-file)) :wk "open guix file")
-    "a"     '(eshell :which-key "eshell")
-    ";"     '(counsel-M-x :which-key "M-x")
-    "w f"   '(delete-frame :wk "delete fram")
-    "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
-    "M-b"   '(ivy-switch-buffer :wk "switch buffer")
-    "C-g"   '((lambda () (interactive) (guix)) :wk "Guix")
-    "o"     '(my/org-open-file :wk "open org file"))
+                (find-file my/guix-file))                             :wk "open guix file")
+    "a"     '(eshell                                                  :wk "eshell")
+    ";"     '(counsel-M-x                                             :wk "M-x")
+    "w f"   '(delete-frame                                            :wk "delete fram")
+    "b"     '(counsel-switch-buffer                                   :wk "switch buffers with preview")
+    "M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
+    "C-g"   '((lambda () (interactive) (guix))                        :wk "Guix")
+    "o"     '(my/org-open-file                                        :wk "open org file")
+    "c"     '(cd                                                      :wk "change directory"))
 #+end_src
 
 *** Guix
@@ -652,7 +653,7 @@ Returns the garbage collector to a sane value.
 
 * Manifest
 Guix Manifest
-#+begin_src scheme :noweb yes :tangle ./config/.config/guix/profiles/emacs.scm
+#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm
   (specifications->manifest
     (list "emacs"
           "emacs-guix"
