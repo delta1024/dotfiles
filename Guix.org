@@ -36,10 +36,11 @@
 :header-args: :tangle config/.config/guix/profiles/applications.scm
 :END:
 #+begin_src scheme
-      (specifications->manifest
-       (list "alacritty" ;; FIXME: requires configuration for guix specific font name
-             "qutebrowser"
-             "password-store"))
+  (specifications->manifest
+   (list "alacritty" 
+         "font-fira-code"
+         "qutebrowser"
+         "password-store"))
 #+end_src
 * Profiles
 :PROPERTIES:

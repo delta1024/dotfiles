@@ -1,4 +1,5 @@
 (specifications->manifest
- (list "alacritty" ;; FIXME: requires configuration for guix specific font name
+ (list "alacritty" 
+       "font-fira-code"
        "qutebrowser"
        "password-store"))
