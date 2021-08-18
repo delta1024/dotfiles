@@ -2,6 +2,7 @@
   (list "emacs"
         "emacs-guix"
         "emacs-exwm"
+        "password-store"
          "font-abattis-cantarell"
          "font-fira-code"
          "emacs-use-package"

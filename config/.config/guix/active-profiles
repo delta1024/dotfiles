@@ -4,7 +4,7 @@ export GUIX_PROFILE="$HOME/.guix-profile"
 . "$GUIX_PROFILE/etc/profile"
 export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
 
-export GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+GUIX_EXTRA_PROFILES="$HOME"/.guix-extra-profiles
 for i in $GUIX_EXTRA_PROFILES/*; do
   profile=$i/$(basename "$i")
   if [ -f "$profile"/etc/profile ]; then
@@ -13,3 +13,6 @@ for i in $GUIX_EXTRA_PROFILES/*; do
   fi
   unset profile
 done
+export GUIX_APPLICATIONS="$GUIX_EXTRA_PROFILES"/applications/applications
+export GUIX_EMACS="$GUIX_EXTRA_PROFILES"/emacs/emacs
+export GUIX_DESKTOP="$GUIX_EXTRA_PROFILES"/desktop/desktop

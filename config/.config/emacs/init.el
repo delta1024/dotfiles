@@ -21,6 +21,7 @@
 (defvar my/font-size 150 "font size for emacs")
 (defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
 (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
+(defvar my/guix-file (concat (getenv "HOME") "/.dotfiles/Guix.org") "Guix org file")
 
 (setq inhibit-startup-message t)
 
@@ -108,12 +109,13 @@
   "h f"   '((lambda () (interactive)
               (find-file my/emacs-file)) :which-key "open emacs configuration")
   "h M-f" '((lambda () (interactive)
-              (find-file (concat (getenv "HOME") "/.emacs-old/README.org"))) :wk "open old config file")
+              (find-file my/guix-file)) :wk "open guix file")
   "a"     '(eshell :which-key "eshell")
   ";"     '(counsel-M-x :which-key "M-x")
   "w f"   '(delete-frame :wk "delete fram")
   "b"     '(counsel-switch-buffer :wk "switch buffers with preview")
   "M-b"   '(ivy-switch-buffer :wk "switch buffer")
+  "C-g"   '((lambda () (interactive) (guix)) :wk "Guix")
   "o"     '(my/org-open-file :wk "open org file"))
 
 (require 'swiper)
@@ -293,3 +295,11 @@
 ;; if exwm isn't running set custom variables
 (unless (found-custom-arg "-exwm")
   (my/post-config))
+
+(specifications->manifest
+  (list "emacs"
+        "emacs-guix"
+        "emacs-exwm"
+        "password-store"
+         <<packages>>
+    ))
