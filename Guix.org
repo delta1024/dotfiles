@@ -21,7 +21,7 @@
 * Manifests
 ** Default
 :PROPERTIES:
-:header-args: :tangle ./config/.config/guix/profiles/default.scm
+:header-args: :tangle ./config/.config/guix/manifests/default.scm
 :END:
 #+begin_src scheme
 (specifications->manifest
@@ -33,7 +33,7 @@
 #+end_src
 ** Desktop
 :PROPERTIES:
-:header-args: :tangle ./config/.config/guix/profiles/desktop.scm
+:header-args: :tangle ./config/.config/guix/manifests/desktop.scm
 :END:
 #+begin_src scheme
   (specifications->manifest
@@ -45,7 +45,7 @@
 #+end_src
 ** Applications
 :PROPERTIES:
-:header-args: :tangle config/.config/guix/profiles/applications.scm
+:header-args: :tangle config/.config/guix/manifests/applications.scm
 :END:
 #+begin_src scheme
   (specifications->manifest
@@ -80,6 +80,7 @@ export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
     fi
     unset profile
   done
+
   export GUIX_APPLICATIONS="$GUIX_EXTRA_PROFILES"/applications/applications
   export GUIX_EMACS="$GUIX_EXTRA_PROFILES"/emacs/emacs
   export GUIX_DESKTOP="$GUIX_EXTRA_PROFILES"/desktop/desktop
