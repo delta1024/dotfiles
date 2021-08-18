@@ -4,7 +4,12 @@
 * Channels
 ** TODO nonguix
 :PROPERTIES:
-:header-args: :tangle config/.config/guix/channels.   (url "https://gitlab.com/nonguix/nonguix")
+:header-args: :tangle config/.config/guix/channels.scm
+:END:
+#+begin_src scheme
+(cons* (channel
+        (name 'nonguix)
+        (url "https://gitlab.com/nonguix/nonguix")
         ;; Enable signature verification:
         (introduction
          (make-channel-introduction
@@ -31,11 +36,10 @@
 :header-args: :tangle config/.config/guix/profiles/applications.scm
 :END:
 #+begin_src scheme
-  (specifications->manifest
-   (list "alacritty" ;; FIXME: requires configuration for guix specific font name
-         "font-fira-code"
-         "qutebrowser"
-         "password-store"))
+      (specifications->manifest
+       (list "alacritty" ;; FIXME: requires configuration for guix specific font name
+             "qutebrowser"
+             "password-store"))
 #+end_src
 * Profiles
 :PROPERTIES:
