@@ -652,16 +652,13 @@ Returns the garbage collector to a sane value.
 
 * Manifest
 Guix Manifest
-:PROPERTIES:
-:header-args: :noweb yes :tangle ./config/.config/guix/profiles/emacs.scm
-:END:
-#+begin_src scheme 
+#+begin_src scheme :noweb yes :tangle ./config/.config/guix/profiles/emacs.scm
   (specifications->manifest
     (list "emacs"
           "emacs-guix"
           "emacs-exwm"
           "password-store"
-           <<packages>>
+          <<packages>>
       ))
 #+end_src
 

@@ -295,11 +295,3 @@
 ;; if exwm isn't running set custom variables
 (unless (found-custom-arg "-exwm")
   (my/post-config))
-
-(specifications->manifest
-  (list "emacs"
-        "emacs-guix"
-        "emacs-exwm"
-        "password-store"
-         <<packages>>
-    ))
