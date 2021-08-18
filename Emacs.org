@@ -665,6 +665,7 @@ Returns the garbage collector to a sane value.
   (specifications->manifest
     (list "emacs"
           "emacs-guix"
+          "emacs-exwm"
            <<packages>>
       ))
 #+end_src

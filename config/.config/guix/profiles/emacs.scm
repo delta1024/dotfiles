@@ -1,6 +1,7 @@
 (specifications->manifest
   (list "emacs"
         "emacs-guix"
+        "emacs-exwm"
          "font-abattis-cantarell"
          "font-fira-code"
          "emacs-use-package"

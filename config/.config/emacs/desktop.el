@@ -101,7 +101,7 @@
 (defun exwm-sys-restart () "Restarts the operating system"
        (interactive)
        (when (yes-or-no-p "Restart system? ")
-         (start-process-shell-command "systemctl" nil "systemctl restart")))
+         (start-process-shell-command "systemctl" nil "systemctl reboot")))
 (exwm-input-set-key (kbd "M-s-p") 'exwm-sys-restart)
 (exwm-input-set-key (kbd "s-q") 'exwm-restart)
 (defun exwm-change-wallpaper () "Changes the Wallpaper"

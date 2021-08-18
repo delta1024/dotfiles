@@ -1,6 +1,5 @@
 (specifications->manifest
-  (list "emacs-exwm"
-        "dunst"
+  (list "dunst"
         "picom"
         "xclip"
         "xwallpaper"
