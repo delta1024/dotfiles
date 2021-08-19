@@ -223,7 +223,7 @@ Gives a memeory boost at startup
     "w f"   '(delete-frame                                            :wk "delete fram")
     "b"     '(counsel-switch-buffer                                   :wk "switch buffers with preview")
     "M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
-    "C-g"   '((lambda () (interactive) (guix))                        :wk "Guix")
+    "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
     "o"     '(my/org-open-file                                        :wk "open org file")
     "c"     '(cd                                                      :wk "change directory"))
 #+end_src
@@ -627,7 +627,7 @@ Load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (concat user-emacs-directory "desktop.el")))
-
+  (load-file (concat user-emacs-directory "desktop.el"))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 

@@ -16,16 +16,15 @@
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
                                               #'my/org-babel-tangle-desktop))))
 
-(defvar my/exwm-auto-start-apps '(("xmodmap" . "xmodmap ~/.Xmodmap")))
-                                  ;; ("wallpaper" . "~/.scripts/wallpaper.sh draw"))
-                                  ;; ("picom" . "picom")
-                                  ;; ("xclip" . "xclip"))
-                                  ;;("auth" . "/usr/lib/polkit-mate-authentication-agent-1"))
+(defun my/run-in-background (command)
+  (let ((command-parts (split-string command "[ ]+")))
+    (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
 
-(defun my/exwm-auto-start ()
- (interactive)
- (dolist (process my/exwm-auto-start-apps)
-   (start-process-shell-command (car process) nil (cdr process))))
+(defun my/exwm-init-hook ()
+  (eshell)
+  (my/run-in-background "picom")
+  (my/run-in-background "xclip")
+  (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
 
 (defun my/exwm-update-class ()
   (exwm-workspace-rename-buffer exwm-class-name))
@@ -35,7 +34,7 @@
   :config
   ;; Set the default number of workspaces
   (setq exwm-workspace-number 5)
-
+  (add-hook 'exwm-init-hook #'my/exwm-init-hook)
   ;; When window "class" updates, use it to set the buffer name
   (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
 
@@ -84,7 +83,7 @@
                         (exwm-workspace-switch-create ,i))))
                   (number-sequence 0 9))))
 
-(exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app)
+(exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app) ;; Set XDG_PATH variables
 
 (defun exwm-poweroff ()
   (interactive)
@@ -109,8 +108,7 @@
   (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
 (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
 
-(exwm-enable)
-(my/exwm-auto-start))
+(exwm-enable))
 
 ;; Show battery status in the mode line
 (display-battery-mode 1)
@@ -120,4 +118,4 @@
 (display-time-mode 1)
 ;; Also take a look at display-time-format and format-time-string
 
-(my/post-config)
+

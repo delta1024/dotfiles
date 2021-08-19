@@ -51,18 +51,16 @@
 ** Autostart
 
 #+begin_src emacs-lisp
-  (defvar my/exwm-auto-start-apps '(("xmodmap" . "xmodmap ~/.Xmodmap")))
-                                    ;; ("wallpaper" . "~/.scripts/wallpaper.sh draw"))
-                                    ;; ("picom" . "picom")
-                                    ;; ("xclip" . "xclip"))
-                                    ;;("auth" . "/usr/lib/polkit-mate-authentication-agent-1"))
+  (defun my/run-in-background (command)
+    (let ((command-parts (split-string command "[ ]+")))
+      (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
   
-  (defun my/exwm-auto-start ()
-   (interactive)
-   (dolist (process my/exwm-auto-start-apps)
-     (start-process-shell-command (car process) nil (cdr process))))
-  
-#+end_src
+  (defun my/exwm-init-hook ()
+    (eshell)
+    (my/run-in-background "picom")
+    (my/run-in-background "xclip")
+    (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
+  #+end_src
 
 ** WM
 
@@ -75,7 +73,7 @@
     :config
     ;; Set the default number of workspaces
     (setq exwm-workspace-number 5)
-  
+    (add-hook 'exwm-init-hook #'my/exwm-init-hook)
     ;; When window "class" updates, use it to set the buffer name
     (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
   
@@ -111,21 +109,21 @@
         `(
           ;; Reset to line-mode (C-c C-k switches to char-mode via exwm-input-release-keyboard)
           ([?\s-r] . exwm-reset)
-
+  
           ;; Move between windows
           ([?\s-h] . windmove-left)
           ([?\s-l] . windmove-right)
           ([?\s-k] . windmove-up)
           ([?\s-j] . windmove-down)
-
+  
           ;; Launch applications via shell command
           ([?\s-&] . (lambda (command)
                        (interactive (list (read-shell-command "$ ")))
                        (start-process-shell-command command nil command)))
-
+  
           ;; Switch workspace
           ([?\s-w] . exwm-workspace-switch)
-
+  
           ;; 's-N': Switch to certain workspace with Super (Win) plus a number key (0 - 9)
           ,@(mapcar (lambda (i)
                       `(,(kbd (format "s-%d" i)) .
@@ -133,21 +131,21 @@
                           (interactive)
                           (exwm-workspace-switch-create ,i))))
                     (number-sequence 0 9))))
-
-  (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app)
-
+  
+  (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app) ;; Set XDG_PATH variables
+  
   (defun exwm-poweroff ()
     (interactive)
     (when (yes-or-no-p "Power down system? ")
       (start-process-shell-command "systemctl" nil "systemctl poweroff")))
   (exwm-input-set-key (kbd "C-s-p") 'exwm-poweroff)
-
+  
   (defun exwm-suspend ()
     (interactive)
     (when (y-or-n-p "Suspend systeM? ")
       (start-process-shell-command "systemctl" nil "systemctl suspend")))
   (exwm-input-set-key (kbd "s-p") 'exwm-suspend)
-
+  
   (defun exwm-sys-restart () "Restarts the operating system"
          (interactive)
          (when (yes-or-no-p "Restart system? ")
@@ -158,13 +156,12 @@
     (interactive)
     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
   (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
-
+  
 #+end_src
 *** DELIM
 
 #+begin_src emacs-lisp
-  (exwm-enable)
-  (my/exwm-auto-start))
+  (exwm-enable))
 #+end_src
 
 ** Status Bar
@@ -180,7 +177,6 @@
 
 * Runtime Optimization
 #+begin_src emacs-lisp
-  (my/post-config)
 #+end_src
 * System Configuration Requirements
 Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
@@ -195,11 +191,16 @@ exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
 #+end_src
 ** Ctrl and CapsLock Switch
 *** Xmodmap
-#+begin_src conf-space :tangle no
+#+begin_src conf-space :tangle config/.Xmodmap 
+clear lock
+clear control
+keycode 66 = Control_L
+add control = Control_L
+add Lock = Control_R
 keycode  23 = BackSpace BackSpace BackSpace BackSpace
 keycode  22 = Tab ISO_Left_Tab Tab ISO_Left_Tab
 #+end_src
-*** =/etc/X11/xorg.conf.d/90-custom-kbd.conf=
+*** on arch =/etc/X11/xorg.conf.d/90-custom-kbd.conf=
 #+begin_src conf-space :tangle no
 Section "InputClass"
     Identifier "keyboard defaults"

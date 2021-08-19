@@ -1,6 +1,16 @@
 #+TITLE: Guix User System Configuration
 #+AUTHOR: Jacob Stannix
 
+* Inbox
+** Change env to be compatible with Guix
+** Install curl  and Starship
+#+begin_src sh
+  guix install curl
+#+end_src
+
+#+begin_src sh
+  sh -c "$(curl -fsSL https://starship.rs/install.sh)"
+#+end_src
 * Channels
 ** TODO nonguix
 :PROPERTIES:
@@ -24,12 +34,16 @@
 :header-args: :tangle ./config/.config/guix/manifests/default.scm
 :END:
 #+begin_src scheme
-(specifications->manifest
-  (list "font-abattis-cantarell"
-        "font-fira-code"
-        "fontconfig"
-        "neovim"
-        "glibc-locales"))
+  (specifications->manifest
+   (list "font-abattis-cantarell"
+         "font-fira-code"
+         "xrandr"
+         "zsh"
+         "xmodmap"
+         "htop"
+         "fontconfig"
+         "neovim"
+         "glibc-locales"))
 #+end_src
 ** Desktop
 :PROPERTIES:
@@ -40,6 +54,7 @@
     (list "dunst"
           "picom"
           "xclip"
+          "firefox"
           "xwallpaper"
           "sxiv"))
 #+end_src
@@ -50,7 +65,6 @@
 #+begin_src scheme
   (specifications->manifest
    (list "alacritty" 
-         ;;"firefox"
          "lf"
          "mpv"
          "mpd"

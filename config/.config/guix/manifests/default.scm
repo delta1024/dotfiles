@@ -1,6 +1,10 @@
 (specifications->manifest
-  (list "font-abattis-cantarell"
-        "font-fira-code"
-        "fontconfig"
-        "neovim"
-        "glibc-locales"))
+ (list "font-abattis-cantarell"
+       "font-fira-code"
+       "xrandr"
+       "zsh"
+       "xmodmap"
+       "htop"
+       "fontconfig"
+       "neovim"
+       "glibc-locales"))

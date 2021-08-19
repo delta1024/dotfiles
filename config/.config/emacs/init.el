@@ -115,7 +115,7 @@
   "w f"   '(delete-frame                                            :wk "delete fram")
   "b"     '(counsel-switch-buffer                                   :wk "switch buffers with preview")
   "M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
-  "C-g"   '((lambda () (interactive) (guix))                        :wk "Guix")
+  "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
   "o"     '(my/org-open-file                                        :wk "open org file")
   "c"     '(cd                                                      :wk "change directory"))
 
@@ -279,7 +279,7 @@
 
 (defun my/exwm-load (switch)
   (load-file (concat user-emacs-directory "desktop.el")))
-
+(load-file (concat user-emacs-directory "desktop.el"))
 (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
 (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"

@@ -13,6 +13,7 @@ for i in $GUIX_EXTRA_PROFILES/*; do
   fi
   unset profile
 done
+
 export GUIX_APPLICATIONS="$GUIX_EXTRA_PROFILES"/applications/applications
 export GUIX_EMACS="$GUIX_EXTRA_PROFILES"/emacs/emacs
 export GUIX_DESKTOP="$GUIX_EXTRA_PROFILES"/desktop/desktop
