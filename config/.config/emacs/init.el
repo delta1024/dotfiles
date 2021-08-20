@@ -194,7 +194,7 @@
   :hook (org-mode . my/org-mode-visual-fill))
 
 (setq org-todo-keywords
-  '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
+  '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
     (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 
 (use-package dired
@@ -248,6 +248,9 @@
   :general
   (:prefix-map 'my-leader-map
    "g" '(magit :which-key "Status")))
+
+(use-package pass
+  :ensure nil)
 
 (use-package helpful
   :ensure nil

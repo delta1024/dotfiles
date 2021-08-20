@@ -1,6 +1,7 @@
 ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
 ;;       in Emacs and desktop.el will be generated automatically!
 
+(server-start)
 (defvar my/exwm-config (concat (getenv "HOME") "/.dotfiles/Desktop.org") "EXWM Configuration file name")
 (add-to-list 'default-frame-alist '(alpha 90 90))
 (my/leader-def

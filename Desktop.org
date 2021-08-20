@@ -8,14 +8,7 @@
 - [ ] Capture exwm start =gcs-done=.
 - [ ] Capture exwm finish =gcs-done=.
 - [ ] Subtract the two values into a new variable
-** DONE crete helper functions for power control 
-- [X] Power Off
-- [X] Restart
-- [X] Suspend
-*** DONE Keybindings
-- [X] Power Off
-- [X] Restart
-- [X] Suspend
+** TODO exwm desktop
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
@@ -25,6 +18,7 @@
 
 
 #+begin_src emacs-lisp
+  (server-start)
   (defvar my/exwm-config (concat (getenv "HOME") "/.dotfiles/Desktop.org") "EXWM Configuration file name")
   (add-to-list 'default-frame-alist '(alpha 90 90))
   (my/leader-def
@@ -162,9 +156,10 @@
   ;; Also take a look at display-time-format and format-time-string
 #+end_src
 
-* Runtime Optimization
+* TODO Runtime Optimization
 #+begin_src emacs-lisp
 #+end_src
+
 * System Configuration Requirements
 Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
 ** Xinirc

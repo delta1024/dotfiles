@@ -29,6 +29,7 @@
   (list (specification->package "emacs")
         (specification->package "emacs-exwm")
         (specification->package "git")
+        (specification->package "stow")
         (specification->package "neovim")
         (specification->package
          "emacs-desktop-environment")

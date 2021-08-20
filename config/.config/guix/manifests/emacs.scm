@@ -1,8 +1,6 @@
 (specifications->manifest
   (list "emacs"
         "emacs-guix"
-        "emacs-exwm"
-        "password-store"
         "emacs-use-package"
         "emacs-evil"
         "emacs-evil-collection"
@@ -18,9 +16,12 @@
         "emacs-projectile"
         "emacs-counsel-projectile"
         "emacs-magit"
+        "emacs-pass"
+        "password-store"
         "emacs-helpful"
         "emacs-doom-themes"
         "emacs-all-the-icons"
         "emacs-doom-modeline"
         "emacs-rainbow-delimiters"
+        "emacs-exwm"
     ))

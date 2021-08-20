@@ -3,9 +3,9 @@
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el 
 * Inbox
 ** TODO setup =org-mode= structure templates
+** TODO fix org variable for todo timeing
 ** DONE bind =org-open-file= to keyboard
-** TODO set =consel-linux-app= custom variable.
-
+** DONE set =consel-linux-app= custom variable.
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
@@ -396,7 +396,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 *** Todo Keywords
 #+begin_src emacs-lisp
   (setq org-todo-keywords
-    '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d!)")
+    '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
       (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 #+end_src
 
@@ -534,6 +534,17 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
  (use-package forge)
  #+end_src
 
+** Pass
+#+begin_src emacs-lisp
+  (use-package pass
+    :ensure nil)
+#+end_src
+
+*** Guix
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-pass"
+  "password-store"
+#+end_src
 * TODO Development
 ** TODO LSP Mode
 [[https://github.com/emacs-lsp/lsp-mode][github]]
@@ -631,6 +642,11 @@ Load in exwm
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 
+** Guix
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-exwm"
+#+end_src
+
 * Runtime Optimization
 
 Returns the garbage collector to a sane value.
@@ -657,8 +673,6 @@ Guix Manifest
   (specifications->manifest
     (list "emacs"
           "emacs-guix"
-          "emacs-exwm"
-          "password-store"
           <<packages>>
       ))
 #+end_src
