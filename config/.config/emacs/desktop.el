@@ -7,15 +7,6 @@
   "h C-f" '((lambda () (interactive)
                (find-file my/exwm-config)) :wk "open desktop configuration"))
 
-(with-eval-after-load 'org
-  (defun my/org-babel-tangle-desktop ()
-    (when (string-equal (buffer-file-name)
-                        (concat (getenv "HOME") "/.dotfiles/Desktop.org"))
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
-                                              #'my/org-babel-tangle-desktop))))
-
 (defun my/run-in-background (command)
   (let ((command-parts (split-string command "[ ]+")))
     (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))

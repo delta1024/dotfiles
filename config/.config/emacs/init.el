@@ -20,8 +20,8 @@
 (defvar my/user-font "Fira Code" "emacs's fixed width font")
 (defvar my/font-size 150 "font size for emacs")
 (defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
+(defvar my/guix-file (concat (getenv "HOME") "/.dotfiles/System.org") "GNU Guix configuration file")
 (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
-(defvar my/guix-file (concat (getenv "HOME") "/.dotfiles/Guix.org") "Guix org file")
 
 (setq inhibit-startup-message t)
 
@@ -168,8 +168,8 @@
     '((emacs-lisp . t)))
 
 (defun my/org-babel-tangle-config ()
-  (when (string-equal (buffer-file-name)
-                 (concat (getenv "HOME") "/.dotfiles/Emacs.org"))
+  (when (string-equal (file-name-directory (buffer-file-name))
+                 (expand-file-name "~/.dotfiles/"))
 ;; Dynamic scoping to the rescue
   (let ((org-confirm-babel-evaluate nil))
   (org-babel-tangle))))

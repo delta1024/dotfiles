@@ -32,19 +32,6 @@
                  (find-file my/exwm-config)) :wk "open desktop configuration"))
 #+end_src
 
-** Autosave Hook
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org
-    (defun my/org-babel-tangle-desktop ()
-      (when (string-equal (buffer-file-name)
-                          (concat (getenv "HOME") "/.dotfiles/Desktop.org"))
-        (let ((org-confirm-babel-evaluate nil))
-          (org-babel-tangle))))
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook
-                                                #'my/org-babel-tangle-desktop))))
-#+end_src
-
 *  EXWM
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-02.org][Emacs Desktop Part 2 Show Notes]]
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
