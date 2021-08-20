@@ -1,6 +1,8 @@
 #+TITLE: GNU Guix System Configuration
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/guix/system.scm
+* Inbox
+** TODO setup passwords
 
 * Modules
   #+begin_src scheme
