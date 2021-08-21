@@ -3,6 +3,9 @@
 #+PROPERTY: header-args :tangle ./config/.config/guix/system.scm
 * Inbox
 ** TODO setup passwords
+- [ ] download passwords from lastpass
+- [ ] import into pass
+- [ ] recover passwords not in lastpass
 
 * Channels
 :PROPERTIES:

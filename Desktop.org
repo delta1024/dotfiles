@@ -1,14 +1,15 @@
 #+TITLE: Desktop
 #+PROPERTY: header-args :tangle ./config/.config/emacs/desktop.el
 * Inbox
+** DONE implement noweb
 ** TODO Polybar
-** TODO Grab launcher function from efs and integrate
+** DONE Grab launcher function from efs and integrate
 ** DONE Add keybinding for changing the wallpaper
 ** TODO Check =EXWM= =gcs-done= and increase threshold if nesisarry
 - [ ] Capture exwm start =gcs-done=.
 - [ ] Capture exwm finish =gcs-done=.
 - [ ] Subtract the two values into a new variable
-** TODO exwm desktop
+** DONE exwm desktop
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
@@ -45,7 +46,7 @@
 
 ** WM
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
   (defun my/exwm-update-class ()
     (exwm-workspace-rename-buffer exwm-class-name))
   
@@ -61,11 +62,17 @@
     (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
   
     (desktop-environment-mode)
+    <<input-prefix-keys>>
+    <<global-keys>>
+    (exwm-enable))
+  <<status-bar>>
+  
 #+end_src
 
 *** Input Prefix Keys
 
-#+begin_src emacs-lisp
+#+NAME: input-prefix-keys
+#+begin_src emacs-lisp :tangle no
   ;; These keys should always pass through to Emacs
   (setq exwm-input-prefix-keys
         '(?\C-x
@@ -86,7 +93,8 @@
 
 *** Global Keys
 
-#+begin_src emacs-lisp
+#+NAME: global-keys
+#+begin_src emacs-lisp :tangle no
   ;; Set up global key bindings.  These always work, no matter the input state!
   ;; Keep in mind that changing this list after EXWM initializes has no effect.
   (setq exwm-input-global-keys
@@ -118,38 +126,16 @@
   
   (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app) ;; Set XDG_PATH variables
   
-  (defun exwm-poweroff ()
-    (interactive)
-    (when (yes-or-no-p "Power down system? ")
-      (start-process-shell-command "systemctl" nil "systemctl poweroff")))
-  (exwm-input-set-key (kbd "C-s-p") 'exwm-poweroff)
-  
-  (defun exwm-suspend ()
-    (interactive)
-    (when (y-or-n-p "Suspend systeM? ")
-      (start-process-shell-command "systemctl" nil "systemctl suspend")))
-  (exwm-input-set-key (kbd "s-p") 'exwm-suspend)
-  
-  (defun exwm-sys-restart () "Restarts the operating system"
-         (interactive)
-         (when (yes-or-no-p "Restart system? ")
-           (start-process-shell-command "systemctl" nil "systemctl reboot")))
-  (exwm-input-set-key (kbd "M-s-p") 'exwm-sys-restart)
-  (exwm-input-set-key (kbd "s-q") 'exwm-restart)
   (defun exwm-change-wallpaper () "Changes the Wallpaper"
     (interactive)
     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
   (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
   
 #+end_src
-*** DELIM
-
-#+begin_src emacs-lisp
-  (exwm-enable))
-#+end_src
 
 ** Status Bar
-#+begin_src emacs-lisp
+#+NAME: status-bar
+#+begin_src emacs-lisp :tangle no
   ;; Show battery status in the mode line
   (display-battery-mode 1)
 
