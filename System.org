@@ -9,6 +9,9 @@
 :header-args: :tangle config/.config/guix/channels.scm
 :END:
 #+begin_src scheme
+  ;; NOTE: channels.scm is generated from System.org. Please edit that file
+  ;;        in Emacs and channels.scm will be generated automatially
+
   (list (channel
           (name 'guix)
           (url "https://git.savannah.gnu.org/git/guix.git")
@@ -32,7 +35,11 @@
 #+end_src
 
 * Modules
+
   #+begin_src scheme
+    ;; NOTE: system.scm is generated from System.org. Please edit that file
+    ;;        in Emacs and system.scm will be generated automatially
+
     (use-modules (gnu) (gnu packages shells) (nongnu packages linux))
     (use-service-modules
      cups
@@ -41,18 +48,30 @@
      ssh
      xorg)
   #+end_src
+
 * OS
-  #+begin_src scheme
-  (operating-system
-   (kernel linux)
-   (firmware (list linux-firmware))
-   (locale "en_CA.utf8")
-   (timezone "America/Edmonton")
-   (keyboard-layout (keyboard-layout "us"))
-   (host-name "Cortex")
+
+  #+begin_src scheme :noweb yes
+    (operating-system
+     (kernel linux)
+     (firmware (list linux-firmware))
+     (locale "en_CA.utf8")
+     (timezone "America/Edmonton")
+     (keyboard-layout (keyboard-layout "us"))
+     (host-name "Cortex")
+     <<users>>
+     <<packages>>
+     <<services>>
+     <<bootloader>>
+     <<mapped-devices>>
+     <<file-system>>
+     <<swap-devices>>)
   #+end_src
+
 ** Users
-   #+begin_src scheme
+
+#+NAME: users
+   #+begin_src scheme :tangle no
    (users (cons* (user-account
                   (name "jake")
                   (comment "Jake")
@@ -63,8 +82,11 @@
                    '("wheel" "netdev" "audio" "video")))
                  %base-user-accounts))
    #+end_src
+
 ** Packages
-   #+begin_src scheme
+
+#+NAME: packages
+   #+begin_src scheme :tangle no
      (packages
       (append
        (list (specification->package "emacs")
@@ -78,8 +100,11 @@
              (specification->package "nss-certs"))
        %base-packages))
    #+end_src
+
 ** Services
-   #+begin_src scheme
+
+#+NAME: services
+   #+begin_src scheme :tangle no
    (services
     (append
      (list (service xfce-desktop-service-type)
@@ -89,16 +114,22 @@
              (keyboard-layout keyboard-layout))))
      %desktop-services))
    #+end_src
+
 ** Bootloader
-   #+begin_src scheme
+
+#+NAME: bootloader
+   #+begin_src scheme :tangle no
    (bootloader
     (bootloader-configuration
      (bootloader grub-efi-bootloader)
      (target "/boot/efi")
      (keyboard-layout keyboard-layout)))
    #+end_src
+
 ** Mapped Devices
-   #+begin_src scheme
+
+#+NAME: mapped-devices
+   #+begin_src scheme :tangle no
    (mapped-devices
     (list (mapped-device
            (source
@@ -111,8 +142,11 @@
            (target "crypthome")
            (type luks-device-mapping))))
    #+end_src
+
 ** File System
-   #+begin_src scheme
+
+#+NAME: file-system
+   #+begin_src scheme :tangle no
      (file-systems
       (cons* (file-system
                (mount-point "/")
@@ -130,56 +164,68 @@
                (dependencies mapped-devices))
      
              %base-file-systems))
-     (swap-devices
-      (list "/tempSwap")))
    #+end_src
+ #+NAME: swap-devices
+ #+begin_src scheme :tangle no
+     (swap-devices
+      (list "/tempSwap"))
+ #+end_src
 #+end_src
 
 * Manifests
-** Default
-#+begin_src scheme :noweb-ref packages :tangle no
-         "font-abattis-cantarell"
-         "font-fira-code"
-         "xrandr"
-         "zsh"
-         "xmodmap"
-         "htop"
-         "fontconfig"
-         "neovim"
-#+end_src
-** Desktop
-#+begin_src scheme :noweb-ref packages :tangle no
-          "dunst"
-          "picom"
-          "xclip"
-          "xwallpaper"
-          "sxiv"
-#+end_src
-** Applications
-#+begin_src scheme :noweb-ref packages :tangle no
-         "alacritty" 
-         "firefox"
-         "lf"
-         "mpv"
-         "mpd"
-         "qutebrowser"
+
+#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/user.scm
+  ;; NOTE: user.scm is generated from System.org. Please edit that file
+  ;;        in Emacs and user.scm will be generated automatially
+
+  (specifications->manifest
+   (list "glibc-locales"
+         <<default>>
+         <<applications>>
+         <<desktop>>))
 #+end_src
 
-** Decleration
-:PROPERTIES:
-:header-args: :noweb yes :tangle ./config/.config/guix/manifests/user.scm
-:END:
-#+begin_src scheme
-  (specifications->manifest
-     (list "glibc-locales"
-           <<packages>> ))
+** Default
+
+#+NAME: default
+#+begin_src scheme :tangle no
+  "font-abattis-cantarell"
+  "font-fira-code"
+  "xrandr"
+  "zsh"
+  "xmodmap"
+  "htop"
+  "fontconfig"
+  "neovim"
 #+end_src
+
+** Desktop
+
+#+NAME: desktop
+#+begin_src scheme :tangle no
+  "dunst"
+  "picom"
+  "xclip"
+  "xwallpaper"
+  "sxiv"
+#+end_src
+
+** Applications
+
+#+NAME: applications
+#+begin_src scheme :tangle no
+  "alacritty" 
+  "firefox"
+  "lf"
+  "mpv"
+  "mpd"
+  "qutebrowser"
+#+end_src
+
 * Profiles
 :PROPERTIES:
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
-** Guix Profile
-
 #+begin_src sh
   export GUIX_PROFILE="$HOME/.config/guix/current"
   . "$GUIX_PROFILE/etc/profile"

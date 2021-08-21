@@ -656,6 +656,9 @@ Returns the garbage collector to a sane value.
 * Manifest
 Guix Manifest
 #+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm
+  ;; NOTE: emacs.scm is generated from Emacs.org. Please edit that file
+  ;;        in Emacs and emacs.scm will be generated automatially
+
   (specifications->manifest
     (list "emacs"
           "emacs-guix"

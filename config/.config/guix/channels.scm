@@ -1,3 +1,6 @@
+;; NOTE: channels.scm is generated from System.org. Please edit that file
+;;        in Emacs and channels.scm will be generated automatially
+
 (list (channel
         (name 'guix)
         (url "https://git.savannah.gnu.org/git/guix.git")

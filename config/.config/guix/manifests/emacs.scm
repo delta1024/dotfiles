@@ -1,3 +1,6 @@
+;; NOTE: emacs.scm is generated from Emacs.org. Please edit that file
+;;        in Emacs and emacs.scm will be generated automatially
+
 (specifications->manifest
   (list "emacs"
         "emacs-guix"
