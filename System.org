@@ -1,4 +1,4 @@
- #+TITLE: GNU Guix System Configuration
+#+TITLE: GNU Guix System Configuration
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/guix/system.scm
 * Inbox
@@ -90,32 +90,36 @@
 
 #+NAME: packages
    #+begin_src scheme :tangle no
-     (packages
-      (append
-       (list (specification->package "emacs")
-             (specification->package "emacs-exwm")
-             (specification->package "git")
-             (specification->package "stow")
-             (specification->package "neovim")
-             (specification->package "gnupg")
-             (specification->package
-              "emacs-desktop-environment")
-             (specification->package "nss-certs"))
-       %base-packages))
+  (packages
+   (append
+    (list (specification->package "emacs")
+          (specification->package "emacs-exwm")
+          (specification->package "git")
+          (specification->package "stow")
+          (specification->package "neovim")
+          (specification->package "gnupg")
+          (specification->package "xauth")
+          (specification->package "zsh")
+          (specification->package
+           "emacs-desktop-environment")
+          (specification->package "nss-certs"))
+    %base-packages))
    #+end_src
 
 ** Services
 
 #+NAME: services
    #+begin_src scheme :tangle no
-   (services
-    (append
-     (list (service xfce-desktop-service-type)
-           (service cups-service-type)
-           (set-xorg-configuration
-            (xorg-configuration
-             (keyboard-layout keyboard-layout))))
-     %desktop-services))
+  (services
+   (append
+    (list (service xfce-desktop-service-type)
+          (service cups-service-type)
+          (set-xorg-configuration
+           (xorg-configuration
+            (keyboard-layout keyboard-layout)))
+          (extra-special-file "/usr/bin/env"
+                              (file-append coreutils "/bin/env")))
+    %desktop-services))
    #+end_src
 
 ** Bootloader
@@ -232,17 +236,27 @@
 #+begin_src sh
   # NOTE: active-profiles is generated from System.org. Please edit that 
   #   file in Emacs and active-profiles will be generated automatially
-
+  
   export GUIX_PROFILE="$HOME/.config/guix/current"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_PROFILE="$HOME/.guix-profile"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
-  export GUIX_PROFILE="$HOME/.guix-emacs/guix-emacs"
-  . "$GUIX_PROFILE/etc/profile"
+  export GUIX_PROFILE="$HOME/.guix-extra-profiles/emacs/emacs"
+  export GUIX_EMACS="$GUIX_PROFILE"
+  . "$GUIX_EMACS/etc/profile"
+#  export GUIX_APPS="$HOME/.guix-extra-profiles/apps/app"
+#  . "$GUIX_APPS/etc/profile"
+#  export GUIX_DESKTOP="$HOME/.guix-extra-profiles/desktop/desktop"
+#  . "$GUIX_DESKTOP/etc/profile"
+  
+  export XDG_DATA_DIR="$HOME/.guix-profile/share"
+  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EMACS/share"
+  # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_APPS/share"
+  # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_DESKTOP/share"
+  
 #+end_src
 Set up XDG variables
 #+begin_src sh :tangle config/.config/user-dirs.dirs
-  XDG_DESKTOP_DIR=$HOME/.guix-profile
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src

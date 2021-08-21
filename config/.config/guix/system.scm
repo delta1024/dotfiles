@@ -33,6 +33,8 @@
          (specification->package "stow")
          (specification->package "neovim")
          (specification->package "gnupg")
+         (specification->package "xauth")
+         (specification->package "zsh")
          (specification->package
           "emacs-desktop-environment")
          (specification->package "nss-certs"))
@@ -43,7 +45,9 @@
          (service cups-service-type)
          (set-xorg-configuration
           (xorg-configuration
-           (keyboard-layout keyboard-layout))))
+           (keyboard-layout keyboard-layout)))
+         (extra-special-file "/usr/bin/env"
+                             (file-append coreutils "/bin/env")))
    %desktop-services))
  (bootloader
   (bootloader-configuration

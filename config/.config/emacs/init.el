@@ -155,18 +155,18 @@
   (defun my/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1))
-    (setq org-ellipsis " ▾")
-    (setq org-hide-emphasis-markers t)
-    (setq org-confirm-babel-evaluate nil)
-    (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t)))
+  (setq org-ellipsis " ▾")
+  (setq org-hide-emphasis-markers t)
+  (setq org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)))
   (defun my/org-babel-tangle-config ()
     (when (string-equal (file-name-directory (buffer-file-name))
-                   (expand-file-name "~/.dotfiles/"))
-  ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-    (org-babel-tangle))))
+                        (expand-file-name "~/.dotfiles/"))
+      ;; Dynamic scoping to the rescue
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
   (my/org-font-setup))
 
 (use-package org-bullets
@@ -187,8 +187,8 @@
   :hook (org-mode . my/org-mode-visual-fill))
 
 (setq org-todo-keywords
-  '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-    (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
+      '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
+        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 
 (use-package dired
   :ensure nil
@@ -199,17 +199,17 @@
   :ensure nil
   :diminish
   :bind (:map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)	
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
+              ("TAB" . ivy-alt-done)	
+              ("C-l" . ivy-alt-done)
+              ("C-j" . ivy-next-line)
+              ("C-k" . ivy-previous-line)
+              :map ivy-switch-buffer-map
+              ("C-k" . ivy-previous-line)
+              ("C-l" . ivy-done)
+              ("C-d" . ivy-switch-buffer-kill)
+              :map ivy-reverse-i-search-map
+              ("C-k" . ivy-previous-line)
+              ("C-d" . ivy-reverse-i-search-kill))
   :config)
 
 (use-package counsel
@@ -217,7 +217,7 @@
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-switch-buffer-other-window))
   :custom
-   ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
+  ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
 (use-package ivy-rich
   :ensure nil
@@ -228,7 +228,7 @@
   :custom ((projectile-completion-system 'ivy))
   :bind-keymap
   ("C-c p" . projectile-command-map))
-  ;; NOTE: Set this to the folder where you keep your Git repos!
+;; NOTE: Set this to the folder where you keep your Git repos!
 
 (use-package counsel-projectile
   :ensure nil
@@ -240,10 +240,14 @@
   :config (evil-collection-magit-setup)
   :general
   (:prefix-map 'my-leader-map
-   "g" '(magit :which-key "Status")))
+               "g" '(magit :which-key "Status")))
 
 (use-package pass
   :ensure nil)
+(use-package pinentry
+  :ensure nil
+  :config
+  (pinentry-start))
 
 (use-package helpful
   :ensure nil
@@ -274,9 +278,9 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (defun my/exwm-load (switch)
-  (load-file (concat user-emacs-directory "desktop.el")))
-(load-file (expand-file-name "desktop.el" user-emacs-directory))
-(add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
+    (load-file (concat user-emacs-directory "desktop.el")))
+;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
+  (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
 (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
        (setq gc-cons-threshold (* 2 1000 1000))

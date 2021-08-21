@@ -94,4 +94,4 @@
 (display-time-mode 1)
 ;; Also take a look at display-time-format and format-time-string
 
-
+(my/post-config)

@@ -28,7 +28,7 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
     (message "Emacs loaded in %s."
              emacs-startup-time
              ))
-
+  
   (add-hook 'emacs-startup-hook #'my/display-startup-time)
 #+end_src
 
@@ -42,7 +42,7 @@ Gives a memeory boost at startup
 :header-args: :tangle no
 :END:
 #+begin_src emacs-lisp
-(setq use-package-verbose t)
+  (setq use-package-verbose t)
 #+end_src
 
 * Variables
@@ -101,12 +101,12 @@ Gives a memeory boost at startup
 
 #+Begin_src emacs-lisp
   (require 'package)
-
+  
   (setq package-archives '(("melpa" . "https://melpa.org/packages/")
                            ("elpa" . "https://elpa.gnu.org/packages/")))
-
+  
   (require 'use-package)
-
+  
 #+end_src
 
 ** Guix
@@ -189,7 +189,7 @@ Gives a memeory boost at startup
 :header-args: :tangle no
 :END:
 #+begin_src emacs-lisp
-(use-package hydra)
+  (use-package hydra)
 #+end_src
 
 ** General
@@ -252,12 +252,12 @@ Gives a memeory boost at startup
 * TODO Org Mode
 ** org-open-file
 
-  #+begin_src emacs-lisp
-    (setq org-directory "~/Documents/org/")
-    (defun my/org-open-file (a) "Opens the file in `org-directory'"
-           (interactive "sOrg File Name: ")
-           (find-file (concat org-directory a ".org")))
-  #+end_src
+#+begin_src emacs-lisp
+  (setq org-directory "~/Documents/org/")
+  (defun my/org-open-file (a) "Opens the file in `org-directory'"
+         (interactive "sOrg File Name: ")
+         (find-file (concat org-directory a ".org")))
+#+end_src
 
 ** Use Package
 #+begin_src emacs-lisp :noweb yes
@@ -297,7 +297,7 @@ Gives a memeory boost at startup
                     (org-level-7 . 1.1)
                     (org-level-8 . 1.1)))
       (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
-
+  
     ;; Ensure that anything that should be fixed-pitch in Org files appears that way
     (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
@@ -314,12 +314,12 @@ Gives a memeory boost at startup
   (defun my/org-mode-setup ()
     (org-indent-mode)
     (visual-line-mode 1))
-    (setq org-ellipsis " ▾")
-    (setq org-hide-emphasis-markers t)
-    (setq org-confirm-babel-evaluate nil)
-    (org-babel-do-load-languages
-      'org-babel-load-languages
-      '((emacs-lisp . t)))
+  (setq org-ellipsis " ▾")
+  (setq org-hide-emphasis-markers t)
+  (setq org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)))
 #+end_src
 
 **** Auto Tangle Config
@@ -327,10 +327,10 @@ Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (defun my/org-babel-tangle-config ()
     (when (string-equal (file-name-directory (buffer-file-name))
-                   (expand-file-name "~/.dotfiles/"))
-  ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-    (org-babel-tangle))))
+                        (expand-file-name "~/.dotfiles/"))
+      ;; Dynamic scoping to the rescue
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
 #+end_src
 
   
@@ -377,12 +377,12 @@ Gives a memeory boost at startup
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 ** TODO Productivity
 [[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
- * Wrap any code to eval in a =with-eval-after-load= block.
+* Wrap any code to eval in a =with-eval-after-load= block.
 *** Todo Keywords
 #+begin_src emacs-lisp
   (setq org-todo-keywords
-    '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-      (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
+        '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
+          (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
 #+end_src
 
 * Dired
@@ -402,17 +402,17 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :ensure nil
     :diminish
     :bind (:map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)	
-           ("C-l" . ivy-alt-done)
-           ("C-j" . ivy-next-line)
-           ("C-k" . ivy-previous-line)
-           :map ivy-switch-buffer-map
-           ("C-k" . ivy-previous-line)
-           ("C-l" . ivy-done)
-           ("C-d" . ivy-switch-buffer-kill)
-           :map ivy-reverse-i-search-map
-           ("C-k" . ivy-previous-line)
-           ("C-d" . ivy-reverse-i-search-kill))
+                ("TAB" . ivy-alt-done)	
+                ("C-l" . ivy-alt-done)
+                ("C-j" . ivy-next-line)
+                ("C-k" . ivy-previous-line)
+                :map ivy-switch-buffer-map
+                ("C-k" . ivy-previous-line)
+                ("C-l" . ivy-done)
+                ("C-d" . ivy-switch-buffer-kill)
+                :map ivy-reverse-i-search-map
+                ("C-k" . ivy-previous-line)
+                ("C-d" . ivy-reverse-i-search-kill))
     :config)
   
 #+end_src
@@ -431,7 +431,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-switch-buffer-other-window))
     :custom
-     ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
+    ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
   
 #+end_src
 
@@ -460,11 +460,11 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 ** Projectile
 #+begin_src emacs-lisp
-(use-package projectile
-  :diminish projectile-mode
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map))
+  (use-package projectile
+    :diminish projectile-mode
+    :custom ((projectile-completion-system 'ivy))
+    :bind-keymap
+    ("C-c p" . projectile-command-map))
   ;; NOTE: Set this to the folder where you keep your Git repos!
 #+end_src
 
@@ -499,7 +499,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :config (evil-collection-magit-setup)
     :general
     (:prefix-map 'my-leader-map
-     "g" '(magit :which-key "Status")))
+                 "g" '(magit :which-key "Status")))
 #+end_src
 
 **** Guix
@@ -507,28 +507,35 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
- "emacs-magit"
+  "emacs-magit"
 #+end_src
 
 *** TODO Forge
- NOTE: Make sure to configure a GitHub token before using this package!
- - https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
- - https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+NOTE: Make sure to configure a GitHub token before using this package!
+- https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+- https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
 
- #+begin_src emacs-lisp :tangle no
- (use-package forge)
- #+end_src
+  #+begin_src emacs-lisp :tangle no
+    (use-package forge)
+  #+end_src
 
 ** Pass
+
 #+begin_src emacs-lisp
-  (use-package pass
-    :ensure nil)
+    (use-package pass
+      :ensure nil)
+    (use-package pinentry
+      :ensure nil
+      :config
+      (pinentry-start))
 #+end_src
 
 *** Guix
+
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-pass"
   "password-store"
+  "emacs-pinentry"
 #+end_src
 * TODO Development
 ** TODO LSP Mode
@@ -584,13 +591,13 @@ display correctly:
 =M-x all-the-icons-install-fonts=
 
 #+begin_src emacs-lisp
-    (use-package all-the-icons
-      :ensure nil)
+  (use-package all-the-icons
+    :ensure nil)
   
-    (use-package doom-modeline
-      :ensure nil
-      :init (doom-modeline-mode t)
-      :custom ((doom-mode-line-height 13)))
+  (use-package doom-modeline
+    :ensure nil
+    :init (doom-modeline-mode t)
+    :custom ((doom-mode-line-height 13)))
 #+end_src
 
 **** Guix
@@ -623,7 +630,7 @@ Load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (concat user-emacs-directory "desktop.el")))
-  (load-file (expand-file-name "desktop.el" user-emacs-directory))
+;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 
@@ -642,12 +649,12 @@ Returns the garbage collector to a sane value.
          ;; We're going to load custom here becaus it makes more
          ;; sense to do so here with how EXWM is loaded
          (load custom-file :noerror))
-
+  
   ;; Returns nil if switch is abset
   (defun found-custom-arg (switch) "Returns nil if switch is absent"
          (let ((found-switch (member switch command-line-args)))
            found-switch))
-
+  
   ;; if exwm isn't running set custom variables
   (unless (found-custom-arg "-exwm")
     (my/post-config))
@@ -658,11 +665,11 @@ Guix Manifest
 #+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm
   ;; NOTE: emacs.scm is generated from Emacs.org. Please edit that file
   ;;        in Emacs and emacs.scm will be generated automatially
-
+  
   (specifications->manifest
-    (list "emacs"
-          "emacs-guix"
-          <<packages>>
-      ))
+   (list "emacs"
+         "emacs-guix"
+         <<packages>>
+         ))
 #+end_src
 

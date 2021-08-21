@@ -147,12 +147,13 @@
 
 * TODO Runtime Optimization
 #+begin_src emacs-lisp
+(my/post-config)
 #+end_src
 
 * System Configuration Requirements
 Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
-** Xinirc
-#+begin_src conf-unix :tangle no
+** Xsession
+#+begin_src sh :tangle config/.xsession :tangle-mode (identity #o755)
 dunst &
 picom &
 xclip &
