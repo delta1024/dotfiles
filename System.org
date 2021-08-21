@@ -227,6 +227,9 @@
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
 #+begin_src sh
+  # NOTE: active-profiles is generated from System.org. Please edit that 
+  #   file in Emacs and active-profiles will be generated automatially
+
   export GUIX_PROFILE="$HOME/.config/guix/current"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_PROFILE="$HOME/.guix-profile"
@@ -238,4 +241,5 @@
 Set up XDG variables
 #+begin_src sh :tangle config/.config/user-dirs.dirs
   XDG_DESKTOP_DIR=$HOME/.guix-profile
+  XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
