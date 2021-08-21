@@ -24,4 +24,5 @@
         "emacs-doom-modeline"
         "emacs-rainbow-delimiters"
         "emacs-exwm"
+        "emacs-desktop-environment"
     ))

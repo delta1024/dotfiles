@@ -26,6 +26,7 @@
 (setq inhibit-startup-message t)
 
 ;; Redirect custom output
+
 (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
@@ -55,7 +56,6 @@
                          ("elpa" . "https://elpa.gnu.org/packages/")))
 
 (require 'use-package)
-(setq use-package-always-ensure t)
 
 (use-package evil
   :ensure nil
@@ -129,52 +129,45 @@
 (use-package org
   :ensure nil
   :no-require t
-
-:bind ("C-c o" . counsel-outline)
-
-:hook (org-mode . my/org-mode-setup)
-(org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
-
-:config
-
-(defun my/org-font-setup ()
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
-
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
-
-(defun my/org-mode-setup ()
-  (org-indent-mode)
-  (visual-line-mode 1))
-  (setq org-ellipsis " ▾")
-  (setq org-hide-emphasis-markers t)
-  (setq org-confirm-babel-evaluate nil)
-  (org-babel-do-load-languages
-    'org-babel-load-languages
-    '((emacs-lisp . t)))
-
-(defun my/org-babel-tangle-config ()
-  (when (string-equal (file-name-directory (buffer-file-name))
-                 (expand-file-name "~/.dotfiles/"))
-;; Dynamic scoping to the rescue
-  (let ((org-confirm-babel-evaluate nil))
-  (org-babel-tangle))))
-
-(my/org-font-setup))
+  :bind ("C-c o" . counsel-outline)
+  :hook (org-mode . my/org-mode-setup)
+  (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+  :config
+  (defun my/org-font-setup ()
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.1)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
+  
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+  (defun my/org-mode-setup ()
+    (org-indent-mode)
+    (visual-line-mode 1))
+    (setq org-ellipsis " ▾")
+    (setq org-hide-emphasis-markers t)
+    (setq org-confirm-babel-evaluate nil)
+    (org-babel-do-load-languages
+      'org-babel-load-languages
+      '((emacs-lisp . t)))
+  (defun my/org-babel-tangle-config ()
+    (when (string-equal (file-name-directory (buffer-file-name))
+                   (expand-file-name "~/.dotfiles/"))
+  ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+    (org-babel-tangle))))
+  (my/org-font-setup))
 
 (use-package org-bullets
   :after org
@@ -282,7 +275,7 @@
 
 (defun my/exwm-load (switch)
   (load-file (concat user-emacs-directory "desktop.el")))
-(load-file (concat user-emacs-directory "desktop.el"))
+(load-file (expand-file-name "desktop.el" user-emacs-directory))
 (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
 (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"

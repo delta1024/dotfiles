@@ -21,6 +21,8 @@
 (defun my/exwm-update-class ()
   (exwm-workspace-rename-buffer exwm-class-name))
 
+(use-package desktop-environment
+  :defer t)
 (use-package exwm
   :ensure nil
   :config
@@ -30,21 +32,23 @@
   ;; When window "class" updates, use it to set the buffer name
   (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
 
+  (desktop-environment-mode)
+
 ;; These keys should always pass through to Emacs
-  (setq exwm-input-prefix-keys
-    '(?\C-x
-       ?\C-u
-       ?\C-h
-       ?\C-w
-       ?\M-x
-       ?\M-`
-       ?\M-&
-       ?\M-:
-       ?\C-\ ))  ;; Ctrl+Space
+(setq exwm-input-prefix-keys
+      '(?\C-x
+        ?\C-u
+        ?\C-h
+        ?\C-w
+        ?\M-x
+        ?\M-`
+        ?\M-&
+        ?\M-:
+        ?\C-\ ))  ;; Ctrl+Space
 
 ;;    Ctrl+ Q will enable the next key to
 ;;    be sent directly
- (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+(define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
 
 ;; Set up global key bindings.  These always work, no matter the input state!
 ;; Keep in mind that changing this list after EXWM initializes has no effect.

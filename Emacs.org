@@ -71,6 +71,7 @@ Gives a memeory boost at startup
   (setq inhibit-startup-message t)
   
   ;; Redirect custom output
+  
   (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
   
   (scroll-bar-mode -1)        ; Disable visible scrollbar
@@ -105,7 +106,6 @@ Gives a memeory boost at startup
                            ("elpa" . "https://elpa.gnu.org/packages/")))
 
   (require 'use-package)
-  (setq use-package-always-ensure t)
 
 #+end_src
 
@@ -260,11 +260,16 @@ Gives a memeory boost at startup
   #+end_src
 
 ** Use Package
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
   (use-package org
     :ensure nil
     :no-require t
+    :bind ("C-c o" . counsel-outline)
+    :hook (org-mode . my/org-mode-setup)
+    (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+    :config
+    <<config>>
+    (my/org-font-setup))
 #+end_src
 
 **** Guix
@@ -274,25 +279,10 @@ Gives a memeory boost at startup
 #+begin_src scheme
   "emacs-org"
 #+end_src
-*** Keybindings
-
-#+begin_src emacs-lisp
-  :bind ("C-c o" . counsel-outline)
-#+end_src
-
-*** Hooks
-
-  #+begin_src emacs-lisp
-    :hook (org-mode . my/org-mode-setup)
-    (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
-  #+end_src
-
 *** Config
-
-  #+begin_src emacs-lisp
-    :config
-#+end_src
-
+:PROPERTIES:
+:header-args: :noweb-ref config
+:END:
 **** Functions
 ***** org-font-setup
 
@@ -343,11 +333,6 @@ Gives a memeory boost at startup
     (org-babel-tangle))))
 #+end_src
 
-*** DELIM
-
-#+begin_src emacs-lisp
-  (my/org-font-setup))
-  #+end_src
   
 ** TODO Packages  
 **** Org Bullets
@@ -638,13 +623,14 @@ Load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (concat user-emacs-directory "desktop.el")))
-  (load-file (concat user-emacs-directory "desktop.el"))
+  (load-file (expand-file-name "desktop.el" user-emacs-directory))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 
 ** Guix
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-exwm"
+  "emacs-desktop-environment"
 #+end_src
 
 * Runtime Optimization
