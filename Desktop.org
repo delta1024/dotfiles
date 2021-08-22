@@ -32,16 +32,16 @@
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
 ** Autostart
 
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
   (defun my/run-in-background (command)
     (let ((command-parts (split-string command "[ ]+")))
       (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
   
   (defun my/exwm-init-hook ()
-    (eshell)
-    (my/run-in-background "picom")
-    (my/run-in-background "xclip")
-    (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
+    (eshell))
+    ;; (my/run-in-background "picom")
+    ;; (my/run-in-background "xclip")
+    ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
   #+end_src
 
 ** WM
@@ -157,7 +157,7 @@ Here are listed the System level configruation requirments in order for emacs to
 dunst &
 picom &
 xclip &
-/usr/libexec/polkit-mate-authentication-agent-1 &
+#/usr/libexec/polkit-mate-authentication-agent-1 &
 $HOME/.scripts/wallpaper.sh draw
 exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
 #+end_src

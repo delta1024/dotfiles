@@ -121,10 +121,10 @@
 
 (require 'swiper)
 
-(setq org-directory "~/Documents/org/")
-(defun my/org-open-file (a) "Opens the file in `org-directory'"
-       (interactive "sOrg File Name: ")
-       (find-file (concat org-directory a ".org")))
+(customize-set-variable 'org-directory "~/Documents/org/")
+(defun my/org-open-file (a)  "Opens the file in `org-directory'"
+       (interactive "sOrg File: ")
+       (find-file (expand-file-name (concat a ".org") org-directory)))
 
 (use-package org
   :ensure nil
@@ -188,7 +188,7 @@
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(d@)")))
+        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
 
 (use-package dired
   :ensure nil
