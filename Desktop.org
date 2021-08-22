@@ -32,7 +32,7 @@
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
 ** Autostart
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (defun my/run-in-background (command)
     (let ((command-parts (split-string command "[ ]+")))
       (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))

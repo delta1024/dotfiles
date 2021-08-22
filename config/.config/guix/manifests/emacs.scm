@@ -2,7 +2,7 @@
 ;;        in Emacs and emacs.scm will be generated automatially
 
 (specifications->manifest
- (list "emacs"
+ (list "emacs-native-comp"
        "emacs-guix"
        "emacs-use-package"
        "emacs-evil"

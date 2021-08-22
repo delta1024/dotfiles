@@ -8,16 +8,6 @@
   "h C-f" '((lambda () (interactive)
                (find-file my/exwm-config)) :wk "open desktop configuration"))
 
-(defun my/run-in-background (command)
-  (let ((command-parts (split-string command "[ ]+")))
-    (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
-
-(defun my/exwm-init-hook ()
-  (eshell)
-  (my/run-in-background "picom")
-  (my/run-in-background "xclip")
-  (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
-
 (defun my/exwm-update-class ()
   (exwm-workspace-rename-buffer exwm-class-name))
 
