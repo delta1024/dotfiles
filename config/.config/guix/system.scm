@@ -49,6 +49,7 @@
          (specification->package "stow")
          (specification->package "neovim")
          (specification->package "gnupg")
+         (specification->package "pinentry")
          (specification->package "xauth")
          (specification->package "zsh")
          (specification->package
@@ -59,6 +60,7 @@
   (append
    (list (service xfce-desktop-service-type)
          (service cups-service-type)
+         (service openssh-service-type)
          (set-xorg-configuration
           (xorg-configuration
            (keyboard-layout keyboard-layout)))
