@@ -119,7 +119,8 @@
   "o"     '(my/org-open-file                                        :wk "open org file")
   "c"     '(cd                                                      :wk "change directory"))
 
-(require 'swiper)
+(use-package swiper
+  :ensure nil)
 
 (customize-set-variable 'org-directory "~/Documents/org/")
 (defun my/org-open-file (a)  "Opens the file in `org-directory'"

@@ -238,7 +238,8 @@ Gives a memeory boost at startup
 
 ** Swiper
 #+begin_src emacs-lisp
-  (require 'swiper)
+  (use-package swiper
+    :ensure nil)
 #+end_src
 
 *** Guix

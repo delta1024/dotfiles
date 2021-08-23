@@ -11,15 +11,12 @@
 - [ ] Github
 * Channels
 
+to lock the channels at the current commit run:
 #+begin_src shell :tangle no
   guix describe --format=channels
 #+end_src
 
-
-:PROPERTIES:
-:header-args: :tangle config/.config/guix/channels.scm
-:END:
-#+begin_src scheme
+#+begin_src scheme :tangle config/.config/guix/channels.scm
   ;; NOTE: channels.scm is generated from System.org. Please edit that file
   ;;        in Emacs and channels.scm will be generated automatially
   
@@ -63,6 +60,7 @@
   
   (use-modules (gnu)
                (gnu packages shells)
+               (gnu services dbus)
                (nongnu packages linux))
   (use-service-modules
    cups
@@ -72,9 +70,11 @@
    xorg)
 #+end_src
 
-* OS
+* TODO OS
 
 #+begin_src scheme :noweb yes
+  <<my-desktop-services>>
+
   (operating-system
    (kernel linux)
    (firmware (list linux-firmware))
@@ -89,60 +89,6 @@
    <<mapped-devices>>
    <<file-system>>
    <<swap-devices>>)
-  #+end_src
-
-** Users
-
-#+NAME: users
-   #+begin_src scheme :tangle no
-   (users (cons* (user-account
-                  (name "jake")
-                  (comment "Jake")
-                  (group "users")
-                  (shell (file-append zsh "/bin/zsh"))
-                  (home-directory "/home/jake")
-                  (supplementary-groups
-                   '("wheel" "netdev" "audio" "video")))
-                 %base-user-accounts))
-   #+end_src
-
-** Packages
-
-#+NAME: packages
-   #+begin_src scheme :tangle no
-  (packages
-   (append
-    (list (specification->package "emacs")
-          (specification->package "emacs-exwm")
-          (specification->package "git")
-          (specification->package "stow")
-          (specification->package "neovim")
-          (specification->package "gnupg")
-          (specification->package "xauth")
-          (specification->package "zsh")
-          (specification->package
-           "emacs-desktop-environment")
-          (specification->package "nss-certs"))
-    %base-packages))
-   #+end_src
-
-** Services
-
-#+NAME: services
-   #+begin_src scheme :tangle no
-  (services
-   (append
-    (list (service xfce-desktop-service-type)
-          (service cups-service-type)
-          ;; (service elogind-service-type
-          ;;          (elogind-configuration
-          ;;           (handle-lid-switch 'suspend)))
-          (set-xorg-configuration
-           (xorg-configuration
-            (keyboard-layout keyboard-layout)))
-          (extra-special-file "/usr/bin/env"
-                              (file-append coreutils "/bin/env")))
-    %desktop-services))
   #+end_src
 
 ** Bootloader
@@ -201,6 +147,81 @@
      (swap-devices
       (list "/tempSwap"))
  #+end_src
+#+end_src
+
+** TODO Users
+
+#+NAME: users
+   #+begin_src scheme :tangle no
+   (users (cons* (user-account
+                  (name "jake")
+                  (comment "Jake")
+                  (group "users")
+                  (shell (file-append zsh "/bin/zsh"))
+                  (home-directory "/home/jake")
+                  (supplementary-groups
+                   '("wheel" "netdev" "audio" "video")))
+                 %base-user-accounts))
+   #+end_src
+
+*** TODO Add auto login  for my user
+
+*** TODO Disable gdm
+
+*** TODO [[info:guix#X Window][enable startx]]
+
+** Packages
+
+#+NAME: packages
+   #+begin_src scheme :tangle no
+  (packages
+   (append
+    (list (specification->package "emacs")
+          (specification->package "emacs-exwm")
+          (specification->package "git")
+          (specification->package "stow")
+          (specification->package "neovim")
+          (specification->package "gnupg")
+          (specification->package "xauth")
+          (specification->package "zsh")
+          (specification->package
+           "emacs-desktop-environment")
+          (specification->package "nss-certs"))
+    %base-packages))
+   #+end_src
+
+** Services
+
+#+NAME: services
+   #+begin_src scheme :tangle no
+  (services
+   (append
+    (list (service xfce-desktop-service-type)
+          (service cups-service-type)
+          (set-xorg-configuration
+           (xorg-configuration
+            (keyboard-layout keyboard-layout)))
+          (extra-special-file "/usr/bin/env"
+                              (file-append coreutils "/bin/env")))
+    %my-desktop-services))
+    #+end_src
+
+** Desktop Configuration
+
+#+NAME: my-desktop-services
+#+begin_src scheme :tangle no
+  (define %my-desktop-services
+    ;; My personal Desktop configuration
+    (modify-services %desktop-services
+                     (elogind-service-type config =>
+                                           (elogind-configuration
+                                            (inherit config)
+                                            (handle-lid-switch 'suspend)))
+                     ;; (guix-service-type config =>
+                     ;;(guix configuration
+                     ;;(inherit config)
+                     ;;do some stuff
+                     ));;))
 #+end_src
 
 * Manifests
