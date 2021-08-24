@@ -187,6 +187,18 @@
     (visual-fill-column-mode 1))
   :hook (org-mode . my/org-mode-visual-fill))
 
+(use-package org-roam
+  :ensure nil
+  :init
+  (setq org-roam-v2-ack t)
+  :custom
+  (org-roam-directory (expand-file-name "roam" org-directory))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n i" . org-roam-node-insert))
+  :config
+  (org-roam-setup))
+
 (setq org-todo-keywords
       '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
         (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
@@ -197,8 +209,7 @@
   :demand t)
 
 (use-package ivy
-  :ensure nil
-  :diminish
+  :diminish t
   :bind (:map ivy-minibuffer-map
               ("TAB" . ivy-alt-done)	
               ("C-l" . ivy-alt-done)
@@ -214,14 +225,12 @@
   :config)
 
 (use-package counsel
-  :ensure nil
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-switch-buffer-other-window))
   :custom
   ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
 (use-package ivy-rich
-  :ensure nil
   :after ivy)
 
 (use-package projectile

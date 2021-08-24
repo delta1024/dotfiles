@@ -4,6 +4,7 @@
 (use-modules (gnu)
              (gnu packages shells)
              (gnu services dbus)
+             (gnu services pm)
              (nongnu packages linux))
 (use-service-modules
  cups
@@ -61,6 +62,10 @@
    (list (service xfce-desktop-service-type)
          (service cups-service-type)
          (service openssh-service-type)
+         (service tlp-service-type
+                  (tlp-configuration
+                   (cpu-scaling-governor-on-ac (list "performance"))
+                   (sched-powersave-on-bat? #t)))
          (set-xorg-configuration
           (xorg-configuration
            (keyboard-layout keyboard-layout)))
@@ -86,19 +91,19 @@
          (type luks-device-mapping))))
  (file-systems
   (cons* (file-system
-           (mount-point "/")
-           (device "/dev/mapper/system-root")
-           (type "ext4")
-           (dependencies mapped-devices))
+          (mount-point "/")
+          (device "/dev/mapper/system-root")
+          (type "ext4")
+          (dependencies mapped-devices))
          (file-system
-           (mount-point "/boot/efi")
-           (device (uuid "4B6C-4B80" 'fat32))
-           (type "vfat"))
+          (mount-point "/boot/efi")
+          (device (uuid "4B6C-4B80" 'fat32))
+          (type "vfat"))
          (file-system
-           (mount-point "/home")
-           (device "/dev/mapper/crypthome")
-           (type "ext4")
-           (dependencies mapped-devices))
+          (mount-point "/home")
+          (device "/dev/mapper/crypthome")
+          (type "ext4")
+          (dependencies mapped-devices))
  
          %base-file-systems))
  (swap-devices

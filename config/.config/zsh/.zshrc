@@ -12,13 +12,13 @@ SAVEHIST=10000
 HISTFILE=~/.cache/zsh/history
 
 # Basic auto/tab complete
-autoload -U compinit promptinit
+autoload -Uz compinit promptinit
 zstyle ':completion:*' menu select
 zmodload zsh/complist
 compinit
 _comp_options+=(globdots)
 promptinit; 
-
+prompt walters
 #Vi Mode
 bindkey -v
 export KEYTIMEOUT=1
@@ -71,6 +71,7 @@ if [ -f "$tmp" ]; then
 fi
 }
 bindkey -s '^o' 'lfcd\n'
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/share/zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh
-[[ $TERM == eterm-color ]] && screen && exit || eval "$(/usr/bin/starship init zsh)"
+#source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+#source /usr/share/zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh
+autoload autosuggestions
+[[ $TERM == eterm-color ]] && screen && exit #|| eval "$(/usr/bin/starship init zsh)"
