@@ -280,27 +280,28 @@ to lock the channels at the current commit run:
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
 #+begin_src sh
-  # NOTE: active-profiles is generated from System.org. Please edit that 
-  #   file in Emacs and active-profiles will be generated automatially
-  
-  export GUIX_PROFILE="$HOME/.config/guix/current"
-  . "$GUIX_PROFILE/etc/profile"
-  export GUIX_PROFILE="$HOME/.guix-profile"
-  . "$GUIX_PROFILE/etc/profile"
-  export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
-  export GUIX_PROFILE="$HOME/.guix-extra-profiles/emacs/emacs"
-  export GUIX_EMACS="$GUIX_PROFILE"
-  . "$GUIX_EMACS/etc/profile"
-#  export GUIX_APPS="$HOME/.guix-extra-profiles/apps/app"
-#  . "$GUIX_APPS/etc/profile"
-#  export GUIX_DESKTOP="$HOME/.guix-extra-profiles/desktop/desktop"
-#  . "$GUIX_DESKTOP/etc/profile"
-  
-  export XDG_DATA_DIR="$HOME/.guix-profile/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EMACS/share"
-  # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_APPS/share"
-  # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_DESKTOP/share"
-  
+    # NOTE: active-profiles is generated from System.org. Please edit that 
+    #   file in Emacs and active-profiles will be generated automatially
+    
+    export GUIX_PROFILE="$HOME/.config/guix/current"
+    . "$GUIX_PROFILE/etc/profile"
+    export GUIX_PROFILE="$HOME/.guix-profile"
+    . "$GUIX_PROFILE/etc/profile"
+    export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+    export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
+    export GUIX_PROFILE="$HOME/.guix-extra-profiles/emacs/emacs"
+    export GUIX_EMACS="$GUIX_PROFILE"
+    . "$GUIX_EMACS/etc/profile"
+  #  export GUIX_APPS="$HOME/.guix-extra-profiles/apps/app"
+  #  . "$GUIX_APPS/etc/profile"
+  #  export GUIX_DESKTOP="$HOME/.guix-extra-profiles/desktop/desktop"
+  #  . "$GUIX_DESKTOP/etc/profile"
+    
+    export XDG_DATA_DIR="$HOME/.guix-profile/share"
+    export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EMACS/share"
+    # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_APPS/share"
+    # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_DESKTOP/share"
+    
 #+end_src
 Set up XDG variables
 #+begin_src sh :tangle config/.config/user-dirs.dirs

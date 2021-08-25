@@ -46,19 +46,32 @@
 (global-display-line-numbers-mode t)
 (dolist (mode '(org-mode-hook
                 term-mode-hook
+                markdown-mode
                 eshell-mode-hook
                 dired-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(require 'package)
+;;(require 'package)
 
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
+;;(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+;;("elpa" . "https://elpa.gnu.org/packages/")))
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
 
 (require 'use-package)
 
 (use-package evil
-  :ensure nil
   :demand t
   :init
   (setq evil-want-integration t)
@@ -75,20 +88,17 @@
   ([remap evil-search-backward] . swiper-backward))
 
 (use-package evil-collection
-  :ensure nil
   :after evil
   :config
   (evil-collection-init))
 
 (use-package which-key
-  :ensure nil
   :init (which-key-mode)
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 1))
 
 (use-package general
-  :ensure nil
   :after evil
   :config
   (general-evil-setup t))
@@ -102,25 +112,24 @@
 
 (my/leader-def
   "f"     '(nil                                                     :wk "file system")
-  "f f"   '(counsel-find-file                                       :wk "save-file")
+  "f f"   '(find-file                                               :wk "save-file")
   "f s"   '(save-buffer                                             :wk "save file")
-  "f r"   '((lambda () (interactive) (counsel-find-file "/sudo::")) :wk "open file as root")
+  "f r"   '((lambda () (interactive) (find-file "/sudo::"))         :wk "open file as root")
   "h"     '(nil                                                     :wk "config options")
   "h f"   '((lambda () (interactive)
               (find-file my/emacs-file))                            :wk "open emacs configuration")
   "h M-f" '((lambda () (interactive)
               (find-file my/guix-file))                             :wk "open guix file")
   "a"     '(eshell                                                  :wk "eshell")
-  ";"     '(counsel-M-x                                             :wk "M-x")
+  ";"     '(execute-extended-command                                :wk "M-x")
   "w f"   '(delete-frame                                            :wk "delete fram")
-  "b"     '(counsel-switch-buffer                                   :wk "switch buffers with preview")
-  "M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
+  "b"     '(consult-buffer                                          :wk "switch buffers with preview")
+  ;;"M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
   "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
   "o"     '(my/org-open-file                                        :wk "open org file")
   "c"     '(cd                                                      :wk "change directory"))
 
-(use-package swiper
-  :ensure nil)
+(use-package swiper)
 
 (customize-set-variable 'org-directory "~/Documents/org/")
 (defun my/org-open-file (a)  "Opens the file in `org-directory'"
@@ -128,9 +137,8 @@
        (find-file (expand-file-name (concat a ".org") org-directory)))
 
 (use-package org
-  :ensure nil
   :no-require t
-  :bind ("C-c o" . counsel-outline)
+  :bind ("C-c o" . consult-outline)
   :hook (org-mode . my/org-mode-setup)
   (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
   :config
@@ -172,23 +180,21 @@
 
 (use-package org-bullets
   :after org
-  :ensure nil
   :hook (org-mode . org-bullets-mode)
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 
 (use-package visual-fill-column
-  :ensure nil
   :after org
   :config
   (defun my/org-mode-visual-fill () 
     (setq visual-fill-column-width 115
           visual-fill-column-center-text t)
     (visual-fill-column-mode 1))
-  :hook (org-mode . my/org-mode-visual-fill))
+  :hook (org-mode . my/org-mode-visual-fill)
+  (markdown-mode . my/org-mode-visual-fill))
 
 (use-package org-roam
-  :ensure nil
   :init
   (setq org-roam-v2-ack t)
   :custom
@@ -203,12 +209,75 @@
       '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
         (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
 
+(use-package markdown-mode
+:commands (markdown-mode gfm-mode)
+:mode (("README\\.md\\'" . gfm-mode)
+       ("\\.md\\'" . markdown-mode)
+       ("\\.markdown\\'" . markdown-mode))
+:init (setq markdown-command "multimarkdown"))
+
 (use-package dired
-  :ensure nil
   :after evil
   :demand t)
 
+(use-package vertico
+  :init
+  (vertico-mode)
+  (setq vertico-cycle t)
+  (setq vertico-resize t)
+  :bind
+  (:map vertico-map
+        ("C-j" . vertico-next)
+        ("C-k" . vertico-previous)))
+
+(use-package orderless
+  :init
+  (setq completion-styles '(orderless)
+        completion-category-defaults nil
+        completion-category-overrides '((file (styles partial-completion)))
+        selectrum-highlight-candidates-function #'orderless-highlight-matches))
+
+;; Persist history over Emacs restarts. Vertico sorts by history position. 
+(use-package savehist
+  :init
+  (savehist-mode))
+
+(use-package selectrum)
+
+(use-package consult
+ :bind
+  ("C-s" . consult-line))
+
+(use-package embark
+
+  :bind
+  (("M-o" . embark-act))         ;; pick some comfortable binding
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+
+(use-package marginalia
+  ;; Either bind `marginalia-cycle` globally or only in the minibuffer
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init configuration is always executed (Not lazy!)
+  :init
+
+  ;; Must be in the :init section of use-package such that the mode gets
+  ;; enabled right away. Note that this forces loading the package.
+  (marginalia-mode))
+
+(use-package app-launcher
+  :straight '(app-launcher :host github :repo "SebastienWae/app-launcher"))
+
 (use-package ivy
+  :disabled t
   :diminish t
   :bind (:map ivy-minibuffer-map
               ("TAB" . ivy-alt-done)	
@@ -217,74 +286,66 @@
               ("C-k" . ivy-previous-line)
               :map ivy-switch-buffer-map
               ("C-k" . ivy-previous-line)
+              ("C-j" . ivy-next-line)
               ("C-l" . ivy-done)
               ("C-d" . ivy-switch-buffer-kill)
               :map ivy-reverse-i-search-map
               ("C-k" . ivy-previous-line)
-              ("C-d" . ivy-reverse-i-search-kill))
-  :config)
+              ("C-j" . ivy-next-line)
+              ("C-d" . ivy-reverse-i-search-kill)))
 
 (use-package counsel
+  :disabled t
   :bind (("M-x" . counsel-M-x)
          ("C-x b" . counsel-switch-buffer-other-window))
   :custom
   ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
 (use-package ivy-rich
+:disabled
   :after ivy)
 
 (use-package projectile
   :diminish projectile-mode
-  :custom ((projectile-completion-system 'ivy))
+  ;;:custom ((projectile-completion-system 'ivy))
   :bind-keymap
   ("C-c p" . projectile-command-map))
 ;; NOTE: Set this to the folder where you keep your Git repos!
 
 (use-package counsel-projectile
-  :ensure nil
+  :disabled t
   :after projectile
   :config (counsel-projectile-mode))
 
 (use-package magit
-  :ensure nil
   :config (evil-collection-magit-setup)
   :general
   (:prefix-map 'my-leader-map
                "g" '(magit :which-key "Status")))
 
-(use-package pass
-  :ensure nil)
+(use-package pass)
 (use-package pinentry
-  :ensure nil
   :config
   (pinentry-start))
 
 (use-package helpful
-  :ensure nil
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
   :bind
-  ([remap describe-function] . counsel-describe-function)
+  ([remap describe-function] . helpful-callable)
   ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
+  ([remap describe-variable] . helpful-variable)
   ([remap describe-key] . helpful-key))
 
 (use-package doom-themes
-  :ensure nil
   :init
   (load-theme 'doom-one t))
 
-(use-package all-the-icons
-  :ensure nil)
+(use-package all-the-icons)
 
 (use-package doom-modeline
-  :ensure nil
   :init (doom-modeline-mode t)
   :custom ((doom-mode-line-height 13)))
 
 (use-package rainbow-delimiters
-  :ensure nil
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (defun my/exwm-load (switch)

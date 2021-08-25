@@ -2,10 +2,6 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el 
 * Inbox
-** TODO setup =org-mode= structure templates
-** DONE fix org variable for todo timeing
-** DONE bind =org-open-file= to keyboard
-** DONE set =consel-linux-app= custom variable.
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
@@ -15,7 +11,10 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
   ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
   ;;       in Emacs and init.el will be generated automatically!
 #+end_src
-
+* Early Init
+#+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el
+  (setq package-enable-at-startup nil)
+#+end_src
 * Startup Optimization
 #+begin_src emacs-lisp 
   (defvar emacs-startup-time 
@@ -91,22 +90,35 @@ Gives a memeory boost at startup
   (global-display-line-numbers-mode t)
   (dolist (mode '(org-mode-hook
                   term-mode-hook
+                  markdown-mode
                   eshell-mode-hook
                   dired-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
-#+end_src
+  #+end_src
 
 * Package and Use-Package
 =use-package= setup. 
 
 #+Begin_src emacs-lisp
-  (require 'package)
+  ;;(require 'package)
   
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
+  ;;(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+  ;;("elpa" . "https://elpa.gnu.org/packages/")))
   
-  (require 'use-package)
+  (defvar bootstrap-version)
+  (let ((bootstrap-file
+         (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+        (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (load bootstrap-file nil 'nomessage))
   
+  (require 'use-package) 
 #+end_src
 
 ** Guix
@@ -122,7 +134,6 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package evil
-    :ensure nil
     :demand t
     :init
     (setq evil-want-integration t)
@@ -151,7 +162,6 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package evil-collection
-    :ensure nil
     :after evil
     :config
     (evil-collection-init)) 
@@ -169,7 +179,6 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package which-key
-    :ensure nil
     :init (which-key-mode)
     :diminish which-key-mode
     :config
@@ -196,7 +205,6 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package general
-    :ensure nil
     :after evil
     :config
     (general-evil-setup t))
@@ -210,19 +218,19 @@ Gives a memeory boost at startup
   
   (my/leader-def
     "f"     '(nil                                                     :wk "file system")
-    "f f"   '(counsel-find-file                                       :wk "save-file")
+    "f f"   '(find-file                                               :wk "save-file")
     "f s"   '(save-buffer                                             :wk "save file")
-    "f r"   '((lambda () (interactive) (counsel-find-file "/sudo::")) :wk "open file as root")
+    "f r"   '((lambda () (interactive) (find-file "/sudo::"))         :wk "open file as root")
     "h"     '(nil                                                     :wk "config options")
     "h f"   '((lambda () (interactive)
                 (find-file my/emacs-file))                            :wk "open emacs configuration")
     "h M-f" '((lambda () (interactive)
                 (find-file my/guix-file))                             :wk "open guix file")
     "a"     '(eshell                                                  :wk "eshell")
-    ";"     '(counsel-M-x                                             :wk "M-x")
+    ";"     '(execute-extended-command                                :wk "M-x")
     "w f"   '(delete-frame                                            :wk "delete fram")
-    "b"     '(counsel-switch-buffer                                   :wk "switch buffers with preview")
-    "M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
+    "b"     '(consult-buffer                                          :wk "switch buffers with preview")
+    ;;"M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
     "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
     "o"     '(my/org-open-file                                        :wk "open org file")
     "c"     '(cd                                                      :wk "change directory"))
@@ -238,8 +246,7 @@ Gives a memeory boost at startup
 
 ** Swiper
 #+begin_src emacs-lisp
-  (use-package swiper
-    :ensure nil)
+  (use-package swiper)
 #+end_src
 
 *** Guix
@@ -259,13 +266,14 @@ Gives a memeory boost at startup
          (interactive "sOrg File: ")
          (find-file (expand-file-name (concat a ".org") org-directory)))
 #+end_src
+** straight
+*** [[https://github.com/SebastienWae/app-launcher][app-launcher]]
 
 ** Use Package
 #+begin_src emacs-lisp :noweb yes
   (use-package org
-    :ensure nil
     :no-require t
-    :bind ("C-c o" . counsel-outline)
+    :bind ("C-c o" . consult-outline)
     :hook (org-mode . my/org-mode-setup)
     (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
     :config
@@ -314,15 +322,15 @@ Gives a memeory boost at startup
 ***** org-mode-setup
 
 #+begin_src emacs-lisp
-    (defun my/org-mode-setup ()
-      (org-indent-mode)
-      (visual-line-mode 1))
-    (setq org-ellipsis " ▾")
-    (setq org-hide-emphasis-markers t)
-    (setq org-confirm-babel-evaluate nil)
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)))
+  (defun my/org-mode-setup ()
+    (org-indent-mode)
+    (visual-line-mode 1))
+  (setq org-ellipsis " ▾")
+  (setq org-hide-emphasis-markers t)
+  (setq org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)))
 #+end_src
 
 **** Auto Tangle Config
@@ -342,7 +350,6 @@ Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (use-package org-bullets
     :after org
-    :ensure nil
     :hook (org-mode . org-bullets-mode)
     :custom
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
@@ -358,14 +365,14 @@ Gives a memeory boost at startup
 
 #+begin_src emacs-lisp
   (use-package visual-fill-column
-    :ensure nil
     :after org
     :config
     (defun my/org-mode-visual-fill () 
       (setq visual-fill-column-width 115
             visual-fill-column-center-text t)
       (visual-fill-column-mode 1))
-    :hook (org-mode . my/org-mode-visual-fill))
+    :hook (org-mode . my/org-mode-visual-fill)
+    (markdown-mode . my/org-mode-visual-fill))
 #+end_src
 ***** Guix
 :PROPERTIES:
@@ -379,7 +386,6 @@ Gives a memeory boost at startup
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 #+begin_src emacs-lisp
   (use-package org-roam
-    :ensure nil
     :init
     (setq org-roam-v2-ack t)
     :custom
@@ -407,22 +413,144 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
           (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
 #+end_src
 
+** TODO setup =org-mode= structure templates
+* Markdown Mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
+#+end_src
+
+** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-markdown-mode"
+#+end_src
+
 * Dired
 
 #+begin_src emacs-lisp
   (use-package dired
-    :ensure nil
     :after evil
     :demand t)
 #+end_src
 
 * TODO Productivity
-** TODO Vertico
+** DONE Vertico
+#+begin_src emacs-lisp
+    (use-package vertico
+      :init
+      (vertico-mode)
+      (setq vertico-cycle t)
+      (setq vertico-resize t)
+      :bind
+      (:map vertico-map
+            ("C-j" . vertico-next)
+            ("C-k" . vertico-previous)))
+    
+    (use-package orderless
+      :init
+      (setq completion-styles '(orderless)
+            completion-category-defaults nil
+            completion-category-overrides '((file (styles partial-completion)))
+            selectrum-highlight-candidates-function #'orderless-highlight-matches))
+    
+    ;; Persist history over Emacs restarts. Vertico sorts by history position. 
+    (use-package savehist
+      :init
+      (savehist-mode))
+#+end_src
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-vertico"
+  "emacs-orderless"
+#+end_src
+** Selectrum
+#+begin_src emacs-lisp
+  (use-package selectrum)
+#+end_src
+*** GUIX
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-selectrum"
+#+end_src
 ** TODO Consult
-** Ivy 
+#+begin_src emacs-lisp
+      (use-package consult
+       :bind
+        ("C-s" . consult-line))
+#+end_src
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src emacs-lisp
+  "emacs-consult"
+#+end_src
+** Embark
+#+begin_src emacs-lisp
 
+  (use-package embark
+
+    :bind
+    (("M-o" . embark-act))         ;; pick some comfortable binding
+
+    :config
+
+    ;; Hide the mode line of the Embark live/completions buffers
+    (add-to-list 'display-buffer-alist
+                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                   nil
+                   (window-parameters (mode-line-format . none)))))
+#+end_src
+*** GUIX
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-embark"
+#+end_src
+** Marginalia
+#+begin_src emacs-lisp
+  
+(use-package marginalia
+  ;; Either bind `marginalia-cycle` globally or only in the minibuffer
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
+
+  ;; The :init configuration is always executed (Not lazy!)
+  :init
+
+  ;; Must be in the :init section of use-package such that the mode gets
+  ;; enabled right away. Note that this forces loading the package.
+  (marginalia-mode))
+#+end_src
+*** GUIX
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-marginalia"
+#+end_src
+** app-launcher
+#+begin_src emacs-lisp
+  (use-package app-launcher
+    :straight '(app-launcher :host github :repo "SebastienWae/app-launcher"))
+#+end_src
+** Ivy 
 #+begin_src emacs-lisp
   (use-package ivy
+    :disabled t
     :diminish t
     :bind (:map ivy-minibuffer-map
                 ("TAB" . ivy-alt-done)	
@@ -431,12 +559,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
                 ("C-k" . ivy-previous-line)
                 :map ivy-switch-buffer-map
                 ("C-k" . ivy-previous-line)
+                ("C-j" . ivy-next-line)
                 ("C-l" . ivy-done)
                 ("C-d" . ivy-switch-buffer-kill)
                 :map ivy-reverse-i-search-map
                 ("C-k" . ivy-previous-line)
-                ("C-d" . ivy-reverse-i-search-kill))
-    :config)
+                ("C-j" . ivy-next-line)
+                ("C-d" . ivy-reverse-i-search-kill)))
   
 #+end_src
 *** Guix
@@ -450,12 +579,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Counsel
 #+begin_src emacs-lisp
   (use-package counsel
+    :disabled t
     :bind (("M-x" . counsel-M-x)
            ("C-x b" . counsel-switch-buffer-other-window))
     :custom
     ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
   
-#+end_src
+  #+end_src
 
 *** Guix
 :PROPERTIES:
@@ -468,6 +598,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   
   (use-package ivy-rich
+  :disabled
     :after ivy)
   
 #+end_src
@@ -483,7 +614,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   (use-package projectile
     :diminish projectile-mode
-    :custom ((projectile-completion-system 'ivy))
+    ;;:custom ((projectile-completion-system 'ivy))
     :bind-keymap
     ("C-c p" . projectile-command-map))
   ;; NOTE: Set this to the folder where you keep your Git repos!
@@ -499,7 +630,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 *** Counsel-Projectile
 #+begin_src emacs-lisp
   (use-package counsel-projectile
-    :ensure nil
+    :disabled t
     :after projectile
     :config (counsel-projectile-mode))
 #+end_src
@@ -516,7 +647,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 #+begin_src emacs-lisp
   (use-package magit
-    :ensure nil
     :config (evil-collection-magit-setup)
     :general
     (:prefix-map 'my-leader-map
@@ -543,10 +673,8 @@ NOTE: Make sure to configure a GitHub token before using this package!
 ** Pass
 
 #+begin_src emacs-lisp
-    (use-package pass
-      :ensure nil)
+    (use-package pass)
     (use-package pinentry
-      :ensure nil
       :config
       (pinentry-start))
 #+end_src
@@ -570,14 +698,10 @@ NOTE: Make sure to configure a GitHub token before using this package!
 
 #+begin_src emacs-lisp
   (use-package helpful
-    :ensure nil
-    :custom
-    (counsel-describe-function-function #'helpful-callable)
-    (counsel-describe-variable-function #'helpful-variable)
     :bind
-    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-function] . helpful-callable)
     ([remap describe-command] . helpful-command)
-    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-variable] . helpful-variable)
     ([remap describe-key] . helpful-key))
 #+end_src
 *** Guix
@@ -593,7 +717,6 @@ NOTE: Make sure to configure a GitHub token before using this package!
 
 #+begin_src emacs-lisp
   (use-package doom-themes
-    :ensure nil
     :init
     (load-theme 'doom-one t))
 #+end_src
@@ -614,11 +737,9 @@ display correctly:
 =M-x all-the-icons-install-fonts=
 
 #+begin_src emacs-lisp
-  (use-package all-the-icons
-    :ensure nil)
+  (use-package all-the-icons)
   
   (use-package doom-modeline
-    :ensure nil
     :init (doom-modeline-mode t)
     :custom ((doom-mode-line-height 13)))
 #+end_src
@@ -636,7 +757,6 @@ display correctly:
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
-    :ensure nil
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 

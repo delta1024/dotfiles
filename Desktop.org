@@ -53,7 +53,6 @@
   (use-package desktop-environment
     :defer t)
   (use-package exwm
-    :ensure nil
     :config
     ;; Set the default number of workspaces
     (setq exwm-workspace-number 5)
@@ -124,7 +123,7 @@
                           (exwm-workspace-switch-create ,i))))
                     (number-sequence 0 9))))
   
-  (exwm-input-set-key (kbd "s-SPC") 'counsel-linux-app) ;; Set XDG_PATH variables
+  (exwm-input-set-key (kbd "s-SPC") 'app-launcher-run-app) ;; Set XDG_PATH variables
   
   (defun exwm-change-wallpaper () "Changes the Wallpaper"
     (interactive)

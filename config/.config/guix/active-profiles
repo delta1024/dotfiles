@@ -1,11 +1,12 @@
 # NOTE: active-profiles is generated from System.org. Please edit that 
   #   file in Emacs and active-profiles will be generated automatially
-  
+
   export GUIX_PROFILE="$HOME/.config/guix/current"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_PROFILE="$HOME/.guix-profile"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+  export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
   export GUIX_PROFILE="$HOME/.guix-extra-profiles/emacs/emacs"
   export GUIX_EMACS="$GUIX_PROFILE"
   . "$GUIX_EMACS/etc/profile"
@@ -13,7 +14,7 @@
 #  . "$GUIX_APPS/etc/profile"
 #  export GUIX_DESKTOP="$HOME/.guix-extra-profiles/desktop/desktop"
 #  . "$GUIX_DESKTOP/etc/profile"
-  
+
   export XDG_DATA_DIR="$HOME/.guix-profile/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EMACS/share"
   # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_APPS/share"
