@@ -3,9 +3,7 @@
 #+PROPERTY: header-args :tangle ./config/.config/guix/system.scm
 * Inbox
 ** TODO setup passwords
-- [X] download passwords from lastpass
-- [ ] import into pass
-- [ ] recover passwords not in lastpass
+- Look into error with pass not being recongnised
 ** TODO SSH Keys
 - [ ] Gitlab
 - [ ] Github

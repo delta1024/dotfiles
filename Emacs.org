@@ -49,8 +49,8 @@ Gives a memeory boost at startup
   (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
   (defvar my/user-font "Fira Code" "emacs's fixed width font")
   (defvar my/font-size 150 "font size for emacs")
-  (defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
-  (defvar my/guix-file (concat (getenv "HOME") "/.dotfiles/System.org") "GNU Guix configuration file")
+  (defvar my/emacs-file (expand-file-name  ".dotfiles/Emacs.org" (getenv "HOME")) "emacs configuration file name")
+  (defvar my/guix-file (expand-file-name  ".dotfiles/System.org" (getenv "HOME")) "GNU Guix configuration file")
   (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
 #+end_src
 
@@ -65,13 +65,12 @@ Gives a memeory boost at startup
 
 * Basic UI Improvements
 
-
 #+begin_src emacs-lisp
   (setq inhibit-startup-message t)
   
   ;; Redirect custom output
   
-  (setq custom-file (concat user-emacs-directory "emacs-custom.el"))
+  (setq custom-file (expand-file-name "emacs-custom.el" user-emacs-directory))
   
   (scroll-bar-mode -1)        ; Disable visible scrollbar
   (tool-bar-mode -1)          ; Disable the toolbar
@@ -267,8 +266,6 @@ Gives a memeory boost at startup
          (find-file (expand-file-name (concat a ".org") org-directory)))
 #+end_src
 ** straight
-*** [[https://github.com/SebastienWae/app-launcher][app-launcher]]
-
 ** Use Package
 #+begin_src emacs-lisp :noweb yes
   (use-package org
@@ -404,8 +401,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-org-roam"
 #+end_src
 
-** TODO Productivity
-[[https://www.youtube.com/watch?v=PNE-mgkZ6HM][System Crafters Video]]
 ** Todo Keywords
 #+begin_src emacs-lisp
   (setq org-todo-keywords
@@ -413,7 +408,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
           (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
 #+end_src
 
-** TODO setup =org-mode= structure templates
+** TODO setup structure templates
 * Markdown Mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -441,7 +436,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+end_src
 
 * TODO Productivity
-** DONE Vertico
+** Vertico
 #+begin_src emacs-lisp
     (use-package vertico
       :init
@@ -484,7 +479,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-selectrum"
 #+end_src
-** TODO Consult
+** Consult
 #+begin_src emacs-lisp
       (use-package consult
        :bind
@@ -772,7 +767,7 @@ display correctly:
 Load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
-    (load-file (concat user-emacs-directory "desktop.el")))
+    (load-file (expand-file-name "desktop.el" user-emacs-directory )))
 ;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src

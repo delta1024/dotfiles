@@ -19,15 +19,15 @@
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 (defvar my/user-font "Fira Code" "emacs's fixed width font")
 (defvar my/font-size 150 "font size for emacs")
-(defvar my/emacs-file (concat (getenv "HOME") "/.dotfiles/Emacs.org") "emacs configuration file name")
-(defvar my/guix-file (concat (getenv "HOME") "/.dotfiles/System.org") "GNU Guix configuration file")
+(defvar my/emacs-file (expand-file-name  ".dotfiles/Emacs.org" (getenv "HOME")) "emacs configuration file name")
+(defvar my/guix-file (expand-file-name  ".dotfiles/System.org" (getenv "HOME")) "GNU Guix configuration file")
 (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
 
 (setq inhibit-startup-message t)
 
 ;; Redirect custom output
 
-(setq custom-file (concat user-emacs-directory "emacs-custom.el"))
+(setq custom-file (expand-file-name "emacs-custom.el" user-emacs-directory))
 
 (scroll-bar-mode -1)        ; Disable visible scrollbar
 (tool-bar-mode -1)          ; Disable the toolbar
@@ -349,7 +349,7 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (defun my/exwm-load (switch)
-    (load-file (concat user-emacs-directory "desktop.el")))
+    (load-file (expand-file-name "desktop.el" user-emacs-directory )))
 ;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
