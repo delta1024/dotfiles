@@ -8,6 +8,7 @@
        "xrandr"
        "zsh"
        "xmodmap"
+       "pinentry"
        "htop"
        "fontconfig"
        "neovim"

@@ -245,6 +245,7 @@ to lock the channels at the current commit run:
   "xrandr"
   "zsh"
   "xmodmap"
+  "pinentry"
   "htop"
   "fontconfig"
   "neovim"

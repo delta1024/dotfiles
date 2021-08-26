@@ -178,6 +178,10 @@
         (org-babel-tangle))))
   (my/org-font-setup))
 
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
+        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
+
 (use-package org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)
@@ -201,13 +205,18 @@
   (org-roam-directory (expand-file-name "roam" org-directory))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
-         ("C-c n i" . org-roam-node-insert))
+         ("C-c n i" . org-roam-node-insert)
+         :map org-mode-map
+         ("C-M-i" . completion-at-point)
+         :map org-roam-dailies-map
+         ("Y" . org-roam-dailies-capture-yesterday)
+         ("T" . org-roam-dailies-capture-tomorrow))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
+  ("C-c n d" . org-roam-dailies-map)
   :config
-  (org-roam-setup))
-
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
+  (require 'org-roam-dailies)
+  (org-roam-db-autosync-mode))
 
 (use-package markdown-mode
 :commands (markdown-mode gfm-mode)
@@ -349,9 +358,9 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (defun my/exwm-load (switch)
-    (load-file (expand-file-name "desktop.el" user-emacs-directory )))
+  (load-file (expand-file-name "desktop.el" user-emacs-directory )))
 ;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
-  (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
+(add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
 (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
        (setq gc-cons-threshold (* 2 1000 1000))

@@ -147,7 +147,7 @@ Gives a memeory boost at startup
     :bind
     ([remap evil-search-forward] . swiper)
     ([remap evil-search-backward] . swiper-backward))
-#+end_src
+    #+end_src
 
 **** Guix
 :PROPERTIES:
@@ -341,8 +341,16 @@ Gives a memeory boost at startup
         (org-babel-tangle))))
 #+end_src
 
-** Packages  
-**** Org Bullets
+** Addons  
+** Todo Keywords
+#+begin_src emacs-lisp
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
+          (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
+#+end_src
+
+** TODO setup structure templates
+* Org Bullets
 
 #+begin_src emacs-lisp
   (use-package org-bullets
@@ -351,14 +359,14 @@ Gives a memeory boost at startup
     :custom
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
-***** Guix
+** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
 #+begin_src scheme
   "emacs-org-bullets"
 #+end_src
-**** Visual Fill Colum
+* Visual Fill Colum
 
 #+begin_src emacs-lisp
   (use-package visual-fill-column
@@ -371,7 +379,7 @@ Gives a memeory boost at startup
     :hook (org-mode . my/org-mode-visual-fill)
     (markdown-mode . my/org-mode-visual-fill))
 #+end_src
-***** Guix
+** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
@@ -379,7 +387,7 @@ Gives a memeory boost at startup
   "emacs-visual-fill-column"
 #+end_src
 
-**** Org Roam
+* Org Roam
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 #+begin_src emacs-lisp
   (use-package org-roam
@@ -389,11 +397,21 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     (org-roam-directory (expand-file-name "roam" org-directory))
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
-           ("C-c n i" . org-roam-node-insert))
+           ("C-c n i" . org-roam-node-insert)
+           :map org-mode-map
+           ("C-M-i" . completion-at-point)
+           :map org-roam-dailies-map
+           ("Y" . org-roam-dailies-capture-yesterday)
+           ("T" . org-roam-dailies-capture-tomorrow))
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
+    ("C-c n d" . org-roam-dailies-map)
     :config
-    (org-roam-setup))
+    (require 'org-roam-dailies)
+    (org-roam-db-autosync-mode))
+  
 #+end_src
-***** Guix
+** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
 :END:
@@ -401,14 +419,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-org-roam"
 #+end_src
 
-** Todo Keywords
-#+begin_src emacs-lisp
-  (setq org-todo-keywords
-        '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-          (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
-#+end_src
-
-** TODO setup structure templates
 * Markdown Mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
@@ -668,10 +678,10 @@ NOTE: Make sure to configure a GitHub token before using this package!
 ** Pass
 
 #+begin_src emacs-lisp
-    (use-package pass)
-    (use-package pinentry
-      :config
-      (pinentry-start))
+  (use-package pass)
+  (use-package pinentry
+    :config
+    (pinentry-start))
 #+end_src
 
 *** Guix
@@ -681,7 +691,7 @@ NOTE: Make sure to configure a GitHub token before using this package!
   "pinentry"
   "password-store"
   "emacs-pinentry"
-#+end_src
+  #+end_src
 
 * TODO Development
 ** TODO LSP Mode
@@ -768,7 +778,7 @@ Load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (expand-file-name "desktop.el" user-emacs-directory )))
-;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
+  ;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 
@@ -800,14 +810,12 @@ Returns the garbage collector to a sane value.
 
 * Manifest
 Guix Manifest
+
 #+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm
   ;; NOTE: emacs.scm is generated from Emacs.org. Please edit that file
   ;;        in Emacs and emacs.scm will be generated automatially
-  
   (specifications->manifest
    (list "emacs-native-comp"
          "emacs-guix"
-         <<packages>>
-         ))
-#+end_src
-
+         <<packages>>))
+ #+end_src
