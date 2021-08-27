@@ -122,6 +122,7 @@
     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
   (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
   (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
+  (exwm-input-set-key (kbd "C-s-p") 'pass)
   
   (exwm-enable))
 
