@@ -265,12 +265,14 @@ Gives a memeory boost at startup
          (interactive "sOrg File: ")
          (find-file (expand-file-name (concat a ".org") org-directory)))
 #+end_src
-** straight
+
 ** Use Package
 #+begin_src emacs-lisp :noweb yes
   (use-package org
+    :straight t
     :no-require t
-    :bind ("C-c o" . consult-outline)
+    :bind ((:map org-mode-map
+                 ("C-c o" . consult-outline)))
     :hook (org-mode . my/org-mode-setup)
     (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
     :config
@@ -359,6 +361,7 @@ Gives a memeory boost at startup
     :custom
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
+
 ** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
@@ -366,6 +369,7 @@ Gives a memeory boost at startup
 #+begin_src scheme
   "emacs-org-bullets"
 #+end_src
+
 * Visual Fill Colum
 
 #+begin_src emacs-lisp
@@ -390,7 +394,12 @@ Gives a memeory boost at startup
 * Org Roam
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 #+begin_src emacs-lisp
+  (use-package emacsql
+    :straight t)
+  (use-package emacsql-sqlite
+   :straight t)
   (use-package org-roam
+    :straight t
     :init
     (setq org-roam-v2-ack t)
     :custom
@@ -400,9 +409,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
            ("C-c n i" . org-roam-node-insert)
            :map org-mode-map
            ("C-M-i" . completion-at-point)
-           :map org-roam-dailies-map
-           ("Y" . org-roam-dailies-capture-yesterday)
-           ("T" . org-roam-dailies-capture-tomorrow))
+    :map org-roam-dailies-map
+    ("Y" . org-roam-dailies-capture-yesterday)
+    ("T" . org-roam-dailies-capture-tomorrow))
     :bind-keymap
     ("C-c n d" . org-roam-dailies-map)
     ("C-c n d" . org-roam-dailies-map)
@@ -445,7 +454,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :demand t)
 #+end_src
 
-* TODO Productivity
+* Productivity
 ** Vertico
 #+begin_src emacs-lisp
     (use-package vertico

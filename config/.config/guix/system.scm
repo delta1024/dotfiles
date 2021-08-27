@@ -49,8 +49,8 @@
          (specification->package "git")
          (specification->package "stow")
          (specification->package "neovim")
+         (specification->package "gcc")
          (specification->package "gnupg")
-         (specification->package "pinentry")
          (specification->package "xauth")
          (specification->package "zsh")
          (specification->package

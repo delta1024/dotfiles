@@ -137,8 +137,10 @@
        (find-file (expand-file-name (concat a ".org") org-directory)))
 
 (use-package org
+  :straight t
   :no-require t
-  :bind ("C-c o" . consult-outline)
+  :bind ((:map org-mode-map
+               ("C-c o" . consult-outline)))
   :hook (org-mode . my/org-mode-setup)
   (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
   :config
@@ -198,7 +200,12 @@
   :hook (org-mode . my/org-mode-visual-fill)
   (markdown-mode . my/org-mode-visual-fill))
 
+(use-package emacsql
+  :straight t)
+(use-package emacsql-sqlite
+ :straight t)
 (use-package org-roam
+  :straight t
   :init
   (setq org-roam-v2-ack t)
   :custom
@@ -208,9 +215,9 @@
          ("C-c n i" . org-roam-node-insert)
          :map org-mode-map
          ("C-M-i" . completion-at-point)
-         :map org-roam-dailies-map
-         ("Y" . org-roam-dailies-capture-yesterday)
-         ("T" . org-roam-dailies-capture-tomorrow))
+  :map org-roam-dailies-map
+  ("Y" . org-roam-dailies-capture-yesterday)
+  ("T" . org-roam-dailies-capture-tomorrow))
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   ("C-c n d" . org-roam-dailies-map)

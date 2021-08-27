@@ -8,12 +8,48 @@
   "h C-f" '((lambda () (interactive)
                (find-file my/exwm-config)) :wk "open desktop configuration"))
 
+;; (defun efs/polybar-exwm-workspace ()
+;;   (pcase exwm-workspace-current-index
+;;     (0 "")
+;;     (1 "")
+;;     (2 "")
+;;     (3 "")
+;;     (4 "")))
+(defun my/send-polybar-hook (module-name hook-index)
+  (start-process-shell-command "polybar-msg" nil (format "polybar-msg hook %s %s" module-name hook-index)))
+
+(defun my/send-polybar-exwm-workspace ()
+  (my/send-polybar-hook "exwm-workspace" 1))
+
+(defvar my/polybar-process nil
+  "Holds the process of the running Polybar instance, if any")
+
+(defun my/kill-panel ()
+  (interactive)
+  (when my/polybar-process
+    (ignore-errors
+      (kill-process my/polybar-process)))
+  (setq my/polybar-process nil))
+
+(defun my/start-panel ()
+  (interactive)
+  (my/kill-panel)
+  (setq my/polybar-process (start-process-shell-command "polybar" nil "polybar panel")))
+
+(defun my/toggle-panel ()
+  (interactive)
+  (if my/polybar-process
+      (my/kill-panel)
+    (my/start-panel)))
+
 (defun my/run-in-background (command)
   (let ((command-parts (split-string command "[ ]+")))
     (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
 
 (defun my/exwm-init-hook ()
-  (eshell))
+  (eshell)
+  (my/start-panel))
+
   ;; (my/run-in-background "picom")
   ;; (my/run-in-background "xclip")
   ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
@@ -30,6 +66,8 @@
   (add-hook 'exwm-init-hook #'my/exwm-init-hook)
   ;; When window "class" updates, use it to set the buffer name
   (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
+  ;; Update panel indicator when workspace changes
+  (add-hook 'exwm-workspace-switch-hook #'my/send-polybar-exwm-workspace)
 
   (desktop-environment-mode)
   ;; These keys should always pass through to Emacs
@@ -83,14 +121,8 @@
     (interactive)
     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
   (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
+  (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
   
   (exwm-enable))
-;; Show battery status in the mode line
-(display-battery-mode 1)
-
-;; Show the time and date in modeline
-(setq display-time-day-and-date t)
-(display-time-mode 1)
-;; Also take a look at display-time-format and format-time-string
 
 (my/post-config)

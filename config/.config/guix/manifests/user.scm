@@ -17,9 +17,4 @@
        "lf"
        "mpv"
        "mpd"
-       "qutebrowser"
-       "dunst"
-       "picom"
-       "xclip"
-       "xwallpaper"
-       "sxiv"))
+       "qutebrowser"))
