@@ -132,6 +132,16 @@
 (use-package swiper)
 
 (customize-set-variable 'org-directory "~/Documents/org/")
+(setq org-agenda-files '("Tasks.org"))
+(setq org-log-done 'time)
+(setq org-log-into-drawer t)
+(setq org-refile-targets
+      '(("Archive.org" :maxlevel . 1)
+        (".archive.org" :maxlevel . 1)))
+
+;; Save Org buffers after refilling!
+(advice-add 'org-refile :after 'org-save-all-org-buffers)
+
 (defun my/org-open-file (a)  "Opens the file in `org-directory'"
        (interactive "sOrg File: ")
        (find-file (expand-file-name (concat a ".org") org-directory)))

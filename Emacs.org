@@ -2,6 +2,22 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
 * Inbox
+** Magit
+*** TODO Forge
+- [ ] Create token for github auth
+- [ ] install and configure forge
+  NOTE: Make sure to configure a GitHub token before using this package!
+- https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
+- https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
+
+  #+begin_src emacs-lisp :tangle no
+    (use-package forge)
+  #+end_src
+** Development
+*** TODO LSP Mode
+[[https://github.com/emacs-lsp/lsp-mode][github]]
+*** TODO Rustic Mode
+[[https://github.com/brotzeit/rustic][github]]
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
@@ -256,11 +272,23 @@ Gives a memeory boost at startup
   "emacs-swiper"
 #+end_src
 
-* TODO Org Mode
+* Org Mode
 ** org-open-file
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-directory "~/Documents/org/")
+  (setq org-agenda-files '("Tasks.org"))
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+  (setq org-refile-targets
+        '(("Archive.org" :maxlevel . 1)
+          (".archive.org" :maxlevel . 1)))
+  
+  ;; Save Org buffers after refilling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+  #+end_src
+** org-open-file
+#+begin_src emacs-lisp
   (defun my/org-open-file (a)  "Opens the file in `org-directory'"
          (interactive "sOrg File: ")
          (find-file (expand-file-name (concat a ".org") org-directory)))
@@ -352,7 +380,6 @@ Gives a memeory boost at startup
           (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
 #+end_src
 
-** TODO setup structure templates
 * Org Bullets
 
 #+begin_src emacs-lisp
@@ -676,15 +703,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-magit"
 #+end_src
 
-*** TODO Forge
-NOTE: Make sure to configure a GitHub token before using this package!
-- https://magit.vc/manual/forge/Token-Creation.html#Token-Creation
-- https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started
-
-  #+begin_src emacs-lisp :tangle no
-    (use-package forge)
-  #+end_src
-
 ** Pass
 
 #+begin_src emacs-lisp
@@ -703,11 +721,6 @@ NOTE: Make sure to configure a GitHub token before using this package!
   "emacs-pinentry"
   #+end_src
 
-* TODO Development
-** TODO LSP Mode
-[[https://github.com/emacs-lsp/lsp-mode][github]]
-** TODO Rustic Mode
-[[https://github.com/brotzeit/rustic][github]]
 * Misc 
 ** Helpful
 

@@ -1,15 +1,14 @@
 #+TITLE: Desktop
 #+PROPERTY: header-args :tangle ./config/.config/emacs/desktop.el
 * Inbox
-** DONE implement noweb
-** TODO Polybar
-** DONE Grab launcher function from efs and integrate
-** DONE Add keybinding for changing the wallpaper
 ** TODO Check =EXWM= =gcs-done= and increase threshold if nesisarry
 - [ ] Capture exwm start =gcs-done=.
 - [ ] Capture exwm finish =gcs-done=.
 - [ ] Subtract the two values into a new variable
-** DONE exwm desktop
+** Windows
+*** TODO Window name hook
+*** TODO workspace spawn rules for applications
+*** TODO Find unicode icons for workspace
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
@@ -30,60 +29,47 @@
 *  EXWM
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-02.org][Emacs Desktop Part 2 Show Notes]]
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
-** Polybar integration
-#+begin_src emacs-lisp
-  ;; (defun efs/polybar-exwm-workspace ()
-  ;;   (pcase exwm-workspace-current-index
-  ;;     (0 "")
-  ;;     (1 "")
-  ;;     (2 "")
-  ;;     (3 "")
-  ;;     (4 "")))
-  (defun my/send-polybar-hook (module-name hook-index)
-    (start-process-shell-command "polybar-msg" nil (format "polybar-msg hook %s %s" module-name hook-index)))
-  
-  (defun my/send-polybar-exwm-workspace ()
-    (my/send-polybar-hook "exwm-workspace" 1))
-  
-  (defvar my/polybar-process nil
-    "Holds the process of the running Polybar instance, if any")
-  
-  (defun my/kill-panel ()
-    (interactive)
-    (when my/polybar-process
-      (ignore-errors
-        (kill-process my/polybar-process)))
-    (setq my/polybar-process nil))
-  
-  (defun my/start-panel ()
-    (interactive)
-    (my/kill-panel)
-    (setq my/polybar-process (start-process-shell-command "polybar" nil "polybar panel")))
+** Autostar
 
-  (defun my/toggle-panel ()
-    (interactive)
-    (if my/polybar-process
-        (my/kill-panel)
-      (my/start-panel)))
-  
-  
-#+end_src
 
-** Autostart
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
+  <<picom-integration>>
+  <<polybar-integration>>
   (defun my/run-in-background (command)
     (let ((command-parts (split-string command "[ ]+")))
       (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
   
   (defun my/exwm-init-hook ()
     (eshell)
-    (my/start-panel))
+    (my/start-panel)
+    (my/start-picom))
   
-    ;; (my/run-in-background "picom")
-    ;; (my/run-in-background "xclip")
-    ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
+  ;; (my/run-in-background "picom")
+  ;; (my/run-in-background "xclip")
+  ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
   #+end_src
+
+*** Picom integration
+#+name: picom-integration
+#+begin_src emacs-lisp :tangle no
+  (defvar my/picom-pid nil
+    "picom process id, if any")
+  (defun my/kill-picom () "kills the runnign picom procrss"
+         (interactive)
+         (when my/picom-pid
+           (ignore-errors
+             (kill-process my/picom-pid)))
+         (setq my/picom-pid nil))
+  (defun my/start-picom () "starts picom pointing to the default configuation location"
+         (interactive)
+         (my/kill-picom)
+         (setq my/picom-pid (start-process-shell-command "picom" nil "picom")))
+  (defun my/toggle-picom () "Toggles picom"
+  (interactive)
+  (if my/picom-pid
+  (my/kill-picom)
+  (my/start-picom)))
+#+end_src
 
 ** WM
 
@@ -109,7 +95,7 @@
     (exwm-enable))
   
 #+end_src
-
+** Keybindings
 *** Input Prefix Keys
 
 #+NAME: input-prefix-keys
@@ -172,8 +158,8 @@
     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
   (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
   (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
-  (exwm-input-set-key (kbd "C-s-p") 'pass)
-  
+  (exwm-input-set-key (kbd "s-g") 'pass)
+  (exwm-input-set-key (kbd "C-s-p") 'my/toggle-picom)
 #+end_src
 
 * Polybar
@@ -322,7 +308,46 @@ label-warn = %temperature-c%!
 label-warn-foreground = ${colors.secondary}
 #+end_src
 
-* TODO Runtime Optimization
+** Polybar integration
+#+NAME: polybar-integration
+#+begin_src emacs-lisp :tangle no
+  ;; (defun efs/polybar-exwm-workspace ()
+  ;;   (pcase exwm-workspace-current-index
+  ;;     (0 "")
+  ;;     (1 "")
+  ;;     (2 "")
+  ;;     (3 "")
+  ;;     (4 "")))
+  (defun my/send-polybar-hook (module-name hook-index)
+    (start-process-shell-command "polybar-msg" nil (format "polybar-msg hook %s %s" module-name hook-index)))
+  
+  (defun my/send-polybar-exwm-workspace ()
+    (my/send-polybar-hook "exwm-workspace" 1))
+  
+  (defvar my/polybar-process nil
+    "Holds the process of the running Polybar instance, if any")
+  
+  (defun my/kill-panel ()
+    (interactive)
+    (when my/polybar-process
+      (ignore-errors
+        (kill-process my/polybar-process)))
+    (setq my/polybar-process nil))
+  
+  (defun my/start-panel ()
+    (interactive)
+    (my/kill-panel)
+    (setq my/polybar-process (start-process-shell-command "polybar" nil "polybar panel")))
+  
+  (defun my/toggle-panel ()
+    (interactive)
+    (if my/polybar-process
+        (my/kill-panel)
+      (my/start-panel)))
+  
+  
+#+end_src
+* Runtime Optimization
 #+begin_src emacs-lisp
 (my/post-config)
 #+end_src
@@ -332,9 +357,7 @@ Here are listed the System level configruation requirments in order for emacs to
 ** Xsession
 #+begin_src sh :tangle config/.xsession :tangle-mode (identity #o755)
 dunst &
-picom &
 xclip &
-#/usr/libexec/polkit-mate-authentication-agent-1 &
 $HOME/.scripts/wallpaper.sh draw
 exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
 #+end_src

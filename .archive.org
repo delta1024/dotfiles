@@ -1,0 +1,7 @@
+* Desktop
+** DONE Polybar
+** DONE Grab launcher function from efs and integrate
+** DONE Add keybinding for changing the wallpaper
+** DONE exwm desktop
+* Emacs
+* System

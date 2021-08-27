@@ -2,6 +2,16 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/guix/system.scm
 * Inbox
+** OS
+*** Users
+**** TODO Add auto login  for my user
+**** TODO Disable gdm
+**** TODO [[info:guix#X Window][enable startx]]
+** Manifests
+*** Applications
+- [ ] Split applications off into a seperate profile
+*** Default
+- [ ] Rename manifest file
 * Channels
 
 to lock the channels at the current commit run:
@@ -58,7 +68,7 @@ to lock the channels at the current commit run:
    xorg)
   #+end_src
 
-* TODO OS
+* OS
 
 #+begin_src scheme :noweb yes
   <<my-desktop-services>>
@@ -137,7 +147,7 @@ to lock the channels at the current commit run:
 #+end_src
 #+end_src
 
-** TODO Users
+** Users
 
 #+NAME: users
 #+begin_src scheme :tangle no
@@ -151,12 +161,6 @@ to lock the channels at the current commit run:
                   '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
 #+end_src
-
-*** TODO Add auto login  for my user
-
-*** TODO Disable gdm
-
-*** TODO [[info:guix#X Window][enable startx]]
 
 ** Packages
 
@@ -220,16 +224,15 @@ to lock the channels at the current commit run:
 
 * Manifests
 
-config/.config/guix/manifests/user.scm
-#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/user.scm
+config/.config/guix/manifests/default.scm
+#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/default.scm
   ;; NOTE: user.scm is generated from System.org. Please edit that file
   ;;        in Emacs and user.scm will be generated automatially
   
   (specifications->manifest
    (list "glibc-locales"
-         <<default>>
-         <<applications>>))
-#+end_src
+         <<default>>))
+   #+end_src
 
 config/.config/guix/manifests/desktop.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/desktop.scm
@@ -238,6 +241,12 @@ config/.config/guix/manifests/desktop.scm
          <<desktop>>))
 #+end_src
 
+config/.config/guix/manifests/apps.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
+  (specifications->manifest
+   (list "alacritty"
+         <<applications>>))
+#+end_src
 ** Default
 
 #+NAME: default
@@ -268,7 +277,6 @@ config/.config/guix/manifests/desktop.scm
 
 #+NAME: applications
 #+begin_src scheme :tangle no
-  "alacritty" 
   "firefox"
   "lf"
   "mpv"
@@ -281,27 +289,26 @@ config/.config/guix/manifests/desktop.scm
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
 #+begin_src sh
-    # NOTE: active-profiles is generated from System.org. Please edit that 
-    #   file in Emacs and active-profiles will be generated automatially
+  # NOTE: active-profiles is generated from System.org. Please edit that 
+  #   file in Emacs and active-profiles will be generated automatially
   
-    export GUIX_PROFILE="$HOME/.config/guix/current"
-    . "$GUIX_PROFILE/etc/profile"
-    export GUIX_PROFILE="$HOME/.guix-profile"
-    . "$GUIX_PROFILE/etc/profile"
-    export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
-    export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
-
-    export XDG_DATA_DIR="$HOME/.guix-profile/share"
-    export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
-    export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
-  #  export GUIX_APPS="$HOME/.guix-extra-profiles/apps/app"
-  #  . "$GUIX_APPS/etc/profile"
-    export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"
-    . "$GUIX_PROFILE/etc/profile"
-    export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"
-    . "$GUIX_PROFILE/etc/profile"
-    # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_APPS/share"
-    # export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_DESKTOP/share"
+  export GUIX_PROFILE="$HOME/.config/guix/current"
+  . "$GUIX_PROFILE/etc/profile"
+  export GUIX_PROFILE="$HOME/.guix-profile"
+  . "$GUIX_PROFILE/etc/profile"
+  export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+  export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
+  
+  export XDG_DATA_DIR="$HOME/.guix-profile/share"
+  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
+  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
+  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
+  export GUIX_APPS="$HOME/$GUIX_EXTRA_PROFILES/apps/apps"
+  . "$GUIX_APPS/etc/profile"
+  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"
+  . "$GUIX_PROFILE/etc/profile"
+  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"
+  . "$GUIX_PROFILE/etc/profile"
   
 #+end_src
 Set up XDG variables

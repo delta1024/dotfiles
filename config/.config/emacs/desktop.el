@@ -8,6 +8,23 @@
   "h C-f" '((lambda () (interactive)
                (find-file my/exwm-config)) :wk "open desktop configuration"))
 
+(defvar my/picom-pid nil
+  "picom process id, if any")
+(defun my/kill-picom () "kills the runnign picom procrss"
+       (interactive)
+       (when my/picom-pid
+         (ignore-errors
+           (kill-process my/picom-pid)))
+       (setq my/picom-pid nil))
+(defun my/start-picom () "starts picom pointing to the default configuation location"
+       (interactive)
+       (my/kill-picom)
+       (setq my/picom-pid (start-process-shell-command "picom" nil "picom")))
+(defun my/toggle-picom () "Toggles picom"
+(interactive)
+(if my/picom-pid
+(my/kill-picom)
+(my/start-picom)))
 ;; (defun efs/polybar-exwm-workspace ()
 ;;   (pcase exwm-workspace-current-index
 ;;     (0 "")
@@ -42,17 +59,19 @@
       (my/kill-panel)
     (my/start-panel)))
 
+
 (defun my/run-in-background (command)
   (let ((command-parts (split-string command "[ ]+")))
     (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
 
 (defun my/exwm-init-hook ()
   (eshell)
-  (my/start-panel))
+  (my/start-panel)
+  (my/start-picom))
 
-  ;; (my/run-in-background "picom")
-  ;; (my/run-in-background "xclip")
-  ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
+;; (my/run-in-background "picom")
+;; (my/run-in-background "xclip")
+;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
 
 (defun my/exwm-update-class ()
   (exwm-workspace-rename-buffer exwm-class-name))
@@ -122,8 +141,8 @@
     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
   (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
   (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
-  (exwm-input-set-key (kbd "C-s-p") 'pass)
-  
+  (exwm-input-set-key (kbd "s-g") 'pass)
+  (exwm-input-set-key (kbd "C-s-p") 'my/toggle-picom)
   (exwm-enable))
 
 (my/post-config)
