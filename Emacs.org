@@ -18,6 +18,11 @@
 [[https://github.com/emacs-lsp/lsp-mode][github]]
 *** TODO Rustic Mode
 [[https://github.com/brotzeit/rustic][github]]
+** Org
+*** TODO Capture Templates
+- [ ] Emacs.org
+- [ ] Desktop.org
+- [ ] System.org
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 

@@ -1,8 +1,9 @@
 ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
 ;;       in Emacs and desktop.el will be generated automatically!
 
+(defvar exwm-gcs-start-var gcs-done "numer of gc's done at the begining of destkop.el")
 (server-start)
-(defvar my/exwm-config (concat (getenv "HOME") "/.dotfiles/Desktop.org") "EXWM Configuration file name")
+(defvar my/exwm-config (expand-file-name ".dotfiles/Desktop.org" (getenv "HOME")) "EXWM Configuration file name")
 (add-to-list 'default-frame-alist '(alpha 90 90))
 (my/leader-def
   "h C-f" '((lambda () (interactive)
@@ -135,14 +136,16 @@
                     (number-sequence 0 9))))
   
   (exwm-input-set-key (kbd "s-SPC") 'app-launcher-run-app) ;; Set XDG_PATH variables
-  
-  (defun exwm-change-wallpaper () "Changes the Wallpaper"
-    (interactive)
-    (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
-  (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
+  (exwm-input-set-key (kbd "s-y") '(lambda () (interactive)
+         (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set")))
   (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
   (exwm-input-set-key (kbd "s-g") 'pass)
   (exwm-input-set-key (kbd "C-s-p") 'my/toggle-picom)
+  (exwm-input-set-key (kbd "s-s") '(lambda (query)
+                                     (interactive "sWeb Search: ")
+                                     (start-process-shell-command "qutebrowser" nil (concat "qutebrowser ""\"" query "\""))))
   (exwm-enable))
 
 (my/post-config)
+(defvar exwm-gc-end-var gcs-done "number of gc's done at end of desktop.el in total")
+(defvar my/desktop-gs (- exwm-gc-end-var exwm-gcs-start-var) "number of gc's done durring desktop.el evaluation")

@@ -18,8 +18,9 @@
 
 
 #+begin_src emacs-lisp
+  (defvar exwm-gcs-start-var gcs-done "numer of gc's done at the begining of destkop.el")
   (server-start)
-  (defvar my/exwm-config (concat (getenv "HOME") "/.dotfiles/Desktop.org") "EXWM Configuration file name")
+  (defvar my/exwm-config (expand-file-name ".dotfiles/Desktop.org" (getenv "HOME")) "EXWM Configuration file name")
   (add-to-list 'default-frame-alist '(alpha 90 90))
   (my/leader-def
     "h C-f" '((lambda () (interactive)
@@ -29,7 +30,7 @@
 *  EXWM
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-02.org][Emacs Desktop Part 2 Show Notes]]
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
-** Autostar
+** Autostart
 
 
 #+begin_src emacs-lisp :noweb yes
@@ -121,7 +122,7 @@
 *** Global Keys
 
 #+NAME: global-keys
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no :noweb yes
   ;; Set up global key bindings.  These always work, no matter the input state!
   ;; Keep in mind that changing this list after EXWM initializes has no effect.
   (setq exwm-input-global-keys
@@ -150,16 +151,22 @@
                           (interactive)
                           (exwm-workspace-switch-create ,i))))
                     (number-sequence 0 9))))
+  <<exwm-input-set-keys>>
+#+end_src
+
+**** input set keys
+#+NAME: exwm-input-set-keys
+#+begin_src emacs-lisp :tangle no
   
   (exwm-input-set-key (kbd "s-SPC") 'app-launcher-run-app) ;; Set XDG_PATH variables
-  
-  (defun exwm-change-wallpaper () "Changes the Wallpaper"
-    (interactive)
-    (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set"))
-  (exwm-input-set-key (kbd "s-y") 'exwm-change-wallpaper)
+  (exwm-input-set-key (kbd "s-y") '(lambda () (interactive)
+         (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set")))
   (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
   (exwm-input-set-key (kbd "s-g") 'pass)
   (exwm-input-set-key (kbd "C-s-p") 'my/toggle-picom)
+  (exwm-input-set-key (kbd "s-s") '(lambda (query)
+                                     (interactive "sWeb Search: ")
+                                     (start-process-shell-command "qutebrowser" nil (concat "qutebrowser ""\"" query "\""))))
 #+end_src
 
 * Polybar
@@ -349,7 +356,9 @@ label-warn-foreground = ${colors.secondary}
 #+end_src
 * Runtime Optimization
 #+begin_src emacs-lisp
-(my/post-config)
+  (my/post-config)
+  (defvar exwm-gc-end-var gcs-done "number of gc's done at end of desktop.el in total")
+  (defvar my/desktop-gs (- exwm-gc-end-var exwm-gcs-start-var) "number of gc's done durring desktop.el evaluation")
 #+end_src
 
 * System Configuration Requirements
