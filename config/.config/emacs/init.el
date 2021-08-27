@@ -141,6 +141,7 @@
   :no-require t
   :bind ((:map org-mode-map
                ("C-c o" . consult-outline)))
+  ([remap evil-jump-forward] . org-cycle)
   :hook (org-mode . my/org-mode-setup)
   (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
   :config
