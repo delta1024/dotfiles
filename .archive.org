@@ -36,3 +36,6 @@ Manifest: default
 Manifest: Emacs
 ** perl-file-mimeinfo
 Manifest: desktop
+** DONE remove lf
+CLOSED: [2021-08-28 Sat 13:12]
+Manifest: desktop

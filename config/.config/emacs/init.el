@@ -15,6 +15,7 @@
 (add-hook 'emacs-startup-hook #'my/display-startup-time)
 
 (setq gc-cons-threshold (* 50 1000 1000))
+(defvar my/post-config nil "Weither or not my/post-config has run")
 
 (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
 (defvar my/user-font "Fira Code" "emacs's fixed width font")
@@ -159,7 +160,7 @@
         ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
          "* TODO %?\n")
         ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
-         "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
+         "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
 
         ("c" "Configs")
         ("ce" "Emacs")
@@ -182,11 +183,14 @@
         ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
          "* %^{Package name: }\nManifest: %^{Manifest: }")
         ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
-         "* TODO %?")))
+         "* TODO %?")
+        ("I" "issues" entry (file "~/Documents/org/Issue.org")
+         "* %^{Issue: }\n%?")))
 
 (defun my/org-open-file (a)  "Opens the file in `org-directory'"
-       (interactive "sOrg File: ")
-       (find-file (expand-file-name (concat a ".org") org-directory)))
+       (interactive (list (read-file-name "What File? " org-directory)))
+       ;; (find-file (expand-file-name (concat a ".org") org-directory)))
+       (find-file  a))
 
 (use-package org
   :straight t
@@ -295,15 +299,31 @@
         dired-switches-in-mode-line t)
   :custom ((dired-listing-switches "-aBGgD --group-directories-first")))
 
+(use-package dired-single
+  :straight t)
+
+(evil-collection-define-key 'normal 'dired-mode-map
+  "h" 'dired-single-up-directory
+  "l" 'dired-single-buffer)
+
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
 
-;; (use-package dired-hide-dotfiles
-;;   :straight t
+(use-package dired-hide-dotfiles
+  :straight t
 ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
-;;   :config
-;;   (evil-collection-define-key 'normal 'dired-mode-map
-;;     "H" 'dired-hide-dotfiles-mode))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
+
+(use-package dired-open
+:straight t
+:config
+;; Doesn't work as expected!
+;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+;; -- OR! --
+(setq dired-open-extensions '(("png" . "sxiv")
+                              ("mkv" . "mpv"))))
 
 (defun my/minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
@@ -461,7 +481,8 @@
        (setq gc-cons-threshold (* 2 1000 1000))
        ;; We're going to load custom here becaus it makes more
        ;; sense to do so here with how EXWM is loaded
-       (load custom-file :noerror))
+       (load custom-file :noerror)
+       (setq my/post-config t))
 
 ;; Returns nil if switch is abset
 (defun found-custom-arg (switch) "Returns nil if switch is absent"

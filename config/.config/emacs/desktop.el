@@ -88,6 +88,7 @@
   (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
   ;; Update panel indicator when workspace changes
   (add-hook 'exwm-workspace-switch-hook #'my/send-polybar-exwm-workspace)
+  (add-hook 'exwm-init-hook #'my/post-config)
 
   (desktop-environment-mode)
   ;; These keys should always pass through to Emacs
@@ -149,6 +150,5 @@
                                      (start-process-shell-command "firefox" nil "firefox youtube.com")))
   (exwm-enable))
 
-(my/post-config)
 (defvar exwm-gc-end-var gcs-done "number of gc's done at end of desktop.el in total")
 (defvar my/desktop-gs (- exwm-gc-end-var exwm-gcs-start-var) "number of gc's done durring desktop.el evaluation")

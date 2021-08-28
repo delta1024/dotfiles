@@ -10,6 +10,8 @@
 ** Manifests
 *** Inbox
 ** General
+*** ZSH
+Paruse zsh documentation on prompts
 * Channels
 
 to lock the channels at the current commit run:
@@ -70,7 +72,7 @@ to lock the channels at the current commit run:
    networking
    ssh
    xorg)
-  #+end_src
+#+end_src
 
 * OS
 
@@ -164,7 +166,7 @@ to lock the channels at the current commit run:
                  (supplementary-groups
                   '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
-                  #+end_src
+#+end_src
 
 ** Packages
 
@@ -219,7 +221,7 @@ to lock the channels at the current commit run:
                     "RUN+=\"/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\""
                     "\n"
                     "ACTION==\"add\", SUBSYSTEM==\"backlight\", ""RUN+=\"/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\"")))
-
+  
   (define %my-desktop-services
     ;; My personal Desktop configuration
     (modify-services %desktop-services
@@ -246,7 +248,7 @@ config/.config/guix/manifests/default.scm
   (specifications->manifest
    (list "glibc-locales"
          <<default>>))
-   #+end_src
+#+end_src
 
 config/.config/guix/manifests/desktop.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/desktop.scm
@@ -303,8 +305,7 @@ config/.config/guix/manifests/browsers.scm
 ** Applications
 
 #+NAME: applications
-#+begin_src scheme :tangle no
-  "lf"
+ #+begin_src scheme :tangle no
   "neofetch"
   "mpv"
   "mpd"

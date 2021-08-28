@@ -5,6 +5,8 @@
 ** God Mode
 check out the [[https://github.com/emacsorphanage/god-mode#readme][README]] for configuration options
 ** General
+*** Eshell
+Paruse Documentation for useful configuration stuff
 ** Magit
 *** TODO Forge
 - [ ] Create token for github auth
@@ -24,8 +26,6 @@ check out the [[https://github.com/emacsorphanage/god-mode#readme][README]] for 
 [[https://github.com/brotzeit/rustic][github]]
 ** Org
 *** TODO Habit Tracker
-pre-existing feature: no
-**** Description
 Habit tracking for underwear and teath brushing 
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
@@ -62,6 +62,7 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
 Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (setq gc-cons-threshold (* 50 1000 1000))
+  (defvar my/post-config nil "Weither or not my/post-config has run")
 #+end_src
 
 ** Debugging
@@ -316,44 +317,47 @@ Gives a memeory boost at startup
 ** Org Capture Templates
 
   #+begin_src emacs-lisp
-  (setq org-capture-templates
-        '(("t" "TODO")
-          ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
-           "* TODO %^{Title}\n %?")
-          ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
-           "* TODO %?\n")
-          ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
-           "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
-  
-          ("c" "Configs")
-          ("ce" "Emacs")
-          ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
-           "* TODO %^{Title}\nDescription: %?")
-          ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
-           "* %^{Title}\n%?")
-  
-          ("cd" "Desktop")
-          ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
-           "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
-          ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
-           "* TODO %^{Window}\nDesired Behaviour:%?")
-          ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
-           "* TODO %?")
-  
-          ("cs" "System")
-          ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
-           "* TODO %^{Title}\n%?")
-          ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
-           "* %^{Package name: }\nManifest: %^{Manifest: }")
-          ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
-           "* TODO %?")))
+    (setq org-capture-templates
+          '(("t" "TODO")
+            ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
+             "* TODO %^{Title}\n %?")
+            ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
+             "* TODO %?\n")
+            ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
+             "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
+    
+            ("c" "Configs")
+            ("ce" "Emacs")
+            ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+             "* TODO %^{Title}\nDescription: %?")
+            ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+             "* %^{Title}\n%?")
+    
+            ("cd" "Desktop")
+            ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
+             "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
+            ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
+             "* TODO %^{Window}\nDesired Behaviour:%?")
+            ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
+             "* TODO %?")
+    
+            ("cs" "System")
+            ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
+             "* TODO %^{Title}\n%?")
+            ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
+             "* %^{Package name: }\nManifest: %^{Manifest: }")
+            ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
+             "* TODO %?")
+            ("I" "issues" entry (file "~/Documents/org/Issue.org")
+             "* %^{Issue: }\n%?")))
    #+end_src
- 
+
 ** org-open-file
 #+begin_src emacs-lisp
   (defun my/org-open-file (a)  "Opens the file in `org-directory'"
-         (interactive "sOrg File: ")
-         (find-file (expand-file-name (concat a ".org") org-directory)))
+         (interactive (list (read-file-name "What File? " org-directory)))
+         ;; (find-file (expand-file-name (concat a ".org") org-directory)))
+         (find-file  a))
 #+end_src
 
 ** Use Package
@@ -573,13 +577,26 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 ** Hide Dotfiles
 #+begin_src emacs-lisp
-  ;; (use-package dired-hide-dotfiles
-  ;;   :straight t
+  (use-package dired-hide-dotfiles
+    :straight t
   ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
-  ;;   :config
-  ;;   (evil-collection-define-key 'normal 'dired-mode-map
-  ;;     "H" 'dired-hide-dotfiles-mode))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
   #+end_src
+
+** Dired Open
+
+#+begin_src emacs-lisp
+  (use-package dired-open
+  :straight t
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  ;; -- OR! --
+  (setq dired-open-extensions '(("png" . "sxiv")
+                                ("mkv" . "mpv"))))
+#+end_src
 
 * Productivity
 ** Vertico
@@ -956,26 +973,27 @@ Load in exwm
 
 Returns the garbage collector to a sane value.
 #+begin_src emacs-lisp
-  (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
-         (setq gc-cons-threshold (* 2 1000 1000))
-         ;; We're going to load custom here becaus it makes more
-         ;; sense to do so here with how EXWM is loaded
-         (load custom-file :noerror))
-  
-  ;; Returns nil if switch is abset
-  (defun found-custom-arg (switch) "Returns nil if switch is absent"
-         (let ((found-switch (member switch command-line-args)))
-           found-switch))
-  
-  ;; if exwm isn't running set custom variables
-  (unless (found-custom-arg "-exwm")
-    (my/post-config))
+    (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
+           (setq gc-cons-threshold (* 2 1000 1000))
+           ;; We're going to load custom here becaus it makes more
+           ;; sense to do so here with how EXWM is loaded
+           (load custom-file :noerror)
+           (setq my/post-config t))
+    
+    ;; Returns nil if switch is abset
+    (defun found-custom-arg (switch) "Returns nil if switch is absent"
+           (let ((found-switch (member switch command-line-args)))
+             found-switch))
+    
+    ;; if exwm isn't running set custom variables
+    (unless (found-custom-arg "-exwm")
+      (my/post-config))
 #+end_src
 
 * Manifest
 Guix Manifest
-
-#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm
+config/.config/guix/manifests/emacs.scm
+#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm 
   ;; NOTE: emacs.scm is generated from Emacs.org. Please edit that file
   ;;        in Emacs and emacs.scm will be generated automatially
   (specifications->manifest
