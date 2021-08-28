@@ -13,6 +13,14 @@
  ssh
  xorg)
 
+(define %backlight-udev-rule
+  (udev-rule
+   "90-backlight.rules"
+   (string-append "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
+                  "RUN+=\"/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\""
+                  "\n"
+                  "ACTION==\"add\", SUBSYSTEM==\"backlight\", ""RUN+=\"/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\"")))
+
 (define %my-desktop-services
   ;; My personal Desktop configuration
   (modify-services %desktop-services
@@ -21,7 +29,10 @@
                                           (inherit config)
                                           (handle-lid-switch 'suspend)))
                    ;; (guix-service-type config =>
-                   ;;(guix configuration
+                   (udev-service-type config =>
+                                      (udev-configuration (inherit config)
+                                                          (rules (cons %backlight-udev-rule
+                                                                       (udev-configuration-rules config)))))
                    ;;(inherit config)
                    ;;do some stuff
                    ));;))

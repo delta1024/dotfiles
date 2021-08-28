@@ -1,7 +1,6 @@
 (specifications->manifest
  (list "alacritty"
-       "firefox"
        "lf"
+       "neofetch"
        "mpv"
-       "mpd"
-       "qutebrowser"))
+       "mpd"))

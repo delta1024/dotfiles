@@ -127,11 +127,13 @@
   ;;"M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
   "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
   "o"     '(my/org-open-file                                        :wk "open org file")
-  "c"     '(cd                                                      :wk "change directory"))
+  "c"     '(org-capture                                             :wk "change directory"))
 
 (use-package swiper)
 
 (customize-set-variable 'org-directory "~/Documents/org/")
+(customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
+(setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
 (setq org-agenda-files '("Tasks.org"))
 (setq org-log-done 'time)
 (setq org-log-into-drawer t)
@@ -141,6 +143,33 @@
 
 ;; Save Org buffers after refilling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
+
+(setq org-capture-templates
+      '(("t" "TODO")
+        ("th" "House" entry (file+headline "~/Documents/org/Tasks.org" "Household")
+         "* TODO %?\n")
+        ("tm" "Medical" entry (file+headline "~/Documents/org/Tasks.org" "Medical")
+         "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
+
+        ("c" "Configs")
+        ("co" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+         "* TODO %^{Title}\npre-existing feature: %^{Does the feature exist|no|yes}\n** Description\n %?")
+        ("ce" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+         "* %^{Title}\n%?")
+
+        ("cd" "Desktop")
+        ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
+         "* TODO %^{Function: }\nBinding: %^{Binding}\nMap: %^{Keymap: }")
+        ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
+         "* TODO %^{Window}\nDesired Behaviour:%?")
+
+        ("cs" "System")
+        ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
+         "* TODO %^{Title}\n%?")
+        ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
+         "* %^{Package name: }")
+        ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
+         "* TODO %?")))
 
 (defun my/org-open-file (a)  "Opens the file in `org-directory'"
        (interactive "sOrg File: ")
@@ -192,8 +221,9 @@
   (my/org-font-setup))
 
 (setq org-todo-keywords
-      '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
+      '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")
+        (sequence "MEDICAL" "NOT_BOOKED" "|" "BOOKED")))
 
 (use-package org-bullets
   :after org

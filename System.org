@@ -8,10 +8,8 @@
 **** TODO Disable gdm
 **** TODO [[info:guix#X Window][enable startx]]
 ** Manifests
-*** Applications
-- [ ] Split applications off into a seperate profile
-*** Default
-- [ ] Rename manifest file
+*** Inbox
+** General
 * Channels
 
 to lock the channels at the current commit run:
@@ -160,7 +158,7 @@ to lock the channels at the current commit run:
                  (supplementary-groups
                   '("wheel" "netdev" "audio" "video")))
                 %base-user-accounts))
-#+end_src
+                  #+end_src
 
 ** Packages
 
@@ -202,12 +200,20 @@ to lock the channels at the current commit run:
           (extra-special-file "/usr/bin/env"
                               (file-append coreutils "/bin/env")))
     %my-desktop-services))
-    #+end_src
+#+end_src
 
 ** Desktop Configuration
 
 #+NAME: my-desktop-services
 #+begin_src scheme :tangle no
+  (define %backlight-udev-rule
+    (udev-rule
+     "90-backlight.rules"
+     (string-append "ACTION==\"add\", SUBSYSTEM==\"backlight\", "
+                    "RUN+=\"/run/current-system/profile/bin/chgrp video /sys/class/backlight/%k/brightness\""
+                    "\n"
+                    "ACTION==\"add\", SUBSYSTEM==\"backlight\", ""RUN+=\"/run/current-system/profile/bin/chmod g+w /sys/class/backlight/%k/brightness\"")))
+
   (define %my-desktop-services
     ;; My personal Desktop configuration
     (modify-services %desktop-services
@@ -216,12 +222,14 @@ to lock the channels at the current commit run:
                                             (inherit config)
                                             (handle-lid-switch 'suspend)))
                      ;; (guix-service-type config =>
-                     ;;(guix configuration
+                     (udev-service-type config =>
+                                        (udev-configuration (inherit config)
+                                                            (rules (cons %backlight-udev-rule
+                                                                         (udev-configuration-rules config)))))
                      ;;(inherit config)
                      ;;do some stuff
                      ));;))
 #+end_src
-
 * Manifests
 
 config/.config/guix/manifests/default.scm
@@ -247,6 +255,14 @@ config/.config/guix/manifests/apps.scm
    (list "alacritty"
          <<applications>>))
 #+end_src
+
+
+config/.config/guix/manifests/browsers.scm
+#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm
+  (specifications->manifest
+   (list "qutebrowser"
+         "firefox"))
+#+end_src
 ** Default
 
 #+NAME: default
@@ -267,6 +283,7 @@ config/.config/guix/manifests/apps.scm
 #+NAME: desktop
 #+begin_src scheme :tangle no
   "dunst"
+  "brightnessctl"
   "picom"
   "xclip"
   "xwallpaper"
@@ -277,11 +294,10 @@ config/.config/guix/manifests/apps.scm
 
 #+NAME: applications
 #+begin_src scheme :tangle no
-  "firefox"
   "lf"
+  "neofetch"
   "mpv"
   "mpd"
-  "qutebrowser"
 #+end_src
 
 * Profiles
@@ -303,11 +319,13 @@ config/.config/guix/manifests/apps.scm
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
-  export GUIX_APPS="$HOME/$GUIX_EXTRA_PROFILES/apps/apps"
-  . "$GUIX_APPS/etc/profile"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"
+  GUIX_PROFILE="$HOME/$GUIX_EXTRA_PROFILES/apps/apps"; \
+   . "$GUIX_PROFILE/etc/profile"
+  GUIX_PROFILE="$HOME/$GUIX_EXTRA_PROFILES/browser/browser"; \
+   . "$GUIX_PROFILE/etc/profile"
+  GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
   . "$GUIX_PROFILE/etc/profile"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"
+  GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
   . "$GUIX_PROFILE/etc/profile"
   
 #+end_src

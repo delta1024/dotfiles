@@ -12,9 +12,11 @@ export XDG_DATA_DIR="$HOME/.guix-profile/share"
 export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
 export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
 export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
-export GUIX_APPS="$HOME/$GUIX_EXTRA_PROFILES/apps/apps"
-. "$GUIX_APPS/etc/profile"
-export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"
+GUIX_PROFILE="$HOME/$GUIX_EXTRA_PROFILES/apps/apps"; \
+ . "$GUIX_PROFILE/etc/profile"
+GUIX_PROFILE="$HOME/$GUIX_EXTRA_PROFILES/browser/browser"; \
+ . "$GUIX_PROFILE/etc/profile"
+GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
 . "$GUIX_PROFILE/etc/profile"
-export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"
+GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
 . "$GUIX_PROFILE/etc/profile"

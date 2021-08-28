@@ -2,6 +2,7 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
 * Inbox
+** General
 ** Magit
 *** TODO Forge
 - [ ] Create token for github auth
@@ -13,16 +14,13 @@
   #+begin_src emacs-lisp :tangle no
     (use-package forge)
   #+end_src
+
 ** Development
 *** TODO LSP Mode
 [[https://github.com/emacs-lsp/lsp-mode][github]]
 *** TODO Rustic Mode
 [[https://github.com/brotzeit/rustic][github]]
 ** Org
-*** TODO Capture Templates
-- [ ] Emacs.org
-- [ ] Desktop.org
-- [ ] System.org
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
@@ -32,10 +30,13 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
   ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
   ;;       in Emacs and init.el will be generated automatically!
 #+end_src
+
 * Early Init
+
 #+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el
   (setq package-enable-at-startup nil)
 #+end_src
+
 * Startup Optimization
 #+begin_src emacs-lisp 
   (defvar emacs-startup-time 
@@ -114,7 +115,7 @@ Gives a memeory boost at startup
                   eshell-mode-hook
                   dired-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
-  #+end_src
+#+end_src
 
 * Package and Use-Package
 =use-package= setup. 
@@ -168,7 +169,7 @@ Gives a memeory boost at startup
     :bind
     ([remap evil-search-forward] . swiper)
     ([remap evil-search-backward] . swiper-backward))
-    #+end_src
+#+end_src
 
 **** Guix
 :PROPERTIES:
@@ -253,7 +254,7 @@ Gives a memeory boost at startup
     ;;"M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
     "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
     "o"     '(my/org-open-file                                        :wk "open org file")
-    "c"     '(cd                                                      :wk "change directory"))
+    "c"     '(org-capture                                             :wk "change directory"))
 #+end_src
 
 *** Guix
@@ -278,10 +279,12 @@ Gives a memeory boost at startup
 #+end_src
 
 * Org Mode
-** org-open-file
+** Org Variables
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-directory "~/Documents/org/")
+  (customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
+  (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
   (setq org-agenda-files '("Tasks.org"))
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
@@ -291,7 +294,39 @@ Gives a memeory boost at startup
   
   ;; Save Org buffers after refilling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
-  #+end_src
+#+end_src
+
+** Org Capture Templates
+
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        '(("t" "TODO")
+          ("th" "House" entry (file+headline "~/Documents/org/Tasks.org" "Household")
+           "* TODO %?\n")
+          ("tm" "Medical" entry (file+headline "~/Documents/org/Tasks.org" "Medical")
+           "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
+  
+          ("c" "Configs")
+          ("co" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+           "* TODO %^{Title}\npre-existing feature: %^{Does the feature exist|no|yes}\n** Description\n %?")
+          ("ce" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+           "* %^{Title}\n%?")
+  
+          ("cd" "Desktop")
+          ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
+           "* TODO %^{Function: }\nBinding: %^{Binding}\nMap: %^{Keymap: }")
+          ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
+           "* TODO %^{Window}\nDesired Behaviour:%?")
+  
+          ("cs" "System")
+          ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
+           "* TODO %^{Title}\n%?")
+          ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
+           "* %^{Package name: }")
+          ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
+           "* TODO %?")))
+#+end_src
+
 ** org-open-file
 #+begin_src emacs-lisp
   (defun my/org-open-file (a)  "Opens the file in `org-directory'"
@@ -364,7 +399,7 @@ Gives a memeory boost at startup
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)))
-#+end_src
+  #+end_src
 
 **** Auto Tangle Config
 
@@ -381,8 +416,9 @@ Gives a memeory boost at startup
 ** Todo Keywords
 #+begin_src emacs-lisp
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "STARTEd(s)" "|" "DONE(d)")
-          (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")))
+        '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+          (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")
+          (sequence "MEDICAL" "NOT_BOOKED" "|" "BOOKED")))
 #+end_src
 
 * Org Bullets
@@ -416,6 +452,7 @@ Gives a memeory boost at startup
     :hook (org-mode . my/org-mode-visual-fill)
     (markdown-mode . my/org-mode-visual-fill))
 #+end_src
+
 ** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
@@ -453,6 +490,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     (org-roam-db-autosync-mode))
   
 #+end_src
+
 ** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
@@ -489,6 +527,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 * Productivity
 ** Vertico
+
 #+begin_src emacs-lisp
     (use-package vertico
       :init
@@ -512,6 +551,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
       :init
       (savehist-mode))
 #+end_src
+
 *** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
@@ -520,10 +560,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-vertico"
   "emacs-orderless"
 #+end_src
+
 ** Selectrum
+
 #+begin_src emacs-lisp
   (use-package selectrum)
 #+end_src
+
 *** GUIX
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
@@ -531,12 +574,15 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-selectrum"
 #+end_src
+
 ** Consult
+
 #+begin_src emacs-lisp
       (use-package consult
        :bind
         ("C-s" . consult-line))
 #+end_src
+
 *** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
@@ -544,7 +590,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   "emacs-consult"
 #+end_src
+
 ** Embark
+
 #+begin_src emacs-lisp
 
   (use-package embark
@@ -560,6 +608,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
                    nil
                    (window-parameters (mode-line-format . none)))))
 #+end_src
+
 *** GUIX
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
@@ -567,7 +616,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-embark"
 #+end_src
+
 ** Marginalia
+
 #+begin_src emacs-lisp
   
 (use-package marginalia
@@ -582,6 +633,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   ;; enabled right away. Note that this forces loading the package.
   (marginalia-mode))
 #+end_src
+
 *** GUIX
 :PROPERTIES:
 :header-args: :noweb-ref packages :tangle no
@@ -589,12 +641,16 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-marginalia"
 #+end_src
+
 ** app-launcher
+
 #+begin_src emacs-lisp
   (use-package app-launcher
     :straight '(app-launcher :host github :repo "SebastienWae/app-launcher"))
 #+end_src
+
 ** Ivy 
+
 #+begin_src emacs-lisp
   (use-package ivy
     :disabled t
@@ -615,6 +671,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
                 ("C-d" . ivy-reverse-i-search-kill)))
   
 #+end_src
+
 *** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
@@ -641,7 +698,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-counsel"
 #+end_src
+
 ** Ivy Rich
+
 #+begin_src emacs-lisp
   
   (use-package ivy-rich
@@ -649,6 +708,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :after ivy)
   
 #+end_src
+
 *** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
@@ -674,6 +734,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-projectile"
 #+end_src
+
 *** Counsel-Projectile
 #+begin_src emacs-lisp
   (use-package counsel-projectile
@@ -737,6 +798,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     ([remap describe-variable] . helpful-variable)
     ([remap describe-key] . helpful-key))
 #+end_src
+
 *** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
@@ -753,6 +815,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :init
     (load-theme 'doom-one t))
 #+end_src
+
 **** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages

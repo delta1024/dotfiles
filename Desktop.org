@@ -9,6 +9,7 @@
 *** TODO Window name hook
 *** TODO workspace spawn rules for applications
 *** TODO Find unicode icons for workspace
+** Keybindings
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
