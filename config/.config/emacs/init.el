@@ -161,22 +161,25 @@
          "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
 
         ("c" "Configs")
-        ("co" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
-         "* TODO %^{Title}\npre-existing feature: %^{Does the feature exist|no|yes}\n** Description\n %?")
-        ("ce" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+        ("ce" "Emacs")
+        ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+         "* TODO %^{Title}\nDescription: %?")
+        ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
          "* %^{Title}\n%?")
 
         ("cd" "Desktop")
         ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
-         "* TODO %^{Function: }\nBinding: %^{Binding}\nMap: %^{Keymap: }")
+         "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
         ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
          "* TODO %^{Window}\nDesired Behaviour:%?")
+        ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
+         "* TODO %?")
 
         ("cs" "System")
         ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
          "* TODO %^{Title}\n%?")
         ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
-         "* %^{Package name: }")
+         "* %^{Package name: }\nManifest: %^{Manifest: }")
         ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
          "* TODO %?")))
 
@@ -279,7 +282,27 @@
 
 (use-package dired
   :after evil
-  :demand t)
+  :demand t
+  :commands (dired dired-jump)
+  :hook (dired-mode . dired-hide-details-mode)
+  :bind (("C-x C-j" . dired-jump))
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-up-directory
+    "l" 'dired-find-file)
+  (setq dired-always-read-filesystem t
+        dired-switches-in-mode-line t)
+  :custom ((dired-listing-switches "-aBGgD --group-directories-first")))
+
+(use-package all-the-icons-dired
+  :hook (dired-mode . all-the-icons-dired-mode))
+
+(use-package dired-hide-dotfiles
+  :straight t
+  :hook (dired-mode . dired-hide-dotfiles-mode)
+  :config
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "H" 'dired-hide-dotfiles-mode))
 
 (use-package vertico
   :init

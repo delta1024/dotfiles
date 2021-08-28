@@ -14,6 +14,7 @@
        "emacs-visual-fill-column"
        "emacs-org-roam"
        "emacs-markdown-mode"
+       "emacs-all-the-icons-dired"
        "emacs-vertico"
        "emacs-orderless"
        "emacs-selectrum"

@@ -9,6 +9,12 @@
 **** TODO [[info:guix#X Window][enable startx]]
 ** Manifests
 *** Inbox
+**** Pavucontrol
+Manifest: desktop
+**** ispell
+Manifest: default
+**** remove pinentry
+Manifest: Emacs
 ** General
 * Channels
 

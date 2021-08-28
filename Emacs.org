@@ -3,8 +3,9 @@
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
 * Inbox
 ** General
-*** Dired
- Configure dired to have preittie icons and better display of files
+*** TODO Dired
+Configure dired to have preittier icons and better display of files
+*** No Littering
 ** Magit
 *** TODO Forge
 - [ ] Create token for github auth
@@ -23,6 +24,10 @@
 *** TODO Rustic Mode
 [[https://github.com/brotzeit/rustic][github]]
 ** Org
+*** TODO Habit Tracker
+pre-existing feature: no
+**** Description
+Habit tracking for underwear and teath brushing 
 * Preamble
 The following is my emacs config, feel free to take as much or as little as you like.
 
@@ -259,7 +264,7 @@ Gives a memeory boost at startup
     "o f"   '(my/org-open-file                                        :wk "open org file")
     "o a"   '(org-agenda                                              :wk "org agenda")
     "c"     '(org-capture                                             :wk "change directory"))
-  #+end_src
+#+end_src
 
 *** Guix
 :PROPERTIES:
@@ -310,7 +315,7 @@ Gives a memeory boost at startup
 
 ** Org Capture Templates
 
-#+begin_src emacs-lisp
+  #+begin_src emacs-lisp
   (setq org-capture-templates
         '(("t" "TODO")
           ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
@@ -321,25 +326,28 @@ Gives a memeory boost at startup
            "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
   
           ("c" "Configs")
-          ("co" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
-           "* TODO %^{Title}\npre-existing feature: %^{Does the feature exist|no|yes}\n** Description\n %?")
-          ("ce" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+          ("ce" "Emacs")
+          ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+           "* TODO %^{Title}\nDescription: %?")
+          ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
            "* %^{Title}\n%?")
   
           ("cd" "Desktop")
           ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
-           "* TODO %^{Function: }\nBinding: %^{Binding}\nMap: %^{Keymap: }")
+           "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
           ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
            "* TODO %^{Window}\nDesired Behaviour:%?")
+          ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
+           "* TODO %?")
   
           ("cs" "System")
           ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
            "* TODO %^{Title}\n%?")
           ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
-           "* %^{Package name: }")
+           "* %^{Package name: }\nManifest: %^{Manifest: }")
           ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
            "* TODO %?")))
-#+end_src
+   #+end_src
  
 ** org-open-file
 #+begin_src emacs-lisp
@@ -528,8 +536,42 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   (use-package dired
     :after evil
-    :demand t)
+    :demand t
+    :commands (dired dired-jump)
+    :hook (dired-mode . dired-hide-details-mode)
+    :bind (("C-x C-j" . dired-jump))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-up-directory
+      "l" 'dired-find-file)
+    (setq dired-always-read-filesystem t
+          dired-switches-in-mode-line t)
+    :custom ((dired-listing-switches "-aBGgD --group-directories-first")))
 #+end_src
+
+*** GUIX
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-all-the-icons-dired"
+#+end_src
+
+** All the Icons Dired
+#+begin_src emacs-lisp
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+
+** Hide Dotfiles
+#+begin_src emacs-lisp
+  (use-package dired-hide-dotfiles
+    :straight t
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
+  #+end_src
 
 * Productivity
 ** Vertico

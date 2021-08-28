@@ -9,7 +9,12 @@
 *** TODO Window name hook
 *** TODO workspace spawn rules for applications
 *** TODO Find unicode icons for workspace
+** General
+*** TODO Look into =exwm-desktop-environment= binding commands
 ** Keybindings
+*** TODO Youtube
+Binding: =s-f y=
+Map: exwm-general-binding
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
