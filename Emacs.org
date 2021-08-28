@@ -3,6 +3,8 @@
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
 * Inbox
 ** General
+*** Dired
+ Configure dired to have preittie icons and better display of files
 ** Magit
 *** TODO Forge
 - [ ] Create token for github auth
@@ -253,9 +255,11 @@ Gives a memeory boost at startup
     "b"     '(consult-buffer                                          :wk "switch buffers with preview")
     ;;"M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
     "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
-    "o"     '(my/org-open-file                                        :wk "open org file")
+    "o"     '(nil                                                     :wk "org")
+    "o f"   '(my/org-open-file                                        :wk "open org file")
+    "o a"   '(org-agenda                                              :wk "org agenda")
     "c"     '(org-capture                                             :wk "change directory"))
-#+end_src
+  #+end_src
 
 *** Guix
 :PROPERTIES:
@@ -301,9 +305,11 @@ Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (setq org-capture-templates
         '(("t" "TODO")
-          ("th" "House" entry (file+headline "~/Documents/org/Tasks.org" "Household")
+          ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
+           "* TODO %^{Title}\n %?")
+          ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
            "* TODO %?\n")
-          ("tm" "Medical" entry (file+headline "~/Documents/org/Tasks.org" "Medical")
+          ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
            "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
   
           ("c" "Configs")
@@ -326,7 +332,7 @@ Gives a memeory boost at startup
           ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
            "* TODO %?")))
 #+end_src
-
+ 
 ** org-open-file
 #+begin_src emacs-lisp
   (defun my/org-open-file (a)  "Opens the file in `org-directory'"
@@ -399,7 +405,7 @@ Gives a memeory boost at startup
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)))
-  #+end_src
+#+end_src
 
 **** Auto Tangle Config
 
@@ -467,7 +473,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   (use-package emacsql
     :straight t)
   (use-package emacsql-sqlite
-   :straight t)
+    :straight t)
   (use-package org-roam
     :straight t
     :init
@@ -479,9 +485,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
            ("C-c n i" . org-roam-node-insert)
            :map org-mode-map
            ("C-M-i" . completion-at-point)
-    :map org-roam-dailies-map
-    ("Y" . org-roam-dailies-capture-yesterday)
-    ("T" . org-roam-dailies-capture-tomorrow))
+           :map org-roam-dailies-map
+           ("Y" . org-roam-dailies-capture-yesterday)
+           ("T" . org-roam-dailies-capture-tomorrow))
     :bind-keymap
     ("C-c n d" . org-roam-dailies-map)
     ("C-c n d" . org-roam-dailies-map)
@@ -502,11 +508,11 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 * Markdown Mode
 #+begin_src emacs-lisp
   (use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown"))
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
 #+end_src
 
 ** Guix
@@ -529,27 +535,27 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Vertico
 
 #+begin_src emacs-lisp
-    (use-package vertico
-      :init
-      (vertico-mode)
-      (setq vertico-cycle t)
-      (setq vertico-resize t)
-      :bind
-      (:map vertico-map
-            ("C-j" . vertico-next)
-            ("C-k" . vertico-previous)))
-    
-    (use-package orderless
-      :init
-      (setq completion-styles '(orderless)
-            completion-category-defaults nil
-            completion-category-overrides '((file (styles partial-completion)))
-            selectrum-highlight-candidates-function #'orderless-highlight-matches))
-    
-    ;; Persist history over Emacs restarts. Vertico sorts by history position. 
-    (use-package savehist
-      :init
-      (savehist-mode))
+  (use-package vertico
+    :init
+    (vertico-mode)
+    (setq vertico-cycle t)
+    (setq vertico-resize t)
+    :bind
+    (:map vertico-map
+          ("C-j" . vertico-next)
+          ("C-k" . vertico-previous)))
+  
+  (use-package orderless
+    :init
+    (setq completion-styles '(orderless)
+          completion-category-defaults nil
+          completion-category-overrides '((file (styles partial-completion)))
+          selectrum-highlight-candidates-function #'orderless-highlight-matches))
+  
+  ;; Persist history over Emacs restarts. Vertico sorts by history position. 
+  (use-package savehist
+    :init
+    (savehist-mode))
 #+end_src
 
 *** Guix
@@ -578,9 +584,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Consult
 
 #+begin_src emacs-lisp
-      (use-package consult
-       :bind
-        ("C-s" . consult-line))
+  (use-package consult
+    :bind
+    ("C-s" . consult-line))
 #+end_src
 
 *** Guix
@@ -594,14 +600,14 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Embark
 
 #+begin_src emacs-lisp
-
+  
   (use-package embark
-
+  
     :bind
     (("M-o" . embark-act))         ;; pick some comfortable binding
-
+  
     :config
-
+  
     ;; Hide the mode line of the Embark live/completions buffers
     (add-to-list 'display-buffer-alist
                  '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
@@ -621,17 +627,17 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 #+begin_src emacs-lisp
   
-(use-package marginalia
-  ;; Either bind `marginalia-cycle` globally or only in the minibuffer
-  :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
-
-  ;; The :init configuration is always executed (Not lazy!)
-  :init
-
-  ;; Must be in the :init section of use-package such that the mode gets
-  ;; enabled right away. Note that this forces loading the package.
-  (marginalia-mode))
+  (use-package marginalia
+    ;; Either bind `marginalia-cycle` globally or only in the minibuffer
+    :bind (:map minibuffer-local-map
+                ("M-A" . marginalia-cycle))
+  
+    ;; The :init configuration is always executed (Not lazy!)
+    :init
+  
+    ;; Must be in the :init section of use-package such that the mode gets
+    ;; enabled right away. Note that this forces loading the package.
+    (marginalia-mode))
 #+end_src
 
 *** GUIX
@@ -689,7 +695,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :custom
     ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
   
-  #+end_src
+#+end_src
 
 *** Guix
 :PROPERTIES:
@@ -704,7 +710,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   
   (use-package ivy-rich
-  :disabled
+    :disabled
     :after ivy)
   
 #+end_src
@@ -785,7 +791,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "pinentry"
   "password-store"
   "emacs-pinentry"
-  #+end_src
+#+end_src
 
 * Misc 
 ** Helpful
@@ -909,4 +915,4 @@ Guix Manifest
    (list "emacs-native-comp"
          "emacs-guix"
          <<packages>>))
- #+end_src
+#+end_src

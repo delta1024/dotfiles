@@ -126,7 +126,9 @@
   "b"     '(consult-buffer                                          :wk "switch buffers with preview")
   ;;"M-b"   '(ivy-switch-buffer                                       :wk "switch buffer")
   "C-s"   '((lambda () (interactive) (guix))                        :wk "Guix")
-  "o"     '(my/org-open-file                                        :wk "open org file")
+  "o"     '(nil                                                     :wk "org")
+  "o f"   '(my/org-open-file                                        :wk "open org file")
+  "o a"   '(org-agenda                                              :wk "org agenda")
   "c"     '(org-capture                                             :wk "change directory"))
 
 (use-package swiper)
@@ -146,9 +148,11 @@
 
 (setq org-capture-templates
       '(("t" "TODO")
-        ("th" "House" entry (file+headline "~/Documents/org/Tasks.org" "Household")
+        ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
+         "* TODO %^{Title}\n %?")
+        ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
          "* TODO %?\n")
-        ("tm" "Medical" entry (file+headline "~/Documents/org/Tasks.org" "Medical")
+        ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
          "* %^{Status|MEDICAL|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
 
         ("c" "Configs")
@@ -244,7 +248,7 @@
 (use-package emacsql
   :straight t)
 (use-package emacsql-sqlite
- :straight t)
+  :straight t)
 (use-package org-roam
   :straight t
   :init
@@ -256,9 +260,9 @@
          ("C-c n i" . org-roam-node-insert)
          :map org-mode-map
          ("C-M-i" . completion-at-point)
-  :map org-roam-dailies-map
-  ("Y" . org-roam-dailies-capture-yesterday)
-  ("T" . org-roam-dailies-capture-tomorrow))
+         :map org-roam-dailies-map
+         ("Y" . org-roam-dailies-capture-yesterday)
+         ("T" . org-roam-dailies-capture-tomorrow))
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   ("C-c n d" . org-roam-dailies-map)
@@ -267,11 +271,11 @@
   (org-roam-db-autosync-mode))
 
 (use-package markdown-mode
-:commands (markdown-mode gfm-mode)
-:mode (("README\\.md\\'" . gfm-mode)
-       ("\\.md\\'" . markdown-mode)
-       ("\\.markdown\\'" . markdown-mode))
-:init (setq markdown-command "multimarkdown"))
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown"))
 
 (use-package dired
   :after evil
@@ -302,7 +306,7 @@
 (use-package selectrum)
 
 (use-package consult
- :bind
+  :bind
   ("C-s" . consult-line))
 
 (use-package embark
@@ -321,7 +325,7 @@
 (use-package marginalia
   ;; Either bind `marginalia-cycle` globally or only in the minibuffer
   :bind (:map minibuffer-local-map
-         ("M-A" . marginalia-cycle))
+              ("M-A" . marginalia-cycle))
 
   ;; The :init configuration is always executed (Not lazy!)
   :init
@@ -359,7 +363,7 @@
   ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
 
 (use-package ivy-rich
-:disabled
+  :disabled
   :after ivy)
 
 (use-package projectile
