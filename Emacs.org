@@ -2,6 +2,8 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
 * Inbox
+** God Mode
+check out the [[https://github.com/emacsorphanage/god-mode#readme][README]] for configuration options
 ** General
 ** Magit
 *** TODO Forge
@@ -284,33 +286,31 @@ Gives a memeory boost at startup
   "emacs-swiper"
 #+end_src
 
-** God Mode
-check out the [[https://github.com/emacsorphanage/god-mode#readme][README]] for configuration options
-
 * Org Mode
 ** Org Variables
 
 #+begin_src emacs-lisp
-  (customize-set-variable 'org-directory "~/Documents/org/")
-  (customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
-  (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
-  (setq org-agenda-files '("Tasks.org"))
-  (setq org-log-done 'time)
-  (setq org-log-into-drawer t)
-  (setq org-refile-targets
-        '(("Archive.org" :maxlevel . 1)
-          (".archive.org" :maxlevel . 1)))
-  
-  ;; Save Org buffers after refilling!
-  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+    (customize-set-variable 'org-directory "~/Documents/org/")
+    (customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
+    (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
+    (setq org-agenda-files '("Tasks.org" "Appointments.org"))
+    (setq org-log-done 'time)
+    (setq org-log-into-drawer t)
+    (setq org-refile-targets
+          '(("Archive.org" :maxlevel . 1)
+            (".archive.org" :maxlevel . 1)
+            ("Appointments.org" :maxlevel . 1)))
+    
+    ;; Save Org buffers after refilling!
+    (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
 ** Todo Keywords
 #+begin_src emacs-lisp
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
-          (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")
-          (sequence "NOT_BOOKED" "|" "BOOKED")))
+          (sequence "HOLD(h@)" "|" "COMPLETED(c)" "DROED(D@)")
+          (sequence "NOT_BOOKED" "|" "BOOKED(@)")))
 #+end_src
 
 ** Org Capture Templates
@@ -585,6 +585,17 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Vertico
 
 #+begin_src emacs-lisp
+  (defun my/minibuffer-backward-kill (arg)
+    "When minibuffer is completing a file name delete up to parent
+    folder, otherwise delete a character backward"
+    (interactive "p")
+    (if minibuffer-completing-file-name
+        ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+        (if (string-match-p "/." (minibuffer-contents))
+            (zap-up-to-char (- arg) ?/)
+          (delete-minibuffer-contents))
+      (delete-backward-char arg)))
+  
   (use-package vertico
     :init
     (vertico-mode)
@@ -593,7 +604,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :bind
     (:map vertico-map
           ("C-j" . vertico-next)
-          ("C-k" . vertico-previous)))
+          ("C-k" . vertico-previous))
+    (:map minibuffer-local-map
+          ("<backspace>" . my/minibuffer-backward-kill)))
   
   (use-package orderless
     :init

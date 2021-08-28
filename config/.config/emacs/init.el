@@ -136,20 +136,21 @@
 (customize-set-variable 'org-directory "~/Documents/org/")
 (customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
 (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
-(setq org-agenda-files '("Tasks.org"))
+(setq org-agenda-files '("Tasks.org" "Appointments.org"))
 (setq org-log-done 'time)
 (setq org-log-into-drawer t)
 (setq org-refile-targets
       '(("Archive.org" :maxlevel . 1)
-        (".archive.org" :maxlevel . 1)))
+        (".archive.org" :maxlevel . 1)
+        ("Appointments.org" :maxlevel . 1)))
 
 ;; Save Org buffers after refilling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
 (setq org-todo-keywords
       '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
-        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")
-        (sequence "NOT_BOOKED" "|" "BOOKED")))
+        (sequence "HOLD(h@)" "|" "COMPLETED(c)" "DROED(D@)")
+        (sequence "NOT_BOOKED" "|" "BOOKED(@)")))
 
 (setq org-capture-templates
       '(("t" "TODO")
@@ -294,13 +295,6 @@
         dired-switches-in-mode-line t)
   :custom ((dired-listing-switches "-aBGgD --group-directories-first")))
 
-(use-package dired-single
-  :straight t)
-
-(evil-collection-define-key 'normal 'dired-mode-map
-  "h" 'dired-single-up-directory
-  "l" 'dired-single-buffer)
-
 (use-package all-the-icons-dired
   :hook (dired-mode . all-the-icons-dired-mode))
 
@@ -311,6 +305,17 @@
 ;;   (evil-collection-define-key 'normal 'dired-mode-map
 ;;     "H" 'dired-hide-dotfiles-mode))
 
+(defun my/minibuffer-backward-kill (arg)
+  "When minibuffer is completing a file name delete up to parent
+  folder, otherwise delete a character backward"
+  (interactive "p")
+  (if minibuffer-completing-file-name
+      ;; Borrowed from https://github.com/raxod502/selectrum/issues/498#issuecomment-803283608
+      (if (string-match-p "/." (minibuffer-contents))
+          (zap-up-to-char (- arg) ?/)
+        (delete-minibuffer-contents))
+    (delete-backward-char arg)))
+
 (use-package vertico
   :init
   (vertico-mode)
@@ -319,7 +324,9 @@
   :bind
   (:map vertico-map
         ("C-j" . vertico-next)
-        ("C-k" . vertico-previous)))
+        ("C-k" . vertico-previous))
+  (:map minibuffer-local-map
+        ("<backspace>" . my/minibuffer-backward-kill)))
 
 (use-package orderless
   :init
