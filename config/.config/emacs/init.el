@@ -146,6 +146,11 @@
 ;; Save Org buffers after refilling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
+(setq org-todo-keywords
+      '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")
+        (sequence "NOT_BOOKED" "|" "BOOKED")))
+
 (setq org-capture-templates
       '(("t" "TODO")
         ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
@@ -223,11 +228,6 @@
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
   (my/org-font-setup))
-
-(setq org-todo-keywords
-      '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
-        (sequence "HOLD(h)" "|" "COMPLETED(c)" "DROED(D@)")
-        (sequence "MEDICAL" "NOT_BOOKED" "|" "BOOKED")))
 
 (use-package org-bullets
   :after org
