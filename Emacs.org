@@ -284,6 +284,9 @@ Gives a memeory boost at startup
   "emacs-swiper"
 #+end_src
 
+** God Mode
+check out the [[https://github.com/emacsorphanage/god-mode#readme][README]] for configuration options
+
 * Org Mode
 ** Org Variables
 
@@ -553,7 +556,15 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src scheme
   "emacs-all-the-icons-dired"
 #+end_src
-
+** Dired Single
+#+begin_src emacs-lisp
+  (use-package dired-single
+    :straight t)
+  
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer)
+#+end_src
 ** All the Icons Dired
 #+begin_src emacs-lisp
   (use-package all-the-icons-dired
@@ -562,12 +573,12 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 ** Hide Dotfiles
 #+begin_src emacs-lisp
-  (use-package dired-hide-dotfiles
-    :straight t
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
+  ;; (use-package dired-hide-dotfiles
+  ;;   :straight t
+  ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
+  ;;   :config
+  ;;   (evil-collection-define-key 'normal 'dired-mode-map
+  ;;     "H" 'dired-hide-dotfiles-mode))
   #+end_src
 
 * Productivity

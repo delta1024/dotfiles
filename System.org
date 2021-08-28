@@ -292,6 +292,7 @@ config/.config/guix/manifests/browsers.scm
 #+begin_src scheme :tangle no
   "dunst"
   "brightnessctl"
+  "perl-file-mimeinfo"
   "picom"
   "pavucontrol"
   "xclip"

@@ -34,3 +34,5 @@ Manifest: desktop
 Manifest: default
 ** remove pinentry
 Manifest: Emacs
+** perl-file-mimeinfo
+Manifest: desktop
