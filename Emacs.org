@@ -3,9 +3,6 @@
 #+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
 * Inbox
 ** General
-*** TODO Dired
-Configure dired to have preittier icons and better display of files
-*** No Littering
 ** Magit
 *** TODO Forge
 - [ ] Create token for github auth
@@ -694,7 +691,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 #+begin_src emacs-lisp
   (use-package app-launcher
-    :straight '(app-launcher :host github :repo "SebastienWae/app-launcher"))
+    :straight '(app-launcher :host github :repo "SebastienWae/app-launcher")
+    :config
+    (dolist (profiles '("browsers/browsers/share/applications"
+                        "apps/apps/share/applications"
+                        "desktop/desktop/share/applications"
+                        "emacs/emacs/share/applications"))
+      (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles))))
 #+end_src
 
 ** Ivy 
@@ -830,8 +833,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-pass"
-  "pinentry"
-  "password-store"
   "emacs-pinentry"
 #+end_src
 

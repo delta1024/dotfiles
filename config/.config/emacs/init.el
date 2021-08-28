@@ -358,7 +358,13 @@
   (marginalia-mode))
 
 (use-package app-launcher
-  :straight '(app-launcher :host github :repo "SebastienWae/app-launcher"))
+  :straight '(app-launcher :host github :repo "SebastienWae/app-launcher")
+  :config
+  (dolist (profiles '("browsers/browsers/share/applications"
+                      "apps/apps/share/applications"
+                      "desktop/desktop/share/applications"
+                      "emacs/emacs/share/applications"))
+    (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles))))
 
 (use-package ivy
   :disabled t

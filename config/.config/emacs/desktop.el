@@ -144,6 +144,9 @@
   (exwm-input-set-key (kbd "s-s") '(lambda (query)
                                      (interactive "sWeb Search: ")
                                      (start-process-shell-command "qutebrowser" nil (concat "qutebrowser ""\"" query "\""))))
+  (exwm-input-set-key (kbd "s-f") '(lambda ()
+                                     (interactive)
+                                     (start-process-shell-command "firefox" nil "firefox youtube.com")))
   (exwm-enable))
 
 (my/post-config)

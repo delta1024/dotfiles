@@ -28,8 +28,6 @@
        "emacs-counsel-projectile"
        "emacs-magit"
        "emacs-pass"
-       "pinentry"
-       "password-store"
        "emacs-pinentry"
        "emacs-helpful"
        "emacs-doom-themes"

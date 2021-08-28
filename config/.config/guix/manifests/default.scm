@@ -8,6 +8,8 @@
        "xrandr"
        "zsh"
        "xmodmap"
+       "ispell"
+       "password-store"
        "pinentry"
        "htop"
        "fontconfig"

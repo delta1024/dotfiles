@@ -12,9 +12,6 @@
 ** General
 *** TODO Look into =exwm-desktop-environment= binding commands
 ** Keybindings
-*** TODO Youtube
-Binding: =s-f y=
-Map: exwm-general-binding
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
@@ -173,6 +170,9 @@ Map: exwm-general-binding
   (exwm-input-set-key (kbd "s-s") '(lambda (query)
                                      (interactive "sWeb Search: ")
                                      (start-process-shell-command "qutebrowser" nil (concat "qutebrowser ""\"" query "\""))))
+  (exwm-input-set-key (kbd "s-f") '(lambda ()
+                                     (interactive)
+                                     (start-process-shell-command "firefox" nil "firefox youtube.com")))
 #+end_src
 
 * Polybar

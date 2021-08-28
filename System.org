@@ -9,12 +9,6 @@
 **** TODO [[info:guix#X Window][enable startx]]
 ** Manifests
 *** Inbox
-**** Pavucontrol
-Manifest: desktop
-**** ispell
-Manifest: default
-**** remove pinentry
-Manifest: Emacs
 ** General
 * Channels
 
@@ -278,6 +272,8 @@ config/.config/guix/manifests/browsers.scm
   "xrandr"
   "zsh"
   "xmodmap"
+  "ispell"
+  "password-store"
   "pinentry"
   "htop"
   "fontconfig"
@@ -291,6 +287,7 @@ config/.config/guix/manifests/browsers.scm
   "dunst"
   "brightnessctl"
   "picom"
+  "pavucontrol"
   "xclip"
   "xwallpaper"
   "sxiv"
@@ -325,13 +322,14 @@ config/.config/guix/manifests/browsers.scm
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
-  GUIX_PROFILE="$HOME/$GUIX_EXTRA_PROFILES/apps/apps"; \
+  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/browsers/browsers/share"
+  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/apps/apps"; \
    . "$GUIX_PROFILE/etc/profile"
-  GUIX_PROFILE="$HOME/$GUIX_EXTRA_PROFILES/browser/browser"; \
+  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/browsers/browsers"; \
    . "$GUIX_PROFILE/etc/profile"
-  GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
+  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
   . "$GUIX_PROFILE/etc/profile"
-  GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
+  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
   . "$GUIX_PROFILE/etc/profile"
   
 #+end_src
