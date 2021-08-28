@@ -39,3 +39,9 @@ Manifest: desktop
 ** DONE remove lf
 CLOSED: [2021-08-28 Sat 13:12]
 Manifest: desktop
+** network-manager
+Manifest: desktop
+** DONE flatpak 
+CLOSED: [2021-08-28 Sat 15:20]
+Manifest: desktop
+Add flatpak share dir to $XDG_DATA_DIR 

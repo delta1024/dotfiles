@@ -158,7 +158,7 @@
         ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
          "* TODO %^{Title}\n %?")
         ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
-         "* TODO %?\n")
+         "* TODO %^{Title}\n")
         ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
          "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
 
@@ -398,7 +398,8 @@
                       "apps/apps/share/applications"
                       "desktop/desktop/share/applications"
                       "emacs/emacs/share/applications"))
-    (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles))))
+    (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles)))
+  (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications")
 
 (use-package ivy
   :disabled t

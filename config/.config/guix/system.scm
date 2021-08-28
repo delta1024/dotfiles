@@ -60,7 +60,7 @@
          (specification->package "git")
          (specification->package "stow")
          (specification->package "neovim")
-         (specification->package "gcc")
+         (specification->package "gcc-toolchain")
          (specification->package "gnupg")
          (specification->package "xauth")
          (specification->package "zsh")

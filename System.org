@@ -7,6 +7,8 @@
 **** TODO Add auto login  for my user
 **** TODO Disable gdm
 **** TODO [[info:guix#X Window][enable startx]]
+*** TODO User auto login
+auto login to gdm by redefinging the service
 ** Manifests
 *** Inbox
 ** General
@@ -179,7 +181,7 @@ to lock the channels at the current commit run:
           (specification->package "git")
           (specification->package "stow")
           (specification->package "neovim")
-          (specification->package "gcc")
+          (specification->package "gcc-toolchain")
           (specification->package "gnupg")
           (specification->package "xauth")
           (specification->package "zsh")
@@ -295,6 +297,8 @@ config/.config/guix/manifests/browsers.scm
   "dunst"
   "brightnessctl"
   "perl-file-mimeinfo"
+  "network-manager"
+  "flatpak"
   "picom"
   "pavucontrol"
   "xclip"
@@ -327,19 +331,21 @@ config/.config/guix/manifests/browsers.scm
   export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
   
   export XDG_DATA_DIR="$HOME/.guix-profile/share"
+  export XDG_DATA_DIR="$XDG_DATA_DIR:/var/lib/flatpak/exports/share/applications"
+  export XDG_DATA_DIR="$XDG_DATA_DIR:$HOME/.local/share/flatpak/exports/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/browsers/browsers/share"
   export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/apps/apps"; \
-   . "$GUIX_PROFILE/etc/profile"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/browsers/browsers"; \
-   . "$GUIX_PROFILE/etc/profile"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
-  . "$GUIX_PROFILE/etc/profile"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
-  . "$GUIX_PROFILE/etc/profile"
-  
+      . "$GUIX_PROFILE/etc/profile"
+      export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/browsers/browsers"; \
+          . "$GUIX_PROFILE/etc/profile"
+          export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
+              . "$GUIX_PROFILE/etc/profile"
+              export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
+                  . "$GUIX_PROFILE/etc/profile"
+                  
 #+end_src
 Set up XDG variables
 #+begin_src sh :tangle config/.config/user-dirs.dirs

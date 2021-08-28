@@ -3,6 +3,8 @@
        "dunst"
        "brightnessctl"
        "perl-file-mimeinfo"
+       "network-manager"
+       "flatpak"
        "picom"
        "pavucontrol"
        "xclip"
