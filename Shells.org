@@ -2,6 +2,8 @@
 #+AUTHOR: Jacob Stannix
 This is my configuration for all of my shell related applications. 
 
+* Inbox
+** TODO Import .zprofile to =Shells.org=.
 * ZSH
 This is my Zsh configuration for use on GNU/Guix.
 ** zshrc

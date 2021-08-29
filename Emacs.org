@@ -30,6 +30,8 @@ Paruse Documentation for useful configuration stuff
 Habit tracking for underwear and teath brushing 
 *** MAYBE [[https://github.com/org-roam/org-roam-ui][org-roam-ui]]
 Description: Graphical front end for org roam 
+*** TODO Update Org Capture Templates
+Description: Create capture templates for =Shells.org=.
 * Preamble
 
 #+begin_src emacs-lisp
