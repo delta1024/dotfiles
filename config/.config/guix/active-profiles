@@ -1,6 +1,3 @@
-# NOTE: active-profiles is generated from System.org. Please edit that 
-#   file in Emacs and active-profiles will be generated automatially
-
 export GUIX_PROFILE="$HOME/.config/guix/current"
 . "$GUIX_PROFILE/etc/profile"
 export GUIX_PROFILE="$HOME/.guix-profile"

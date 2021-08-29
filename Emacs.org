@@ -1,9 +1,10 @@
 #+TITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
-#+PROPERTY: header-args :tangle ./config/.config/emacs/init.el :dir ~/.config/emacs
+#+PROPERTY: header-args :tangle config/.config/emacs/init.el :dir ~/.config/emacs
+The following is my emacs config, feel free to take as much or as little as you like.
+
+For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 * Inbox
-** God Mode
-check out the [[https://github.com/emacsorphanage/god-mode#readme][README]] for configuration options
 ** General
 *** Eshell
 Paruse Documentation for useful configuration stuff
@@ -27,10 +28,9 @@ Paruse Documentation for useful configuration stuff
 ** Org
 *** TODO Habit Tracker
 Habit tracking for underwear and teath brushing 
+*** MAYBE [[https://github.com/org-roam/org-roam-ui][org-roam-ui]]
+Description: Graphical front end for org roam 
 * Preamble
-The following is my emacs config, feel free to take as much or as little as you like.
-
-For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 
 #+begin_src emacs-lisp
   ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
@@ -39,7 +39,13 @@ For a very comprehensive configuratoin guide please check out the [[https://www.
 
 * Early Init
 
+#+NAME: early-init-header
+#+begin_src emacs-lisp
+  (my/--generate-file-header "Emacs.org" "early-init.el")
+#+end_src
+
 #+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el
+  <<early-init-header()>>
   (setq package-enable-at-startup nil)
 #+end_src
 
@@ -109,7 +115,7 @@ Gives a memeory boost at startup
   (menu-bar-mode -1)          ; Disable the menu bar
   
   ;; sets fixed-width font
-  (set-face-attribute 'default nil :font my/user-font :height my/font-size)
+  (set-face-attribute 'default nil :font my/user-font :height my/font-size :weight 'regular)
   
   
   ;; Disables the visual bell
@@ -203,32 +209,6 @@ Gives a memeory boost at startup
   "emacs-evil-collection"
 #+end_src
 
-*** Which-Key
-
-#+begin_src emacs-lisp
-  (use-package which-key
-    :init (which-key-mode)
-    :diminish which-key-mode
-    :config
-    (setq which-key-idle-delay 1))
-#+end_src
-
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-which-key"
-#+end_src
-
-*** Hydra
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-#+begin_src emacs-lisp
-  (use-package hydra)
-#+end_src
-
 ** General
 
 #+begin_src emacs-lisp
@@ -274,12 +254,30 @@ Gives a memeory boost at startup
   "emacs-general"
 #+end_src
 
-** Swiper
+* Which-Key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
+#+end_src
+
+** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-which-key"
+#+end_src
+
+* Swiper
 #+begin_src emacs-lisp
   (use-package swiper)
 #+end_src
 
-*** Guix
+** Guix
 :PROPERTIES:
 :header-args: :noweb-ref packages
 :END:
@@ -291,19 +289,18 @@ Gives a memeory boost at startup
 ** Org Variables
 
 #+begin_src emacs-lisp
-    (customize-set-variable 'org-directory "~/Documents/org/")
-    (customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
-    (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
-    (setq org-agenda-files '("Tasks.org" "Appointments.org"))
-    (setq org-log-done 'time)
-    (setq org-log-into-drawer t)
-    (setq org-refile-targets
-          '(("Archive.org" :maxlevel . 1)
-            (".archive.org" :maxlevel . 1)
-            ("Appointments.org" :maxlevel . 1)))
-    
-    ;; Save Org buffers after refilling!
-    (advice-add 'org-refile :after 'org-save-all-org-buffers)
+  (customize-set-variable 'org-directory "~/Documents/org/")
+  ;;(customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
+  (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t)))
+  (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
+  (setq org-agenda-files '("Tasks.org" "Appointments.org"))
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+  (setq org-refile-targets
+        '((("Appointments.org" :maxlevel . 1))))
+  
+  ;; Save Org buffers after refilling!
+  (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
 ** Todo Keywords
@@ -311,46 +308,47 @@ Gives a memeory boost at startup
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
           (sequence "HOLD(h@)" "|" "COMPLETED(c)" "DROED(D@)")
-          (sequence "NOT_BOOKED" "|" "BOOKED(@)")))
+          (sequence "NOT_BOOKED" "|" "BOOKED(@)")
+          (sequence "MAYBE" "|" "DEAD(@)")))
 #+end_src
 
 ** Org Capture Templates
 
-  #+begin_src emacs-lisp
-    (setq org-capture-templates
-          '(("t" "TODO")
-            ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
-             "* TODO %^{Title}\n %?")
-            ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
-             "* TODO %^{Title}\n")
-            ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
-             "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
-    
-            ("c" "Configs")
-            ("ce" "Emacs")
-            ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
-             "* TODO %^{Title}\nDescription: %?")
-            ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
-             "* %^{Title}\n%?")
-    
-            ("cd" "Desktop")
-            ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
-             "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
-            ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
-             "* TODO %^{Window}\nDesired Behaviour:%?")
-            ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
-             "* TODO %?")
-    
-            ("cs" "System")
-            ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
-             "* TODO %^{Title}\n%?")
-            ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
-             "* %^{Package name: }\nManifest: %^{Manifest: }")
-            ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
-             "* TODO %?")
-            ("I" "issues" entry (file "~/Documents/org/Issue.org")
-             "* %^{Issue: }\n%?")))
-   #+end_src
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        '(("t" "TODO")
+          ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
+           "* TODO %^{Title}\n %?")
+          ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
+           "* TODO %^{Title}\n")
+          ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
+           "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
+  
+          ("c" "Configs")
+          ("ce" "Emacs")
+          ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+           "* TODO %^{Title}\nDescription: %?")
+          ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+           "* %^{Title}\n%?")
+  
+          ("cd" "Desktop")
+          ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
+           "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
+          ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
+           "* TODO %^{Window}\nDesired Behaviour:%?")
+          ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
+           "* TODO %?")
+  
+          ("cs" "System")
+          ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
+           "* TODO %^{Title}\n%?")
+          ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
+           "* %^{Package name: }\nManifest: %^{Manifest: }")
+          ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
+           "* TODO %?")
+          ("I" "issues" entry (file "~/Documents/org/Issue.org")
+           "* %^{Issue: }\n%?")))
+#+end_src
 
 ** org-open-file
 #+begin_src emacs-lisp
@@ -365,11 +363,13 @@ Gives a memeory boost at startup
   (use-package org
     :straight t
     :no-require t
+    :init
+    (require 'org-habit)
     :bind ((:map org-mode-map
                  ("C-c o" . consult-outline)))
     ([remap evil-jump-forward] . org-cycle)
     :hook (org-mode . my/org-mode-setup)
-    (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+    ;; (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
     :config
     <<config>>
     (my/org-font-setup))
@@ -579,26 +579,27 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   (use-package dired-hide-dotfiles
     :straight t
-  ;;   :hook (dired-mode . dired-hide-dotfiles-mode)
+    :hook (dired-mode . dired-hide-dotfiles-mode)
     :config
     (evil-collection-define-key 'normal 'dired-mode-map
       "H" 'dired-hide-dotfiles-mode))
-  #+end_src
+#+end_src
 
 ** Dired Open
 
 #+begin_src emacs-lisp
   (use-package dired-open
-  :straight t
-  :config
-  ;; Doesn't work as expected!
-  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-  ;; -- OR! --
-  (setq dired-open-extensions '(("png" . "sxiv")
-                                ("mkv" . "mpv"))))
+    :straight t
+    :config
+    ;; Doesn't work as expected!
+    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+    ;; -- OR! --
+    (setq dired-open-extensions '(("png" . "sxiv")
+                                  ("mkv" . "mpv")
+                                  ("webm" . "mpv"))))
 #+end_src
 
-* Productivity
+* Misc
 ** Vertico
 
 #+begin_src emacs-lisp
@@ -677,6 +678,16 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-consult"
 #+end_src
 
+** Dotcrafter
+
+#+begin_src emacs-lisp
+  (setq dotcrafter-config-files-directory "config")
+  (setq dotcrafter-ensure-output-directories '(".gnupg" ".local/share" ".config/emacs"))
+  (setq dotcrafter-org-files '("Emacs.org" "System.org" "Desktop.org"))
+  (load-file (substitute-in-file-name "$HOME/Projects/Code/dotcrafter.el/dotcrafter.el"))
+  (dotcrafter-mode)
+#+end_src
+
 ** Embark
 
 #+begin_src emacs-lisp
@@ -739,12 +750,17 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
                         "desktop/desktop/share/applications"
                         "emacs/emacs/share/applications"))
       (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles)))
-    (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications")
+    (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications"))
 #+end_src
 
-** Ivy 
+** DEAD Ivy 
+CLOSED: [2021-08-28 Sat 16:49]
+:LOGBOOK:
+- State "DEAD"       from              [2021-08-28 Sat 16:49] \\
+  Droped in favor of =vertico=
+:END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (use-package ivy
     :disabled t
     :diminish t
@@ -773,8 +789,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-ivy"
 #+end_src
 
-** Counsel
-#+begin_src emacs-lisp
+** DEAD Counsel
+CLOSED: [2021-08-28 Sat 16:50]
+:LOGBOOK:
+- State "DEAD"       from              [2021-08-28 Sat 16:50] \\
+  Droped in favor of =consult=
+:END:
+#+begin_src emacs-lisp :tangle no
   (use-package counsel
     :disabled t
     :bind (("M-x" . counsel-M-x)
@@ -792,9 +813,14 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-counsel"
 #+end_src
 
-** Ivy Rich
+** DEAD Ivy Rich
+CLOSED: [2021-08-28 Sat 16:51]
+:LOGBOOK:
+- State "DEAD"       from              [2021-08-28 Sat 16:51] \\
+  droped in favor of =marginalia=
+:END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   
   (use-package ivy-rich
     :disabled
@@ -878,7 +904,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-pinentry"
 #+end_src
 
-* Misc 
 ** Helpful
 
 #+begin_src emacs-lisp
@@ -940,6 +965,7 @@ display correctly:
   "emacs-doom-modeline"
 #+end_src
 
+
 ** Rainbow Delimiters
 
 #+begin_src emacs-lisp
@@ -954,6 +980,14 @@ display correctly:
 #+begin_src scheme
   "emacs-rainbow-delimiters"
 #+end_src
+
+** Cusotm Helper Functions
+#+begin_src emacs-lisp
+  (defun my/--generate-file-header (parent-file tangle-file) "Generates a heading to say which file a file is generated form"
+         (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
+  ;;        in Emacs and " tangle-file " will be generated automatially"))
+         #+end_src
+
 
 * EXWM
 Load in exwm
@@ -974,29 +1008,36 @@ Load in exwm
 
 Returns the garbage collector to a sane value.
 #+begin_src emacs-lisp
-    (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
-           (setq gc-cons-threshold (* 2 1000 1000))
-           ;; We're going to load custom here becaus it makes more
-           ;; sense to do so here with how EXWM is loaded
-           (load custom-file :noerror)
-           (setq my/post-config t))
-    
-    ;; Returns nil if switch is abset
-    (defun found-custom-arg (switch) "Returns nil if switch is absent"
-           (let ((found-switch (member switch command-line-args)))
-             found-switch))
-    
-    ;; if exwm isn't running set custom variables
-    (unless (found-custom-arg "-exwm")
-      (my/post-config))
+  (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
+         (require 'org)
+         (setq gc-cons-threshold (* 2 1000 1000))
+         ;; We're going to load custom here becaus it makes more
+         ;; sense to do so here with how EXWM is loaded
+         (load custom-file :noerror)
+         (setq my/post-config t))
+  
+  ;; Returns nil if switch is abset
+  (defun found-custom-arg (switch) "Returns nil if switch is absent"
+         (let ((found-switch (member switch command-line-args)))
+           found-switch))
+  
+  ;; if exwm isn't running set custom variables
+  (unless (found-custom-arg "-exwm")
+    (my/post-config))
 #+end_src
 
 * Manifest
 Guix Manifest
+#+NAME: manifest-header
+#+begin_src emacs-lisp :noweb eval
+  (my/--generate-file-header "Emacs.org" "emacs.scm")
+#+end_src
+
+
+
 config/.config/guix/manifests/emacs.scm
-#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/emacs.scm 
-  ;; NOTE: emacs.scm is generated from Emacs.org. Please edit that file
-  ;;        in Emacs and emacs.scm will be generated automatially
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/emacs.scm 
+  <<manifest-header()>>
   (specifications->manifest
    (list "emacs-native-comp"
          "emacs-guix"

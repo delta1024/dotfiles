@@ -1,6 +1,8 @@
 ;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
 ;;       in Emacs and init.el will be generated automatically!
 
+(my/--generate-file-header "Emacs.org" "early-init.el")
+
 (defvar emacs-startup-time 
   (format "%.2f seconds"
           (float-time
@@ -38,7 +40,7 @@
 (menu-bar-mode -1)          ; Disable the menu bar
 
 ;; sets fixed-width font
-(set-face-attribute 'default nil :font my/user-font :height my/font-size)
+(set-face-attribute 'default nil :font my/user-font :height my/font-size :weight 'regular)
 
 
 ;; Disables the visual bell
@@ -93,12 +95,6 @@
   :config
   (evil-collection-init))
 
-(use-package which-key
-  :init (which-key-mode)
-  :diminish which-key-mode
-  :config
-  (setq which-key-idle-delay 1))
-
 (use-package general
   :after evil
   :config
@@ -132,18 +128,23 @@
   "o a"   '(org-agenda                                              :wk "org agenda")
   "c"     '(org-capture                                             :wk "change directory"))
 
+(use-package which-key
+  :init (which-key-mode)
+  :diminish which-key-mode
+  :config
+  (setq which-key-idle-delay 1))
+
 (use-package swiper)
 
 (customize-set-variable 'org-directory "~/Documents/org/")
-(customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
+;;(customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
+(customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t)))
 (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
 (setq org-agenda-files '("Tasks.org" "Appointments.org"))
 (setq org-log-done 'time)
 (setq org-log-into-drawer t)
 (setq org-refile-targets
-      '(("Archive.org" :maxlevel . 1)
-        (".archive.org" :maxlevel . 1)
-        ("Appointments.org" :maxlevel . 1)))
+      '((("Appointments.org" :maxlevel . 1))))
 
 ;; Save Org buffers after refilling!
 (advice-add 'org-refile :after 'org-save-all-org-buffers)
@@ -151,7 +152,8 @@
 (setq org-todo-keywords
       '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
         (sequence "HOLD(h@)" "|" "COMPLETED(c)" "DROED(D@)")
-        (sequence "NOT_BOOKED" "|" "BOOKED(@)")))
+        (sequence "NOT_BOOKED" "|" "BOOKED(@)")
+        (sequence "MAYBE" "|" "DEAD(@)")))
 
 (setq org-capture-templates
       '(("t" "TODO")
@@ -195,11 +197,13 @@
 (use-package org
   :straight t
   :no-require t
+  :init
+  (require 'org-habit)
   :bind ((:map org-mode-map
                ("C-c o" . consult-outline)))
   ([remap evil-jump-forward] . org-cycle)
   :hook (org-mode . my/org-mode-setup)
-  (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
+  ;; (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
   :config
   (defun my/org-font-setup ()
     (dolist (face '((org-level-1 . 1.2)
@@ -311,19 +315,20 @@
 
 (use-package dired-hide-dotfiles
   :straight t
-;;   :hook (dired-mode . dired-hide-dotfiles-mode)
+  :hook (dired-mode . dired-hide-dotfiles-mode)
   :config
   (evil-collection-define-key 'normal 'dired-mode-map
     "H" 'dired-hide-dotfiles-mode))
 
 (use-package dired-open
-:straight t
-:config
-;; Doesn't work as expected!
-;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-;; -- OR! --
-(setq dired-open-extensions '(("png" . "sxiv")
-                              ("mkv" . "mpv"))))
+  :straight t
+  :config
+  ;; Doesn't work as expected!
+  ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+  ;; -- OR! --
+  (setq dired-open-extensions '(("png" . "sxiv")
+                                ("mkv" . "mpv")
+                                ("webm" . "mpv"))))
 
 (defun my/minibuffer-backward-kill (arg)
   "When minibuffer is completing a file name delete up to parent
@@ -366,6 +371,12 @@
   :bind
   ("C-s" . consult-line))
 
+(setq dotcrafter-config-files-directory "config")
+(setq dotcrafter-ensure-output-directories '(".gnupg" ".local/share" ".config/emacs"))
+(setq dotcrafter-org-files '("Emacs.org" "System.org" "Desktop.org"))
+(load-file (substitute-in-file-name "$HOME/Projects/Code/dotcrafter.el/dotcrafter.el"))
+(dotcrafter-mode)
+
 (use-package embark
 
   :bind
@@ -399,36 +410,7 @@
                       "desktop/desktop/share/applications"
                       "emacs/emacs/share/applications"))
     (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles)))
-  (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications")
-
-(use-package ivy
-  :disabled t
-  :diminish t
-  :bind (:map ivy-minibuffer-map
-              ("TAB" . ivy-alt-done)	
-              ("C-l" . ivy-alt-done)
-              ("C-j" . ivy-next-line)
-              ("C-k" . ivy-previous-line)
-              :map ivy-switch-buffer-map
-              ("C-k" . ivy-previous-line)
-              ("C-j" . ivy-next-line)
-              ("C-l" . ivy-done)
-              ("C-d" . ivy-switch-buffer-kill)
-              :map ivy-reverse-i-search-map
-              ("C-k" . ivy-previous-line)
-              ("C-j" . ivy-next-line)
-              ("C-d" . ivy-reverse-i-search-kill)))
-
-(use-package counsel
-  :disabled t
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-switch-buffer-other-window))
-  :custom
-  ((counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)))
-
-(use-package ivy-rich
-  :disabled
-  :after ivy)
+  (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications"))
 
 (use-package projectile
   :diminish projectile-mode
@@ -473,12 +455,17 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(defun my/--generate-file-header (parent-file tangle-file) "Generates a heading to say which file a file is generated form"
+       (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
+;;        in Emacs and " tangle-file " will be generated automatially"))
+
 (defun my/exwm-load (switch)
   (load-file (expand-file-name "desktop.el" user-emacs-directory )))
 ;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
 (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 
 (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
+       (require 'org)
        (setq gc-cons-threshold (* 2 1000 1000))
        ;; We're going to load custom here becaus it makes more
        ;; sense to do so here with how EXWM is loaded
@@ -493,3 +480,5 @@
 ;; if exwm isn't running set custom variables
 (unless (found-custom-arg "-exwm")
   (my/post-config))
+
+(my/--generate-file-header "Emacs.org" "emacs.scm")

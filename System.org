@@ -1,6 +1,7 @@
 #+TITLE: GNU Guix System Configuration
 #+AUTHOR: Jacob Stannix
-#+PROPERTY: header-args :tangle ./config/.config/guix/system.scm
+#+PROPERTY: header-args :tangle config/.config/guix/system.scm
+My GNU/Guix System Configuration. In this file you will find channels.scm, all my active manifests, any environment variables that need to be configured, and general misilanious/sp? files required for the healthy operation of my Guix system.
 * Inbox
 ** OS
 *** Users
@@ -14,17 +15,22 @@ auto login to gdm by redefinging the service
 ** General
 *** ZSH
 Paruse zsh documentation on prompts
-* Channels
+* Guix
+** Channels
 
 to lock the channels at the current commit run:
 #+begin_src shell :tangle no
   guix describe --format=channels
 #+end_src
 
-#+begin_src scheme :tangle config/.config/guix/channels.scm
-  ;; NOTE: channels.scm is generated from System.org. Please edit that file
-  ;;        in Emacs and channels.scm will be generated automatially
-  
+#+NAME: channels-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "System.org" "channels.scm")
+#+end_src
+
+#+begin_src scheme :tangle config/.config/guix/channels.scm :noweb yes
+
+  <<channels-header()>>
   (list (channel
          (name 'guix)
          (url "https://git.savannah.gnu.org/git/guix.git")
@@ -57,12 +63,15 @@ to lock the channels at the current commit run:
             "736A C00E 1254 378B A982  7AF6 9DBE 8265 81B6 4490")))))
 #+end_src
 
-* Modules
+** Modules
+#+NAME: system-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "System.org" "system.scm")
+#+end_src
 
-#+begin_src scheme
-  ;; NOTE: system.scm is generated from System.org. Please edit that file
-  ;;        in Emacs and system.scm will be generated automatially
-  
+#+begin_src scheme :noweb yes
+  <<system-header()>>
+
   (use-modules (gnu)
                (gnu packages shells)
                (gnu services dbus)
@@ -76,7 +85,7 @@ to lock the channels at the current commit run:
    xorg)
 #+end_src
 
-* OS
+** OS
 
 #+begin_src scheme :noweb yes
   <<my-desktop-services>>
@@ -97,7 +106,7 @@ to lock the channels at the current commit run:
    <<swap-devices>>)
 #+end_src
 
-** Bootloader
+*** Bootloader
 
 #+NAME: bootloader
 #+begin_src scheme :tangle no
@@ -109,7 +118,7 @@ to lock the channels at the current commit run:
     (keyboard-layout keyboard-layout)))
 #+end_src
 
-** Mapped Devices
+*** Mapped Devices
 
 #+NAME: mapped-devices
 #+begin_src scheme :tangle no
@@ -126,7 +135,7 @@ to lock the channels at the current commit run:
           (type luks-device-mapping))))
 #+end_src
 
-** File System
+*** File System
 
 #+NAME: file-system
 #+begin_src scheme :tangle no
@@ -155,7 +164,7 @@ to lock the channels at the current commit run:
 #+end_src
 #+end_src
 
-** Users
+*** Users
 
 #+NAME: users
 #+begin_src scheme :tangle no
@@ -170,7 +179,7 @@ to lock the channels at the current commit run:
                 %base-user-accounts))
 #+end_src
 
-** Packages
+*** Packages
 
 #+NAME: packages
 #+begin_src scheme :tangle no
@@ -191,7 +200,7 @@ to lock the channels at the current commit run:
     %base-packages))
 #+end_src
 
-** Services
+*** Services
 
 #+NAME: services
 #+begin_src scheme :tangle no
@@ -212,7 +221,7 @@ to lock the channels at the current commit run:
     %my-desktop-services))
 #+end_src
 
-** Desktop Configuration
+*** Desktop Configuration
 
 #+NAME: my-desktop-services
 #+begin_src scheme :tangle no
@@ -240,40 +249,37 @@ to lock the channels at the current commit run:
                      ;;do some stuff
                      ));;))
 #+end_src
-* Manifests
+** Manifests
 
+#+NAME: default-header
+#+begin_src emacs-lisp :tangle no
+ (my/--generate-file-header "System.org" "default.scm") 
+#+end_src
 config/.config/guix/manifests/default.scm
-#+begin_src scheme :noweb yes :tangle ./config/.config/guix/manifests/default.scm
-  ;; NOTE: user.scm is generated from System.org. Please edit that file
-  ;;        in Emacs and user.scm will be generated automatially
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
+  <<default-header()>>
   
   (specifications->manifest
    (list "glibc-locales"
          <<default>>))
 #+end_src
 
-config/.config/guix/manifests/desktop.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/desktop.scm
-  (specifications->manifest
-   (list "polybar"
-         <<desktop>>))
-#+end_src
 
+#+NAME: apps-header
+#+begin_src emacs-lisp :tangle no
+ (my/--generate-file-header "System.org" "default.scm") 
+#+end_src
 config/.config/guix/manifests/apps.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
+  <<apps-header()>>
+
   (specifications->manifest
    (list "alacritty"
          <<applications>>))
 #+end_src
 
 
-config/.config/guix/manifests/browsers.scm
-#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm
-  (specifications->manifest
-   (list "qutebrowser"
-         "firefox"))
-#+end_src
-** Default
+*** Default
 
 #+NAME: default
 #+begin_src scheme :tangle no
@@ -290,23 +296,7 @@ config/.config/guix/manifests/browsers.scm
   "neovim"
 #+end_src
 
-** Desktop
-
-#+NAME: desktop
-#+begin_src scheme :tangle no
-  "dunst"
-  "brightnessctl"
-  "perl-file-mimeinfo"
-  "network-manager"
-  "flatpak"
-  "picom"
-  "pavucontrol"
-  "xclip"
-  "xwallpaper"
-  "sxiv"
-#+end_src
-
-** Applications
+*** Applications
 
 #+NAME: applications
  #+begin_src scheme :tangle no
@@ -315,13 +305,12 @@ config/.config/guix/manifests/browsers.scm
   "mpd"
 #+end_src
 
-* Profiles
+** Profiles
 :PROPERTIES:
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
-#+begin_src sh
-  # NOTE: active-profiles is generated from System.org. Please edit that 
-  #   file in Emacs and active-profiles will be generated automatially
+
+#+begin_src sh 
   
   export GUIX_PROFILE="$HOME/.config/guix/current"
   . "$GUIX_PROFILE/etc/profile"
@@ -345,9 +334,14 @@ config/.config/guix/manifests/browsers.scm
               . "$GUIX_PROFILE/etc/profile"
               export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
                   . "$GUIX_PROFILE/etc/profile"
-                  
+  
 #+end_src
 Set up XDG variables
-#+begin_src sh :tangle config/.config/user-dirs.dirs
+
+#+begin_src sh :tangle config/.config/user-dirs.dirs :noweb yes
+
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
+
+
+
