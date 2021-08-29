@@ -17,3 +17,5 @@ config/.Xmodmap
 config/.xsession
 config/.config/polybar/config
 config/.config/emacs/desktop.el
+config/.config/zsh/aliasrc
+config/.config/zsh/.zshrc

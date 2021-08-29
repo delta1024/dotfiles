@@ -1,0 +1,190 @@
+#+TITLE: Shells
+#+AUTHOR: Jacob Stannix
+This is my configuration for all of my shell related applications. 
+
+* ZSH
+This is my Zsh configuration for use on GNU/Guix.
+** zshrc
+:PROPERTIES:
+:header-args: :tangle config/.config/zsh/.zshrc
+:END:
+#+NAME: zshrc-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "Shells.org" ".zshrc" "#")
+#+end_src
+config/.config/zsh/.zshrc
+#+begin_src shell-script :noweb yes 
+  <<zshrc-header()>>
+#+end_src
+#+begin_src shell-script 
+  [[ `whoami` == root ]] && source /root/.config/zsh/.zshrc
+  export PATH="$PATH:$HOME/.scripts/:$HOME/.scripts/web:$HOME/.scripts/status-modules:$HOME/.cargo/bin"
+  export EDITOR="/usr/bin/nvim"
+  GPG_TTY=$(tty)
+  export GPG_TTY
+  #export $(dbus-launch)
+  # If not running interactively, don't do anything
+  [[ $- != *i* ]] && return
+  # Hisotry in cache directory:
+  HISTSIZE=10000
+  SAVEHIST=10000
+  HISTFILE=~/.cache/zsh/history
+  
+  # Basic auto/tab complete
+  autoload -Uz compinit promptinit
+  zstyle ':completion:*' menu select
+  zmodload zsh/complist
+  compinit
+  _comp_options+=(globdots)
+  promptinit; 
+  prompt walters
+  #Vi Mode
+  bindkey -v
+  export KEYTIMEOUT=1
+  
+  # Use vim keys in tab complete menu:
+  bindkey -M menuselect 'h' vi-backward-char
+  bindkey -M menuselect 'k' vi-up-line-or-history
+  bindkey -M menuselect 'l' vi-forward-char
+  bindkey -M menuselect 'j' vi-down-line-or-history
+  bindkey -v '^?' backward-delete-char
+  
+  # Edit line in vim with ctrl-e
+  autoload edit-command-line; zle -N edit-command-line
+  bindkey '^e' edit-command-line
+  
+  [ -f "$HOME/.config/zsh/aliasrc" ] && source "$HOME/.config/zsh/aliasrc"
+  
+  # # ex = EXtractor for all kinds of archives
+  # # usage: ex <file>
+  ex ()
+  {
+    if [ -f $1 ] ; then
+      case $1 in
+        ,*.tar.bz2)   tar xjf $1   ;;
+        ,*.tar.gz)    tar xzf $1   ;;
+        ,*.bz2)       bunzip2 $1   ;;
+        ,*.rar)       unrar x $1   ;;
+        ,*.gz)        gunzip $1    ;;
+        ,*.tar)       tar xf $1    ;;
+        ,*.tbz2)      tar xjf $1   ;;
+        ,*.tgz)       tar xzf $1   ;;
+        ,*.zip)       unzip $1     ;;
+        ,*.Z)         uncompress $1;;
+        ,*.7z)        7z x $1      ;;
+        ,*.deb)       ar x $1      ;;
+        ,*.tar.xz)    tar xf $1    ;;
+        ,*)           echo "'$1' cannot be extracted via ex()" ;;
+      esac
+    else
+      echo "'$1' is not a valid file"
+    fi
+  }
+  lfcd () {
+  tmp="$(mktemp)"
+  lf -last-dir-path="$tmp" "$@"
+  if [ -f "$tmp" ]; then
+          dir="$(cat "$tmp")"
+          rm -f "$tmp" > /dev/null
+          [ -d "$dir" ] && [ "$dir" != "$(pwd)" ] && cd "$dir"
+  fi
+  }
+  bindkey -s '^o' 'lfcd\n'
+  #source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+  #source /usr/share/zsh/plugins/zsh-you-should-use/you-should-use.plugin.zsh
+  autoload autosuggestions
+  [[ $TERM == eterm-color ]] && screen && exit #|| eval "$(/usr/bin/starship init zsh)"
+#+end_src
+** aliasrc
+:PROPERTIES:
+:header-args: :tangle config/.config/zsh/aliasrc
+:END:
+#+NAME: aliasrc-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "Shells.org" "aliasrc" "#")
+#+end_src
+config/.config/zsh/aliasrc
+#+begin_src shell-script :noweb yes 
+  <<aliasrc-header()>>
+#+end_src
+#+begin_src shell-script 
+#list
+alias ls='ls --color=auto -lh'
+alias la='/bin/ls --color=auto -a'
+alias ll='/bin/ls --color=auto -la'
+alias l='/bin/ls --color=auto'
+alias l.="/bin/ls -A | egrep '^\.'"
+
+#fix obvious typo's
+alias ..='cd ..'
+alias pdw="pwd"
+alias doom="~/.emacs.d/bin/doom"
+## Colorize the grep command output for ease of use (good for log files)##
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+#Git aliases   
+alias ga="git add"
+alias gau="git add -u"
+alias gc="git commit"
+alias gcm="git commit -m"
+alias gC="git checkout"
+alias gp="git push"
+alias gpu="git push -u"
+alias gs="git status"
+#Cargo Aliases
+alias bcr="RUST_BACKTRACE=1 cargo run"
+alias cr="cargo run"
+alias ct="cargo test"
+alias cbr="cargo build --release"
+alias cch="cargo check"
+alias ccD="cargo doc --document-private-items"
+alias cCD="cargo doc --document-private-items --open"
+alias ccd="cargo doc"
+alias cCd="cargo doc --open"
+alias ccf="cargo fmt"
+alias cvm="nvim src/main.rs"
+alias cem="emacsclient -nw src/main.rs" 
+alias rustdoc="rustup doc&|"
+
+#Dotfiles aliases
+alias conf="git --git-dir=/home/jake/.cfg --work-tree=$HOME ${@}"
+alias confa="git --git-dir=/home/jake/.cfg --work-tree=$HOME add ${@}"
+alias confc="git --git-dir=/home/jake/.cfg --work-tree=$HOME commit"
+alias confcm="git --git-dir=/home/jake/.cfg --work-tree=$HOME commit -m ${@}"
+alias confu="git --git-dir=/home/jake/.cfg --work-tree=$HOME add -u"
+alias confp="git --git-dir=/home/jake/.cfg --work-tree=$HOME push -u"
+alias v="nvim"
+alias dv="doas nvim"
+alias e="emacsclient -nw"
+alias df="df -h"
+alias df.="/bin/df"
+
+#mpv
+alias vp="mpv --playlist=.playlist"
+vps () {
+let "var = $1 - 1"
+mpv --playlist=.playlist --playlist-start="$var"
+}
+
+#admin
+alias paclist-gen="pacman -Qqe | sed '/dmenu/d' > ~/.config/archconfig/parulist.txt && comm -12 <(pacman -Slq | sort) <(sort ~/.config/archconfig/parulist.txt) > ~/.config/archconfig/paclist.txt"
+suar () {
+su -c - root "${@}"
+}
+port_merge () {
+su -c - root "emerge -a ${@}"
+}
+port_pretend () {
+emerge -p ${@}
+}
+update-grub () {
+doas mount -L Arch
+doas grub-mkconfig -o /boot/grub/grub.cfg
+doas umount /dev/sdb3
+}
+alias system-upgrade="su -c - root 'emerge -auUD --with-bdeps=y @world'"
+alias sys-up-pretend="emerge -puUD --with-bdeps=y @world| genlop --pretend"
+alias dvmkconf="doas nvim /etc/portage/make.conf"
+#+end_src

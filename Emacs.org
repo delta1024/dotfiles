@@ -40,11 +40,11 @@ Description: Graphical front end for org roam
 * Early Init
 
 #+NAME: early-init-header
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Emacs.org" "early-init.el")
 #+end_src
 
-#+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el
+#+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el :noweb yes
   <<early-init-header()>>
   (setq package-enable-at-startup nil)
 #+end_src
@@ -683,7 +683,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+begin_src emacs-lisp
   (setq dotcrafter-config-files-directory "config")
   (setq dotcrafter-ensure-output-directories '(".gnupg" ".local/share" ".config/emacs"))
-  (setq dotcrafter-org-files '("Emacs.org" "System.org" "Desktop.org"))
+  (setq dotcrafter-org-files '("Emacs.org" "System.org" "Desktop.org" "Shells.org"))
   (load-file (substitute-in-file-name "$HOME/Projects/Code/dotcrafter.el/dotcrafter.el"))
   (dotcrafter-mode)
 #+end_src
@@ -965,7 +965,6 @@ display correctly:
   "emacs-doom-modeline"
 #+end_src
 
-
 ** Rainbow Delimiters
 
 #+begin_src emacs-lisp
@@ -983,14 +982,17 @@ display correctly:
 
 ** Cusotm Helper Functions
 #+begin_src emacs-lisp
-  (defun my/--generate-file-header (parent-file tangle-file) "Generates a heading to say which file a file is generated form"
-         (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
-  ;;        in Emacs and " tangle-file " will be generated automatially"))
-         #+end_src
+  (defun my/--generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated form.
+    by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
+         (if delim
+             (concat delim " NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
+  " delim "        in emacs and " tangle-file " will be generated automatially!")
+           (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
+    ;;        in emacs and " tangle-file " will be generated automatially!")))
+#+end_src
 
-
-* EXWM
-Load in exwm
+* exwm
+load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (expand-file-name "desktop.el" user-emacs-directory )))
@@ -1029,7 +1031,7 @@ Returns the garbage collector to a sane value.
 * Manifest
 Guix Manifest
 #+NAME: manifest-header
-#+begin_src emacs-lisp :noweb eval
+#+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Emacs.org" "emacs.scm")
 #+end_src
 

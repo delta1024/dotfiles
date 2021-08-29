@@ -186,12 +186,17 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 
 * Polybar
 :PROPERTIES:
-:header-args: :tangle config/.config/polybar/config
+:header-args: :tangle config/.config/polybar/config :noweb yes
 :END:
+#+NAME: polybar-header
+#+begin_src emacs-lisp :tangle no
+(my/--generate-file-header "Desktop.org" "config" "#")
+#+end_src
 Docs: https://github.com/polybar/polybar
 #+begin_src conf-toml :noweb yes
-
-  [settings]
+  <<polybar-header()>>
+  
+  [settings]			
   screenchange-reload = false
   
   [global/wm]
@@ -377,19 +382,30 @@ Docs: https://github.com/polybar/polybar
 #+begin_src scheme
   "polybar"
 #+end_src
+
 * System Environment Configuration 
 Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
 ** Xsession
+:PROPERTIES:
+:header-args: :tangle config/.xsession :tangle-mode (identity #o755)
+:END:
+#+NAME: xsession-header
+#+begin_src emacs-lisp :tangle no
+(my/--generate-file-header "Desktop.org" ".xsession" "#")
+#+end_src
 
-#+begin_src sh :tangle config/.xsession :tangle-mode (identity #o755) :noweb yes
+#+begin_src sh :noweb yes
+  <<xsession-header()>>
+#+end_src
+#+begin_src sh 
   dunst &
   xclip &
   $HOME/.scripts/wallpaper.sh draw
   exec dbus-launch --exit-with-session emacs -mm -exwm --debug-init
 #+end_src
+
 ** Ctrl and CapsLock Switch
 *** Xmodmap
-
 #+begin_src conf-space :tangle config/.Xmodmap :noweb yes
   clear lock
   clear control
