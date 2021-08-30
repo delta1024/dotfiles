@@ -2,7 +2,6 @@
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle config/.config/emacs/init.el :dir ~/.config/emacs
 The following is my emacs config, =feel= free to take as much or as little as you like.
-
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 * Inbox
 ** General
@@ -26,7 +25,8 @@ Paruse Documentation for useful configuration stuff
 *** TODO Rustic Mode
 [[https://github.com/brotzeit/rustic][github]]
 ** Org
-*** TODO Habit Tracker
+*** DONE Habit Tracker
+    CLOSED: [2021-08-29 Sun 20:28]
 Habit tracking for underwear and teath brushing 
 *** MAYBE [[https://github.com/org-roam/org-roam-ui][org-roam-ui]]
 Description: Graphical front end for org roam 
@@ -50,6 +50,13 @@ Description: Create capture templates for =Shells.org=.
 #+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el :noweb yes
   <<early-init-header()>>
   (setq package-enable-at-startup nil)
+  (defun my/--generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated form.
+    by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
+         (if delim
+             (concat delim " NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
+  " delim "        in emacs and " tangle-file " will be generated automatially!")
+           (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
+    ;;        in emacs and " tangle-file " will be generated automatially!")))
 #+end_src
 
 * Startup Optimization
@@ -258,53 +265,25 @@ Gives a memeory boost at startup
   "emacs-general"
 #+end_src
 
-* Which-Key
-
-#+begin_src emacs-lisp
-  (use-package which-key
-    :init (which-key-mode)
-    :diminish which-key-mode
-    :config
-    (setq which-key-idle-delay 1))
-#+end_src
-
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-which-key"
-#+end_src
-
-* Swiper
-#+begin_src emacs-lisp
-  (use-package swiper)
-#+end_src
-
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-swiper"
-#+end_src
-
 * Org Mode
 ** Org Variables
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-directory "~/Documents/org/")
-  ;;(customize-set-variable 'org-archive-location "~/Documents/org/archive.org")
-  (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t)))
   (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
   (setq org-agenda-files '("Tasks.org" "Appointments.org"))
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
-  (setq org-refile-targets
-        '((("Appointments.org" :maxlevel . 1))))
+  (with-eval-after-load 'org
   
-  ;; Save Org buffers after refilling!
-  (advice-add 'org-refile :after 'org-save-all-org-buffers)
+  (customize-set-variable 'org-structure-template-alist (cons '("$" . "src emacs-lisp") org-structure-template-alist))
+  (customize-set-variable 'org-archive-location ".archive::")
+  (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t))))
+  ;; (setq org-refile-targets
+  ;;       '((("Appointments.org" :maxlevel . 1))))
+  
+  ;; ;; Save Org buffers after refilling!
+  ;; (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
 ** Todo Keywords
@@ -998,13 +977,37 @@ display correctly:
 
 ** Cusotm Helper Functions
 #+begin_src emacs-lisp
-  (defun my/--generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated form.
-    by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
-         (if delim
-             (concat delim " NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
-  " delim "        in emacs and " tangle-file " will be generated automatially!")
-           (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
-    ;;        in emacs and " tangle-file " will be generated automatially!")))
+#+end_src
+
+** Which-Key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :config
+    (setq which-key-idle-delay 1))
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-which-key"
+#+end_src
+
+** Swiper
+#+begin_src emacs-lisp
+  (use-package swiper)
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-swiper"
 #+end_src
 
 * exwm
@@ -1012,7 +1015,6 @@ load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (expand-file-name "desktop.el" user-emacs-directory )))
-  ;;  (load-file (expand-file-name "desktop.el" user-emacs-directory))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 
@@ -1026,7 +1028,7 @@ load in exwm
 
 Returns the garbage collector to a sane value.
 #+begin_src emacs-lisp
-  (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file"
+  (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file, among other things"
          (require 'org)
          (setq gc-cons-threshold (* 2 1000 1000))
          ;; We're going to load custom here becaus it makes more
@@ -1050,9 +1052,6 @@ Guix Manifest
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Emacs.org" "emacs.scm")
 #+end_src
-
-
-
 config/.config/guix/manifests/emacs.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/emacs.scm 
   <<manifest-header()>>
