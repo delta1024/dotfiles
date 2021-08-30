@@ -405,21 +405,41 @@ Docs: https://github.com/polybar/polybar
   "polybar"
 #+end_src
 
+* Misc
+** Redshift
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "redshift"
+#+end_src
+:END:
+#+begin_src conf-unix  :tangle config/.config/redshift.conf
+  [redshift]
+  dawn-time=07:00
+  dusk-time=20:00
+  location-provider=manual
+  
+  [manual]
+  lat=53.544388
+  lon=-113.490929
+#+end_src
+
 * System Environment Configuration 
 Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
 ** Xsession
 :PROPERTIES:
 :header-args: :tangle config/.xsession :tangle-mode (identity #o755)
 :END:
+:HEADER:
 #+NAME: xsession-header
 #+begin_src emacs-lisp :tangle no
 (my/--generate-file-header "Desktop.org" ".xsession" "#")
 #+end_src
-
 #+begin_src sh :noweb yes
   <<xsession-header()>>
 #+end_src
+:END:
 #+begin_src sh 
+  redshift&
   dunst &
   xclip &
   $HOME/.scripts/wallpaper.sh draw
@@ -453,27 +473,30 @@ Here are listed the System level configruation requirments in order for emacs to
   EndSection
 #+end_src
 * Manifest
+:HEADER:
 #+NAME: desktop-manifest-header
 #+begin_src emacs-lisp :tangle no
  (my/--generate-file-header "Desktop.org" "desktop.scm") 
 #+end_src
-config/.config/guix/manifests/desktop.scm
 #+begin_src scheme :tangle config/.config/guix/manifests/desktop.scm :noweb yes
   <<desktop-manifest-header()>>
-
+#+end_src
+:END:
+config/.config/guix/manifests/desktop.scm
+#+begin_src scheme :tangle config/.config/guix/manifests/desktop.scm :noweb yes
   (specifications->manifest
-   (list "dunst"
-         "brightnessctl"
-         "libreoffice"
-         "perl-file-mimeinfo"
-         "network-manager"
-         "flatpak"
-         "picom"
-         "pavucontrol"
-         "xclip"
-         <<packages>>
-         "xwallpaper"
-         "sxiv"))
+     (list "dunst"
+           "brightnessctl"
+           "libreoffice"
+           "perl-file-mimeinfo"
+           "network-manager"
+           "flatpak"
+           "picom"
+           "pavucontrol"
+           "xclip"
+           <<packages>>
+           "xwallpaper"
+           "sxiv"))
 #+end_src
 
 #+NAME: browser-manifest-header

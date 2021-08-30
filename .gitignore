@@ -13,8 +13,10 @@ config/.config/guix/channels.scm
 config/.config/guix/system.scm
 config/.config/guix/manifests/browsers.scm
 config/.config/guix/manifests/desktop.scm
+config/.config/guix/manifests/desktop.scm
 config/.Xmodmap
 config/.xsession
+config/.config/redshift.conf
 config/.config/polybar/config
 config/.config/emacs/desktop.el
 config/.config/zsh/aliasrc
