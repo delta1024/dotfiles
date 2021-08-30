@@ -1,7 +1,7 @@
 #+TITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle config/.config/emacs/init.el :dir ~/.config/emacs
-The following is my emacs config, feel free to take as much or as little as you like.
+The following is my emacs config, =feel= free to take as much or as little as you like.
 
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 * Inbox
@@ -32,6 +32,7 @@ Habit tracking for underwear and teath brushing
 Description: Graphical front end for org roam 
 *** TODO Update Org Capture Templates
 Description: Create capture templates for =Shells.org=.
+*** TODO Agenda view for dotfiles folder
 * Preamble
 
 #+begin_src emacs-lisp
@@ -132,8 +133,8 @@ Gives a memeory boost at startup
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
-* Package and Use-Package
-=use-package= setup. 
+* Straight and Use-Package
+=Straight= and =use-package= setup. 
 
 #+Begin_src emacs-lisp
   ;;(require 'package)
@@ -141,6 +142,7 @@ Gives a memeory boost at startup
   ;;(setq package-archives '(("melpa" . "https://melpa.org/packages/")
   ;;("elpa" . "https://elpa.gnu.org/packages/")))
   
+  (add-to-list 'load-path "~/.config/emacs/my-packages")
   (defvar bootstrap-version)
   (let ((bootstrap-file
          (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
@@ -441,102 +443,6 @@ Gives a memeory boost at startup
 #+end_src
 
 ** Addons  
-* Org Bullets
-
-#+begin_src emacs-lisp
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-#+end_src
-
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-org-bullets"
-#+end_src
-
-* Visual Fill Colum
-
-#+begin_src emacs-lisp
-  (use-package visual-fill-column
-    :after org
-    :config
-    (defun my/org-mode-visual-fill () 
-      (setq visual-fill-column-width 115
-            visual-fill-column-center-text t)
-      (visual-fill-column-mode 1))
-    :hook (org-mode . my/org-mode-visual-fill)
-    (markdown-mode . my/org-mode-visual-fill))
-#+end_src
-
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-visual-fill-column"
-#+end_src
-
-* Org Roam
-For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
-#+begin_src emacs-lisp
-  (use-package emacsql
-    :straight t)
-  (use-package emacsql-sqlite
-    :straight t)
-  (use-package org-roam
-    :straight t
-    :init
-    (setq org-roam-v2-ack t)
-    :custom
-    (org-roam-directory (expand-file-name "roam" org-directory))
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-           ("C-c n f" . org-roam-node-find)
-           ("C-c n i" . org-roam-node-insert)
-           :map org-mode-map
-           ("C-M-i" . completion-at-point)
-           :map org-roam-dailies-map
-           ("Y" . org-roam-dailies-capture-yesterday)
-           ("T" . org-roam-dailies-capture-tomorrow))
-    :bind-keymap
-    ("C-c n d" . org-roam-dailies-map)
-    ("C-c n d" . org-roam-dailies-map)
-    :config
-    (require 'org-roam-dailies)
-    (org-roam-db-autosync-mode))
-  
-#+end_src
-
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-org-roam"
-#+end_src
-
-* Markdown Mode
-#+begin_src emacs-lisp
-  (use-package markdown-mode
-    :commands (markdown-mode gfm-mode)
-    :mode (("README\\.md\\'" . gfm-mode)
-           ("\\.md\\'" . markdown-mode)
-           ("\\.markdown\\'" . markdown-mode))
-    :init (setq markdown-command "multimarkdown"))
-#+end_src
-
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-markdown-mode"
-#+end_src
-
 * Dired
 
 #+begin_src emacs-lisp
@@ -552,7 +458,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
       "l" 'dired-find-file)
     (setq dired-always-read-filesystem t
           dired-switches-in-mode-line t)
-    :custom ((dired-listing-switches "-aBGgD --group-directories-first")))
+    :custom ((dired-listing-switches "-ABGgD --group-directories-first")))
 #+end_src
 
 *** GUIX
@@ -602,6 +508,109 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+end_src
 
 * Misc
+** Visual Fill Colum
+
+#+begin_src emacs-lisp
+  (use-package visual-fill-column
+    :after org
+    :config
+    (defun my/org-mode-visual-fill () 
+      (setq visual-fill-column-width 115
+            visual-fill-column-center-text t)
+      (visual-fill-column-mode 1))
+    :hook (org-mode . my/org-mode-visual-fill)
+    (markdown-mode . my/org-mode-visual-fill))
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-visual-fill-column"
+#+end_src
+
+** Org Bullets
+
+#+begin_src emacs-lisp
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages
+:END:
+#+begin_src scheme
+  "emacs-org-bullets"
+#+end_src
+
+** Org Roam
+For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
+#+begin_src emacs-lisp
+  (use-package emacsql
+    :straight t)
+  (use-package emacsql-sqlite
+    :straight t)
+  (use-package org-roam
+    :straight t
+    :init
+    (setq org-roam-v2-ack t)
+    :custom
+    (org-roam-directory (expand-file-name "roam" org-directory))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n i" . org-roam-node-insert)
+           :map org-mode-map
+           ("C-M-i" . completion-at-point)
+           :map org-roam-dailies-map
+           ("Y" . org-roam-dailies-capture-yesterday)
+           ("T" . org-roam-dailies-capture-tomorrow))
+    :bind-keymap
+    ("C-c n d" . org-roam-dailies-map)
+    ("C-c n d" . org-roam-dailies-map)
+    :config
+    (require 'org-roam-dailies)
+    (org-roam-db-autosync-mode))
+  
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-org-roam"
+#+end_src
+
+** Markdown Mode
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :commands (markdown-mode gfm-mode)
+    :mode (("README\\.md\\'" . gfm-mode)
+           ("\\.md\\'" . markdown-mode)
+           ("\\.markdown\\'" . markdown-mode))
+    :init (setq markdown-command "multimarkdown"))
+#+end_src
+
+*** Guix
+:PROPERTIES:
+:header-args: :noweb-ref packages :tangle no
+:END:
+#+begin_src scheme
+  "emacs-markdown-mode"
+#+end_src
+
+** Org Appear
+#+begin_src emacs-lisp
+  (use-package org-appear
+  :straight '(org-appear :type git :host github :repo "awth13/org-appear")
+  :hook (org-mode . org-appear-mode))
+#+end_src
+
 ** Vertico
 
 #+begin_src emacs-lisp
@@ -683,11 +692,16 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 ** Dotcrafter
 
 #+begin_src emacs-lisp
-  (setq dotcrafter-config-files-directory "config")
-  (setq dotcrafter-ensure-output-directories '(".gnupg" ".local/share" ".config/emacs"))
-  (setq dotcrafter-org-files '("Emacs.org" "System.org" "Desktop.org" "Shells.org"))
-  (load-file (substitute-in-file-name "$HOME/Projects/Code/dotcrafter.el/dotcrafter.el"))
-  (dotcrafter-mode)
+  (use-package dotcrafter
+    :straight '(dotcrafter :host github :repo "delta1024/dotcrafter.el")
+    :config
+    (dotcrafter-mode)
+    :custom
+    (dotcrafter-config-files-directory "config")
+    (dotcrafter-ensure-output-directories
+     '(".gnupg" ".local/share" ".config/emacs"))
+    (dotcrafter-org-files
+     '("Emacs.org" "System.org" "Desktop.org" "Shells.org")))
 #+end_src
 
 ** Embark
