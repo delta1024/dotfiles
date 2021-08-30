@@ -10,14 +10,16 @@ This is my Zsh configuration for use on GNU/Guix.
 :PROPERTIES:
 :header-args: :tangle config/.config/zsh/.zshrc
 :END:
+:HEADER:
 #+NAME: zshrc-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Shells.org" ".zshrc" "#")
 #+end_src
-config/.config/zsh/.zshrc
 #+begin_src shell-script :noweb yes 
   <<zshrc-header()>>
 #+end_src
+:END:
+config/.config/zsh/.zshrc
 #+begin_src shell-script 
   [[ `whoami` == root ]] && source /root/.config/zsh/.zshrc
   export PATH="$PATH:$HOME/.scripts/:$HOME/.scripts/web:$HOME/.scripts/status-modules:$HOME/.cargo/bin"
@@ -97,18 +99,21 @@ config/.config/zsh/.zshrc
   autoload autosuggestions
   [[ $TERM == eterm-color ]] && screen && exit #|| eval "$(/usr/bin/starship init zsh)"
 #+end_src
+
 ** aliasrc
 :PROPERTIES:
 :header-args: :tangle config/.config/zsh/aliasrc
 :END:
+:HEADER:
 #+NAME: aliasrc-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Shells.org" "aliasrc" "#")
 #+end_src
-config/.config/zsh/aliasrc
 #+begin_src shell-script :noweb yes 
   <<aliasrc-header()>>
 #+end_src
+:END:
+config/.config/zsh/aliasrc
 #+begin_src shell-script 
 #list
 alias ls='ls --color=auto -lh'

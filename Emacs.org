@@ -1,7 +1,7 @@
 #+TITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle config/.config/emacs/init.el :dir ~/.config/emacs
-The following is my emacs config, =feel= free to take as much or as little as you like.
+The following is my emacs config, feel free to take as much or as little as you like.
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 * Inbox
 ** General
@@ -33,6 +33,8 @@ Description: Graphical front end for org roam
 *** TODO Update Org Capture Templates
 Description: Create capture templates for =Shells.org=.
 *** TODO Agenda view for dotfiles folder
+*** TODO add straight recipie to histmode for Vertico
+Description: 
 * Preamble
 
 #+begin_src emacs-lisp
@@ -141,6 +143,11 @@ Gives a memeory boost at startup
 #+end_src
 
 * Straight and Use-Package
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-use-package"
+#+end_src
+:END:
 =Straight= and =use-package= setup. 
 
 #+Begin_src emacs-lisp
@@ -166,16 +173,14 @@ Gives a memeory boost at startup
   (require 'use-package) 
 #+end_src
 
-** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-use-package"
-#+end_src
-
 * Keyboard
 ** Evil
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-evil"
+  "emacs-evil-collection"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp
   (use-package evil
@@ -194,15 +199,6 @@ Gives a memeory boost at startup
     ([remap evil-search-forward] . swiper)
     ([remap evil-search-backward] . swiper-backward))
 #+end_src
-
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-evil"
-#+end_src
-
 *** Evil Collection
 
 #+begin_src emacs-lisp
@@ -212,15 +208,12 @@ Gives a memeory boost at startup
     (evil-collection-init)) 
 #+end_src
 
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-evil-collection"
-#+end_src
-
 ** General
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-general"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp
   (use-package general
@@ -257,13 +250,6 @@ Gives a memeory boost at startup
     "c"     '(org-capture                                             :wk "change directory"))
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-general"
-#+end_src
 
 * Org Mode
 ** Org Variables
@@ -275,10 +261,9 @@ Gives a memeory boost at startup
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
   (with-eval-after-load 'org
-  
-  (customize-set-variable 'org-structure-template-alist (cons '("$" . "src emacs-lisp") org-structure-template-alist))
-  (customize-set-variable 'org-archive-location ".archive::")
-  (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t))))
+    (customize-set-variable 'org-structure-template-alist (cons '("S" . "src emacs-lisp") org-structure-template-alist))
+    (customize-set-variable 'org-archive-location ".archive::")
+    (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t))))
   ;; (setq org-refile-targets
   ;;       '((("Appointments.org" :maxlevel . 1))))
   
@@ -423,7 +408,11 @@ Gives a memeory boost at startup
 
 ** Addons  
 * Dired
-
+:GUIX:
+  #+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-all-the-icons-dired"
+  #+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package dired
     :after evil
@@ -445,7 +434,6 @@ Gives a memeory boost at startup
 :header-args: :noweb-ref packages :tangle no
 :END:
 #+begin_src scheme
-  "emacs-all-the-icons-dired"
 #+end_src
 ** Dired Single
 #+begin_src emacs-lisp
@@ -488,6 +476,11 @@ Gives a memeory boost at startup
 
 * Misc
 ** Visual Fill Colum
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-visual-fill-column"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp
   (use-package visual-fill-column
@@ -501,15 +494,12 @@ Gives a memeory boost at startup
     (markdown-mode . my/org-mode-visual-fill))
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-visual-fill-column"
-#+end_src
-
 ** Org Bullets
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-org-bullets"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp
   (use-package org-bullets
@@ -519,15 +509,13 @@ Gives a memeory boost at startup
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-org-bullets"
-#+end_src
-
 ** Org Roam
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-org-roam"
+#+end_src
+:END:
+
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 #+begin_src emacs-lisp
   (use-package emacsql
@@ -557,15 +545,13 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-org-roam"
-#+end_src
 
 ** Markdown Mode
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-markdown-mode"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package markdown-mode
     :commands (markdown-mode gfm-mode)
@@ -574,15 +560,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "multimarkdown"))
 #+end_src
-
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-markdown-mode"
-#+end_src
-
 ** Org Appear
 #+begin_src emacs-lisp
   (use-package org-appear
@@ -591,6 +568,12 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 #+end_src
 
 ** Vertico
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-vertico"
+  "emacs-orderless"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp
   (defun my/minibuffer-backward-kill (arg)
@@ -628,44 +611,26 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :init
     (savehist-mode))
 #+end_src
-
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-vertico"
-  "emacs-orderless"
-#+end_src
-
 ** Selectrum
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-selectrum"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package selectrum)
 #+end_src
 
-*** GUIX
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-selectrum"
-#+end_src
-
 ** Consult
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-consult"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package consult
     :bind
     ("C-s" . consult-line))
-#+end_src
-
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src emacs-lisp
-  "emacs-consult"
 #+end_src
 
 ** Dotcrafter
@@ -683,33 +648,40 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
      '("Emacs.org" "System.org" "Desktop.org" "Shells.org")))
 #+end_src
 
-** Embark
+** DEAD Embark
+CLOSED: [2021-08-29 Sun 20:58]
+:LOGBOOK:
+- State "DEAD"       from              [2021-08-29 Sun 20:58] \\
+  not used
+:END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   
   (use-package embark
   
     :bind
-    (("M-o" . embark-act))         ;; pick some comfortable binding
+    (("m-o" . embark-act))         ;; pick some comfortable binding
   
     :config
   
-    ;; Hide the mode line of the Embark live/completions buffers
+    ;; hide the mode line of the embark live/completions buffers
     (add-to-list 'display-buffer-alist
-                 '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 '("\\`\\*embark collect \\(live\\|completions\\)\\*"
                    nil
                    (window-parameters (mode-line-format . none)))))
 #+end_src
 
-*** GUIX
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
+*** guix
+#+begin_src scheme :tangle no
   "emacs-embark"
 #+end_src
 
-** Marginalia
+** marginalia
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-marginalia"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp
   
@@ -724,14 +696,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     ;; Must be in the :init section of use-package such that the mode gets
     ;; enabled right away. Note that this forces loading the package.
     (marginalia-mode))
-#+end_src
-
-*** GUIX
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "emacs-marginalia"
 #+end_src
 
 ** app-launcher
@@ -1031,12 +995,10 @@ Returns the garbage collector to a sane value.
   (defun my/post-config () "Sets the `gc-cons-threshold' to a sane value and loads the custom file, among other things"
          (require 'org)
          (setq gc-cons-threshold (* 2 1000 1000))
-         ;; We're going to load custom here becaus it makes more
-         ;; sense to do so here with how EXWM is loaded
          (load custom-file :noerror)
          (setq my/post-config t))
   
-  ;; Returns nil if switch is abset
+  ;; Returns nil if switch is absent
   (defun found-custom-arg (switch) "Returns nil if switch is absent"
          (let ((found-switch (member switch command-line-args)))
            found-switch))
