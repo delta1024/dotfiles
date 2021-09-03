@@ -1,14 +1,22 @@
-#+TITLE: Jake's Emacs Config
+#+ITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle config/.config/emacs/init.el :dir ~/.config/emacs
+#+STARTUP: showall
 The following is my emacs config, feel free to take as much or as little as you like.
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 * Inbox
+:PROPERTIES:
+:VISIBILITY: children
+:END:
 ** General
 *** Eshell
 Paruse Documentation for useful configuration stuff
+*** Transiant keymap for config files
+*** Keybinding for Shells.org
+*** Dotcrafter
+find a way to remove duplicate .gitignore entries
 ** Magit
-*** TODO Forge
+*** MAYBE Forge
 - [ ] Create token for github auth
 - [ ] install and configure forge
   NOTE: Make sure to configure a GitHub token before using this package!
@@ -20,21 +28,13 @@ Paruse Documentation for useful configuration stuff
   #+end_src
 
 ** Development
-*** TODO LSP Mode
+*** MAYBE LSP Mode
 [[https://github.com/emacs-lsp/lsp-mode][github]]
-*** TODO Rustic Mode
+*** MAYBE Rustic Mode
 [[https://github.com/brotzeit/rustic][github]]
 ** Org
-*** DONE Habit Tracker
-    CLOSED: [2021-08-29 Sun 20:28]
-Habit tracking for underwear and teath brushing 
 *** MAYBE [[https://github.com/org-roam/org-roam-ui][org-roam-ui]]
 Description: Graphical front end for org roam 
-*** TODO Update Org Capture Templates
-Description: Create capture templates for =Shells.org=.
-*** TODO Agenda view for dotfiles folder
-*** TODO add straight recipie to histmode for Vertico
-Description: 
 * Preamble
 
 #+begin_src emacs-lisp
@@ -43,22 +43,29 @@ Description:
 #+end_src
 
 * Early Init
-
+:PROPERTIES:
+:header-args: :tangle config/.config/emacs/early-init.el
+:END:
+:HEADER:
 #+NAME: early-init-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Emacs.org" "early-init.el")
 #+end_src
-
 #+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el :noweb yes
   <<early-init-header()>>
+#+end_src
+:END:
+#+begin_src emacs-lisp 
   (setq package-enable-at-startup nil)
-  (defun my/--generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated form.
-    by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
-         (if delim
-             (concat delim " NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
-  " delim "        in emacs and " tangle-file " will be generated automatially!")
-           (concat ";; NOTE: " tangle-file " is generated from " parent-file ". Please edit that file
-    ;;        in emacs and " tangle-file " will be generated automatially!")))
+#+end_src
+
+My custom header string function.
+#+begin_src emacs-lisp 
+  (defun my/--generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
+      by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
+         (let ((delim (or delim ";;")))
+           (format "%s NOTE: %s is generated from %s. Please edit that file
+  %s       in emacs and %s will be generated automatially!" delim tangle-file parent-file delim tangle-file)))
 #+end_src
 
 * Startup Optimization
@@ -101,15 +108,6 @@ Gives a memeory boost at startup
   (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
 #+end_src
 
-* Initial Buffer
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-
-#+begin_src emacs-lisp 
-  (setq initial-buffer-choice (lambda () (switch-to-buffer "*Messages*")))
-#+end_src
-
 * Basic UI Improvements
 
 #+begin_src emacs-lisp
@@ -143,7 +141,7 @@ Gives a memeory boost at startup
 #+end_src
 
 * Straight and Use-Package
-:GUIX:
+:GUIX: 
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-use-package"
 #+end_src
@@ -173,6 +171,21 @@ Gives a memeory boost at startup
   (require 'use-package) 
 #+end_src
 
+* No Littering
+
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-no-littering"
+#+end_src
+:END:
+
+#+begin_src emacs-lisp
+  (use-package no-littering
+    :config
+    (setq auto-save-file-name-transforms
+          `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
+#+end_src
+
 * Keyboard
 ** Evil
 :GUIX:
@@ -181,7 +194,6 @@ Gives a memeory boost at startup
   "emacs-evil-collection"
 #+end_src
 :END:
-
 #+begin_src emacs-lisp
   (use-package evil
     :demand t
@@ -199,6 +211,7 @@ Gives a memeory boost at startup
     ([remap evil-search-forward] . swiper)
     ([remap evil-search-backward] . swiper-backward))
 #+end_src
+
 *** Evil Collection
 
 #+begin_src emacs-lisp
@@ -206,6 +219,18 @@ Gives a memeory boost at startup
     :after evil
     :config
     (evil-collection-init)) 
+#+end_src
+
+*** Evil God State
+
+#+begin_src emacs-lisp
+  (use-package evil-god-state
+    :straight '(evil-god-state
+                :host github
+                :repo "gridaphobe/evil-god-state")
+    :config
+    (evil-define-key 'normal global-map "," 'evil-execute-in-god-state)
+    (evil-define-key 'god global-map [escape] 'evil-god-state-bail))
 #+end_src
 
 ** General
@@ -219,7 +244,8 @@ Gives a memeory boost at startup
   (use-package general
     :after evil
     :config
-    (general-evil-setup t))
+    (general-evil-setup t)
+    (global-set-key (kbd "C-c k") 'my-leader-command))
   
   (general-create-definer my/leader-def
     :keymaps '(normal insert visual emacs)
@@ -227,6 +253,7 @@ Gives a memeory boost at startup
     :global-prefix "C-SPC"
     :prefix-command 'my-leader-command
     :prefix-map 'my-leader-map)
+  
   
   (my/leader-def
     "f"     '(nil                                                     :wk "file system")
@@ -238,6 +265,7 @@ Gives a memeory boost at startup
                 (find-file my/emacs-file))                            :wk "open emacs configuration")
     "h M-f" '((lambda () (interactive)
                 (find-file my/guix-file))                             :wk "open guix file")
+    "d"     '((lambda () (interactive) (dired "~/")) :wk "Dired home")
     "a"     '(eshell                                                  :wk "eshell")
     ";"     '(execute-extended-command                                :wk "M-x")
     "w f"   '(delete-frame                                            :wk "delete fram")
@@ -250,20 +278,25 @@ Gives a memeory boost at startup
     "c"     '(org-capture                                             :wk "change directory"))
 #+end_src
 
-
 * Org Mode
 ** Org Variables
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-directory "~/Documents/org/")
-  (setq org-default-notes-file (expand-file-name "Tasks.org" org-directory))
-  (setq org-agenda-files '("Tasks.org" "Appointments.org"))
+  (setq org-default-notes-file (expand-file-name "Notes.org" org-directory))
+  (setq org-agenda-files '("Task.org" "Appointment.org" "Work.org" "Habits.org"))
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
   (with-eval-after-load 'org
     (customize-set-variable 'org-structure-template-alist (cons '("S" . "src emacs-lisp") org-structure-template-alist))
     (customize-set-variable 'org-archive-location ".archive::")
-    (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t))))
+    (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t)))
+    (customize-set-variable 'org-timer-default-timer "00:20:00")
+    (customize-set-variable 'org-agenda-custom-commands
+                            '(("y" alltodo ""
+                               ((org-directory) (org-agenda-files '("Emacs.org"
+                                                                    "System.org" "Desktop.org"
+                                                                    "Shells.org")))))))
   ;; (setq org-refile-targets
   ;;       '((("Appointments.org" :maxlevel . 1))))
   
@@ -272,6 +305,7 @@ Gives a memeory boost at startup
 #+end_src
 
 ** Todo Keywords
+
 #+begin_src emacs-lisp
   (setq org-todo-keywords
         '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
@@ -285,11 +319,11 @@ Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (setq org-capture-templates
         '(("t" "TODO")
-          ("tg" "General" entry (file+olp "~/Documents/org/Tasks.org" "General")
+          ("tg" "General" entry (file+olp "~/Documents/org/Task.org" "General")
            "* TODO %^{Title}\n %?")
-          ("th" "House" entry (file+olp "~/Documents/org/Tasks.org" "Household")
+          ("th" "House" entry (file+olp "~/Documents/org/Task.org" "Household")
            "* TODO %^{Title}\n")
-          ("tm" "Medical" entry (file+olp "~/Documents/org/Tasks.org" "Medical")
+          ("tm" "Medical" entry (file+olp "~/Documents/org/Task.org" "Medical")
            "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
   
           ("c" "Configs")
@@ -313,12 +347,18 @@ Gives a memeory boost at startup
           ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
            "* %^{Package name: }\nManifest: %^{Manifest: }")
           ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
-           "* TODO %?")
-          ("I" "issues" entry (file "~/Documents/org/Issue.org")
-           "* %^{Issue: }\n%?")))
+           "* TODO %^{Title}")
+  
+          ("cz" "Shells")
+          ("czz" "Zsh" entry (file+olp "~/.dotfiles/Shells.org" "Inbox" "ZSH")
+           "* TODO %^{Title}")
+  
+          ("i" "issues" entry (file "~/Documents/org/Issue.org")
+           "* %^{Issue: }%?")))
 #+end_src
 
 ** org-open-file
+
 #+begin_src emacs-lisp
   (defun my/org-open-file (a)  "Opens the file in `org-directory'"
          (interactive (list (read-file-name "What File? " org-directory)))
@@ -337,19 +377,9 @@ Gives a memeory boost at startup
                  ("C-c o" . consult-outline)))
     ([remap evil-jump-forward] . org-cycle)
     :hook (org-mode . my/org-mode-setup)
-    ;; (org-mode . (lambda () (add-hook 'after-save-hook #'my/org-babel-tangle-config)))
     :config
     <<config>>
     (my/org-font-setup))
-#+end_src
-
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-
-#+begin_src scheme
-  "emacs-org"
 #+end_src
 
 *** Config
@@ -406,12 +436,11 @@ Gives a memeory boost at startup
         (org-babel-tangle))))
 #+end_src
 
-** Addons  
 * Dired
 :GUIX:
-  #+begin_src scheme :noweb-ref packages :tangle no
+#+begin_src scheme :noweb-ref packages :tangle no
   "emacs-all-the-icons-dired"
-  #+end_src
+#+end_src
 :END:
 #+begin_src emacs-lisp
   (use-package dired
@@ -424,18 +453,13 @@ Gives a memeory boost at startup
     (evil-collection-define-key 'normal 'dired-mode-map
       "h" 'dired-up-directory
       "l" 'dired-find-file)
-    (setq dired-always-read-filesystem t
-          dired-switches-in-mode-line t)
-    :custom ((dired-listing-switches "-ABGgD --group-directories-first")))
+    (setq dired-always-read-filesystem t)
+    :custom ((dired-listing-switches "-AGgD --group-directories-first")
+             (dired-kill-when-opening-new-dired-buffer t)))
 #+end_src
 
-*** GUIX
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-#+end_src
 ** Dired Single
+
 #+begin_src emacs-lisp
   (use-package dired-single
     :straight t)
@@ -444,6 +468,7 @@ Gives a memeory boost at startup
     "h" 'dired-single-up-directory
     "l" 'dired-single-buffer)
 #+end_src
+
 ** All the Icons Dired
 #+begin_src emacs-lisp
   (use-package all-the-icons-dired
@@ -545,7 +570,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   
 #+end_src
 
-
 ** Markdown Mode
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
@@ -560,11 +584,15 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "multimarkdown"))
 #+end_src
+
 ** Org Appear
 #+begin_src emacs-lisp
   (use-package org-appear
-  :straight '(org-appear :type git :host github :repo "awth13/org-appear")
-  :hook (org-mode . org-appear-mode))
+    :straight '(org-appear
+                :type git
+                :host github
+                :repo "awth13/org-appear")
+    :hook (org-mode . org-appear-mode))
 #+end_src
 
 ** Vertico
@@ -574,7 +602,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   "emacs-orderless"
 #+end_src
 :END:
-
 #+begin_src emacs-lisp
   (defun my/minibuffer-backward-kill (arg)
     "When minibuffer is completing a file name delete up to parent
@@ -611,6 +638,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :init
     (savehist-mode))
 #+end_src
+
 ** Selectrum
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
@@ -637,7 +665,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
 
 #+begin_src emacs-lisp
   (use-package dotcrafter
-    :straight '(dotcrafter :host github :repo "delta1024/dotcrafter.el")
+    :load-path "~/Projects/Code/dotcrafter.el/"
     :config
     (dotcrafter-mode)
     :custom
@@ -654,6 +682,11 @@ CLOSED: [2021-08-29 Sun 20:58]
 - State "DEAD"       from              [2021-08-29 Sun 20:58] \\
   not used
 :END:
+:GUIX:
+#+begin_src scheme :tangle no
+  "emacs-embark"
+#+end_src
+:END:
 
 #+begin_src emacs-lisp :tangle no
   
@@ -669,11 +702,6 @@ CLOSED: [2021-08-29 Sun 20:58]
                  '("\\`\\*embark collect \\(live\\|completions\\)\\*"
                    nil
                    (window-parameters (mode-line-format . none)))))
-#+end_src
-
-*** guix
-#+begin_src scheme :tangle no
-  "emacs-embark"
 #+end_src
 
 ** marginalia
@@ -702,13 +730,17 @@ CLOSED: [2021-08-29 Sun 20:58]
 
 #+begin_src emacs-lisp
   (use-package app-launcher
-    :straight '(app-launcher :host github :repo "SebastienWae/app-launcher")
+    :straight '(app-launcher
+                :host github
+                :repo "SebastienWae/app-launcher")
     :config
-    (dolist (profiles '("browsers/browsers/share/applications"
-                        "apps/apps/share/applications"
-                        "desktop/desktop/share/applications"
-                        "emacs/emacs/share/applications"))
-      (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES") "/" profiles)))
+    (dolist (profiles '("browsers/browsers"
+                        "apps/apps"
+                        "desktop/desktop"
+                        "emacs/emacs"))
+      (add-to-list 'app-launcher-apps-directories (concat (getenv "GUIX_EXTRA_PROFILES")
+                                                          "/" profiles
+                                                          "/share/applications")))
     (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications"))
 #+end_src
 
@@ -717,6 +749,11 @@ CLOSED: [2021-08-28 Sat 16:49]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-28 Sat 16:49] \\
   Droped in favor of =vertico=
+:END:
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-ivy"
+#+end_src
 :END:
 
 #+begin_src emacs-lisp :tangle no
@@ -740,19 +777,16 @@ CLOSED: [2021-08-28 Sat 16:49]
   
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-ivy"
-#+end_src
-
 ** DEAD Counsel
 CLOSED: [2021-08-28 Sat 16:50]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-28 Sat 16:50] \\
   Droped in favor of =consult=
+:END:
+:GUIX:
+#+begin_src scheme noweb-ref packages :tangle no
+  "emacs-counsel"
+#+end_src
 :END:
 #+begin_src emacs-lisp :tangle no
   (use-package counsel
@@ -764,21 +798,17 @@ CLOSED: [2021-08-28 Sat 16:50]
   
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-counsel"
-#+end_src
-
 ** DEAD Ivy Rich
 CLOSED: [2021-08-28 Sat 16:51]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-28 Sat 16:51] \\
   droped in favor of =marginalia=
 :END:
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-ivy-rich"
+#+end_src
+:END:
 #+begin_src emacs-lisp :tangle no
   
   (use-package ivy-rich
@@ -787,15 +817,12 @@ CLOSED: [2021-08-28 Sat 16:51]
   
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-ivy-rich"
-#+end_src
-
 ** Projectile
+:GUIX:
+#+begin_src scheme :noweb-ref packages
+  "emacs-projectile"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package projectile
     :diminish projectile-mode
@@ -805,15 +832,17 @@ CLOSED: [2021-08-28 Sat 16:51]
   ;; NOTE: Set this to the folder where you keep your Git repos!
 #+end_src
 
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
+*** DEAD Counsel-Projectile
+CLOSED: [2021-08-30 Mon 06:38]
+:LOGBOOK:
+- State "DEAD"       from              [2021-08-30 Mon 06:38] \\
+  not using counsel
 :END:
-#+begin_src scheme
-  "emacs-projectile"
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-counsel-projectile"
 #+end_src
-
-*** Counsel-Projectile
+:END:
 #+begin_src emacs-lisp
   (use-package counsel-projectile
     :disabled t
@@ -821,16 +850,12 @@ CLOSED: [2021-08-28 Sat 16:51]
     :config (counsel-projectile-mode))
 #+end_src
 
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-counsel-projectile"
-#+end_src
-
 ** Magit
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-magit"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package magit
     :config (evil-collection-magit-setup)
@@ -839,16 +864,13 @@ CLOSED: [2021-08-28 Sat 16:51]
                  "g" '(magit :which-key "Status")))
 #+end_src
 
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-magit"
-#+end_src
-
 ** Pass
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-pass"
+  "emacs-pinentry"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package pass)
   (use-package pinentry
@@ -856,15 +878,12 @@ CLOSED: [2021-08-28 Sat 16:51]
     (pinentry-start))
 #+end_src
 
-*** Guix
-
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-pass"
-  "emacs-pinentry"
-#+end_src
-
 ** Helpful
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-helpful"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package helpful
     :bind
@@ -874,33 +893,26 @@ CLOSED: [2021-08-28 Sat 16:51]
     ([remap describe-key] . helpful-key))
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-helpful"
-#+end_src
-
 ** Doom
 *** Doom Themes
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-doom-themes"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package doom-themes
     :init
-    (load-theme 'doom-one t))
-#+end_src
-
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-doom-themes"
+    (load-theme 'doom-henna t))
 #+end_src
 
 *** Doom Modeline 
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-all-the-icons"
+  "emacs-doom-modeline"
+#+end_src
+:END:
 NOTE: The first time you load your configuration on a new machine, you'll
 need to run the following command interactively so that mode line icons
 display correctly:
@@ -915,36 +927,23 @@ display correctly:
     :custom ((doom-mode-line-height 13)))
 #+end_src
 
-**** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-all-the-icons"
-  "emacs-doom-modeline"
-#+end_src
-
 ** Rainbow Delimiters
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-rainbow-delimiters"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-rainbow-delimiters"
-#+end_src
-
-** Cusotm Helper Functions
-#+begin_src emacs-lisp
-#+end_src
-
 ** Which-Key
-
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-which-key"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package which-key
     :init (which-key-mode)
@@ -953,39 +952,49 @@ display correctly:
     (setq which-key-idle-delay 1))
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
-:END:
-#+begin_src scheme
-  "emacs-which-key"
-#+end_src
-
 ** Swiper
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-swiper"
+#+end_src
+:END:
 #+begin_src emacs-lisp
   (use-package swiper)
 #+end_src
 
-*** Guix
-:PROPERTIES:
-:header-args: :noweb-ref packages
+** PDF view
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-pdf-tools"
+#+end_src
 :END:
-#+begin_src scheme
-  "emacs-swiper"
+#+begin_src emacs-lisp
+#+end_src
+
+** Perspective
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-perspective"
+#+end_src
+:END:
+#+begin_src emacs-lisp
+  (use-package perspective
+    :init
+    (persp-mode))
 #+end_src
 
 * exwm
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-exwm"
+  "emacs-desktop-environment"
+#+end_src
+:END:
 load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
     (load-file (expand-file-name "desktop.el" user-emacs-directory )))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
-#+end_src
-
-** Guix
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-exwm"
-  "emacs-desktop-environment"
 #+end_src
 
 * Runtime Optimization
@@ -1009,16 +1018,27 @@ Returns the garbage collector to a sane value.
 #+end_src
 
 * Manifest
-Guix Manifest
+:PROPERTIES:
+:header-args: :tangle config/.config/guix/manifests/emacs.scm
+:GUIX: test
+:END:
+:HEADER:
 #+NAME: manifest-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Emacs.org" "emacs.scm")
 #+end_src
-config/.config/guix/manifests/emacs.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/emacs.scm 
+#+begin_src scheme :noweb yes
   <<manifest-header()>>
+#+end_src
+:END:
+Guix Manifest
+config/.config/guix/manifests/emacs.scm
+#+begin_src scheme :noweb yes
   (specifications->manifest
    (list "emacs-native-comp"
          "emacs-guix"
          <<packages>>))
 #+end_src
+
+
+

@@ -3,7 +3,10 @@
 This is my configuration for all of my shell related applications. 
 
 * Inbox
-** TODO Import .zprofile to =Shells.org=.
+** ZSH
+*** DONE Import .zprofile to =Shells.org=.
+CLOSED: [2021-09-01 Wed 06:32]
+
 * ZSH
 This is my Zsh configuration for use on GNU/Guix.
 ** zshrc
@@ -195,3 +198,31 @@ alias system-upgrade="su -c - root 'emerge -auUD --with-bdeps=y @world'"
 alias sys-up-pretend="emerge -puUD --with-bdeps=y @world| genlop --pretend"
 alias dvmkconf="doas nvim /etc/portage/make.conf"
 #+end_src
+
+** zprofile
+:PROPERTIES:
+:header-args: :tangle config/.zprofile
+:END:
+:HEADER:
+#+NAME: zprofile-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "Shells.org" ".zprofile" "#")
+#+end_src
+#+begin_src sh :noweb yes
+  #!/bin/zsh
+  <<zprofile-header()>>
+#+end_src
+:END:
+#+begin_src sh
+export ZDOTDIR="$HOME/.config/zsh"
+source /etc/profile
+source "$HOME/.config/guix/active-profiles"
+xmodmap ~/.Xmodmap
+export $(dbus-launch)
+
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+    sleep 1
+    startx
+fi
+#+end_src
+

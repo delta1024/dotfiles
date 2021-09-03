@@ -46,3 +46,63 @@ Manifest: desktop
 CLOSED: [2021-08-28 Sat 15:20]
 Manifest: desktop
 Add flatpak share dir to $XDG_DATA_DIR 
+
+* DONE Habit Tracker
+    CLOSED: [2021-08-29 Sun 20:28]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-08-29 Sun 21:39
+:ARCHIVE_FILE: ~/.dotfiles/Emacs.org
+:ARCHIVE_OLPATH: Inbox/Org
+:ARCHIVE_CATEGORY: Emacs
+:ARCHIVE_TODO: DONE
+:END:
+Habit tracking for underwear and teath brushing 
+
+* DONE Agenda view for dotfiles folder
+CLOSED: [2021-08-31 Tue 06:39]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-08-31 Tue 06:40
+:ARCHIVE_FILE: ~/.dotfiles/Emacs.org
+:ARCHIVE_OLPATH: Inbox/Org
+:ARCHIVE_CATEGORY: Emacs
+:ARCHIVE_TODO: DONE
+:END:
+
+* DROED add straight recipie to histmode for Vertico
+CLOSED: [2021-08-31 Tue 06:39]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-08-31 Tue 06:40
+:ARCHIVE_FILE: ~/.dotfiles/Emacs.org
+:ARCHIVE_OLPATH: Inbox/Org
+:ARCHIVE_CATEGORY: Emacs
+:ARCHIVE_TODO: DROED
+:END:
+:LOGBOOK:
+- State "DROED"      from "TODO"       [2021-08-31 Tue 06:39] \\
+  Histmode is included in emacs
+:END:
+Description: 
+
+* DONE Update Org Capture Templates
+CLOSED: [2021-08-31 Tue 06:50]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-08-31 Tue 06:51
+:ARCHIVE_FILE: ~/.dotfiles/Emacs.org
+:ARCHIVE_OLPATH: Inbox/Org
+:ARCHIVE_CATEGORY: Emacs
+:ARCHIVE_TODO: DONE
+:END:
+Description: Create capture templates for =Shells.org=.
+
+* DONE Check =EXWM= =gcs-done= and increase threshold if nesisarry
+CLOSED: [2021-09-03 Fri 07:17]
+:PROPERTIES:
+:ARCHIVE_TIME: 2021-09-03 Fri 07:18
+:ARCHIVE_FILE: ~/.dotfiles/Desktop.org
+:ARCHIVE_OLPATH: Inbox
+:ARCHIVE_CATEGORY: Desktop
+:ARCHIVE_TODO: DONE
+:END:
+- [X] Capture exwm start =gcs-done=.
+- [X] Capture exwm finish =gcs-done=.
+- [X] Subtract the two values into a new variable

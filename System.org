@@ -10,11 +10,10 @@ My GNU/Guix System Configuration. In this file you will find channels.scm, all m
 **** TODO [[info:guix#X Window][enable startx]]
 *** TODO User auto login
 auto login to gdm by redefinging the service
+*** TODO GPS Local for redshift
 ** Manifests
 *** Inbox
 ** General
-*** ZSH
-Paruse zsh documentation on prompts
 * Guix
 ** Channels
 
@@ -22,14 +21,17 @@ to lock the channels at the current commit run:
 #+begin_src shell :tangle no
   guix describe --format=channels
 #+end_src
-
+:HEADER:
 #+NAME: channels-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "System.org" "channels.scm")
 #+end_src
-
 #+begin_src scheme :tangle config/.config/guix/channels.scm :noweb yes
   <<channels-header()>>
+#+end_src
+:END:
+
+#+begin_src scheme :tangle config/.config/guix/channels.scm
 
   (list (channel
          (name 'guix)
@@ -58,14 +60,16 @@ to lock the channels at the current commit run:
 #+end_src
 
 ** Modules
+:HEADER:
 #+NAME: system-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "System.org" "system.scm")
 #+end_src
-
 #+begin_src scheme :noweb yes
   <<system-header()>>
-
+#+end_src
+:END:
+#+begin_src scheme :noweb yes
   (use-modules (gnu)
                (gnu packages shells)
                (gnu services dbus)
@@ -245,33 +249,40 @@ to lock the channels at the current commit run:
 #+end_src
 ** Manifests
 
+:HEADER:
 #+NAME: default-header
 #+begin_src emacs-lisp :tangle no
  (my/--generate-file-header "System.org" "default.scm") 
 #+end_src
-config/.config/guix/manifests/default.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
   <<default-header()>>
+#+end_src
+:END:
   
+config/.config/guix/manifests/default.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
   (specifications->manifest
    (list "glibc-locales"
          <<default>>))
 #+end_src
 
-
+:HEADER:
 #+NAME: apps-header
 #+begin_src emacs-lisp :tangle no
  (my/--generate-file-header "System.org" "default.scm") 
 #+end_src
-config/.config/guix/manifests/apps.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
   <<apps-header()>>
+#+end_src
+:END:
+
+config/.config/guix/manifests/apps.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
 
   (specifications->manifest
    (list "alacritty"
          <<applications>>))
 #+end_src
-
 
 *** Default
 
@@ -303,15 +314,16 @@ config/.config/guix/manifests/apps.scm
 :PROPERTIES:
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
-#+name: active-profiles-header
+:HEADER:
+#+NAME: active-profiles-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "System.org" "active-profiles" "#")
 #+end_src
-
 #+begin_src sh :noweb yes
   <<active-profiles-header()>>
-
 #+end_src
+:END:
+
 #+begin_src sh 
   export GUIX_PROFILE="$HOME/.config/guix/current"
   . "$GUIX_PROFILE/etc/profile"
@@ -337,10 +349,9 @@ config/.config/guix/manifests/apps.scm
                   . "$GUIX_PROFILE/etc/profile"
   
 #+end_src
+
 Set up XDG variables
-
-#+begin_src sh :tangle config/.config/user-dirs.dirs :noweb yes
-
+#+begin_src sh :tangle config/.config/user-dirs.dirs 
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
 

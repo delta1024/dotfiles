@@ -2,16 +2,13 @@
 #+PROPERTY: header-args :tangle config/.config/emacs/desktop.el
 My desktop environment as managed by EXWM. In this file you will also find any desktop configurations required to make emacs into a fully functioning desktop environment as I see it.
 * Inbox
-** TODO Check =EXWM= =gcs-done= and increase threshold if nesisarry
-- [ ] Capture exwm start =gcs-done=.
-- [ ] Capture exwm finish =gcs-done=.
-- [ ] Subtract the two values into a new variable
 ** Windows
 *** TODO Window name hook
 *** TODO workspace spawn rules for applications
 *** TODO Find unicode icons for workspace
 ** General
 *** TODO Look into =exwm-desktop-environment= binding commands
+*** Find a way to dynamically set polybar theme to match emacs theme 
 ** Keybindings
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
@@ -19,7 +16,6 @@ My desktop environment as managed by EXWM. In this file you will also find any d
   ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
   ;;       in Emacs and desktop.el will be generated automatically!
 #+end_src
-
 
 *  EXWM
 #+begin_src emacs-lisp
@@ -58,23 +54,25 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 [[https://github.com/daviwil/emacs-from-scratch/raw/master/show-notes/Emacs-Desktop-03.org][efs part 3]]
 ** Autostart
 
-
 #+begin_src emacs-lisp :noweb yes
-  <<picom-integration>>
-  <<polybar-integration>>
-  (defun my/run-in-background (command)
-    (let ((command-parts (split-string command "[ ]+")))
-      (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
-  
-  (defun my/exwm-init-hook ()
-    (dired "~/")
-    (my/start-panel)
-    (my/start-picom))
-  
-  ;; (my/run-in-background "picom")
-  ;; (my/run-in-background "xclip")
-  ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
-  #+end_src
+    <<picom-integration>>
+    <<polybar-integration>>
+    (defun my/run-in-background (command)
+      (let ((command-parts (split-string command "[ ]+")))
+        (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
+    
+    (defun my/exwm-init-hook ()
+      (my/start-panel)
+      (my/start-picom)
+      (dired "~/")
+      (delete-other-windows)
+      (org-agenda-list)
+  )
+    
+    ;; (my/run-in-background "picom")
+    ;; (my/run-in-background "xclip")
+    ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
+#+end_src
 
 *** Picom integration
 #+name: picom-integration
@@ -92,10 +90,10 @@ My desktop environment as managed by EXWM. In this file you will also find any d
          (my/kill-picom)
          (setq my/picom-pid (start-process-shell-command "picom" nil "picom")))
   (defun my/toggle-picom () "Toggles picom"
-  (interactive)
-  (if my/picom-pid
-  (my/kill-picom)
-  (my/start-picom)))
+         (interactive)
+         (if my/picom-pid
+             (my/kill-picom)
+           (my/start-picom)))
 #+end_src
 
 ** WM
@@ -123,6 +121,7 @@ My desktop environment as managed by EXWM. In this file you will also find any d
     (exwm-enable))
   
 #+end_src
+
 ** Checks
 #+begin_src emacs-lisp
   (defvar exwm-gc-end-var gcs-done "number of gc's done at end of desktop.el in total")
@@ -187,13 +186,13 @@ My desktop environment as managed by EXWM. In this file you will also find any d
   <<exwm-input-set-keys>>
 #+end_src
 
-**** input set keys
+*** input set keys
 #+NAME: exwm-input-set-keys
 #+begin_src emacs-lisp :tangle no
   
   (exwm-input-set-key (kbd "s-SPC") 'app-launcher-run-app) ;; Set XDG_PATH variables
   (exwm-input-set-key (kbd "s-y") '(lambda () (interactive)
-         (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set")))
+                                     (start-process-shell-command "Wallpaper" nil "~/.scripts/wallpaper.sh set")))
   (exwm-input-set-key (kbd "s-p") 'my/toggle-panel)
   (exwm-input-set-key (kbd "s-g") 'pass)
   (exwm-input-set-key (kbd "C-s-p") 'my/toggle-picom)
@@ -201,6 +200,9 @@ My desktop environment as managed by EXWM. In this file you will also find any d
                                      (interactive "sWeb Search: ")
                                      (start-process-shell-command "qutebrowser" nil (concat "qutebrowser ""\"" query "\""))))
   (exwm-input-set-key (kbd "C-s-r") 'my/exwm-restart)
+  (exwm-input-set-key (kbd "C-s-Q") '(lambda ()
+                                       (interactive)
+                                       (eshell-command "sudo shutdown")))
   (exwm-input-set-key (kbd "s-f") '(lambda ()
                                      (interactive)
                                      (start-process-shell-command "firefox" nil "firefox youtube.com")))
@@ -210,14 +212,22 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 :PROPERTIES:
 :header-args: :tangle config/.config/polybar/config :noweb yes
 :END:
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "polybar"
+#+end_src
+:END:
+:HEADER:
 #+NAME: polybar-header
 #+begin_src emacs-lisp :tangle no
 (my/--generate-file-header "Desktop.org" "config" "#")
 #+end_src
-Docs: https://github.com/polybar/polybar
 #+begin_src conf-toml :noweb yes
   <<polybar-header()>>
-  
+#+end_src
+:END:
+Docs: https://github.com/polybar/polybar
+#+begin_src conf-toml 
   [settings]			
   screenchange-reload = false
   
@@ -398,12 +408,6 @@ Docs: https://github.com/polybar/polybar
 #+end_src
 
 ** GUIX
-:PROPERTIES:
-:header-args: :noweb-ref packages :tangle no
-:END:
-#+begin_src scheme
-  "polybar"
-#+end_src
 
 * Misc
 ** Redshift
@@ -498,15 +502,17 @@ config/.config/guix/manifests/desktop.scm
            "xwallpaper"
            "sxiv"))
 #+end_src
-
+:HEADER:
 #+NAME: browser-manifest-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "Desktop.org" "browsers.scm")
 #+end_src
-config/.config/guix/manifests/browsers.scm
 #+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :noweb yes
   <<browser-manifest-header()>>
-
+#+end_src
+:END:
+config/.config/guix/manifests/browsers.scm
+#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm
   (specifications->manifest
    (list "qutebrowser"
          "firefox"))
