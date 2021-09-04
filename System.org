@@ -14,8 +14,7 @@ auto login to gdm by redefinging the service
 ** Manifests
 *** Inbox
 ** General
-* Guix
-** Channels
+* Channels
 
 to lock the channels at the current commit run:
 #+begin_src shell :tangle no
@@ -59,7 +58,7 @@ to lock the channels at the current commit run:
             "736A C00E 1254 378B A982  7AF6 9DBE 8265 81B6 4490")))))
 #+end_src
 
-** Modules
+* Modules
 :HEADER:
 #+NAME: system-header
 #+begin_src emacs-lisp :tangle no
@@ -83,7 +82,7 @@ to lock the channels at the current commit run:
    xorg)
 #+end_src
 
-** OS
+* OS
 
 #+begin_src scheme :noweb yes
   <<my-desktop-services>>
@@ -104,7 +103,7 @@ to lock the channels at the current commit run:
    <<swap-devices>>)
 #+end_src
 
-*** Bootloader
+** Bootloader
 
 #+NAME: bootloader
 #+begin_src scheme :tangle no
@@ -116,7 +115,7 @@ to lock the channels at the current commit run:
     (keyboard-layout keyboard-layout)))
 #+end_src
 
-*** Mapped Devices
+** Mapped Devices
 
 #+NAME: mapped-devices
 #+begin_src scheme :tangle no
@@ -133,7 +132,7 @@ to lock the channels at the current commit run:
           (type luks-device-mapping))))
 #+end_src
 
-*** File System
+** File System
 
 #+NAME: file-system
 #+begin_src scheme :tangle no
@@ -162,7 +161,7 @@ to lock the channels at the current commit run:
 #+end_src
 #+end_src
 
-*** Users
+** Users
 
 #+NAME: users
 #+begin_src scheme :tangle no
@@ -177,7 +176,7 @@ to lock the channels at the current commit run:
                 %base-user-accounts))
 #+end_src
 
-*** Packages
+** Packages
 
 #+NAME: packages
 #+begin_src scheme :tangle no
@@ -187,6 +186,7 @@ to lock the channels at the current commit run:
           (specification->package "emacs-exwm")
           (specification->package "git")
           (specification->package "stow")
+          (specification->package "wesnoth")
           (specification->package "neovim")
           (specification->package "gcc-toolchain")
           (specification->package "gnupg")
@@ -196,9 +196,9 @@ to lock the channels at the current commit run:
            "emacs-desktop-environment")
           (specification->package "nss-certs"))
     %base-packages))
-#+end_src
+  #+end_src
 
-*** Services
+** Services
 
 #+NAME: services
 #+begin_src scheme :tangle no
@@ -219,7 +219,7 @@ to lock the channels at the current commit run:
     %my-desktop-services))
 #+end_src
 
-*** Desktop Configuration
+** Desktop Configuration
 
 #+NAME: my-desktop-services
 #+begin_src scheme :tangle no
@@ -247,12 +247,12 @@ to lock the channels at the current commit run:
                      ;;do some stuff
                      ));;))
 #+end_src
-** Manifests
+* Manifests
 
 :HEADER:
 #+NAME: default-header
 #+begin_src emacs-lisp :tangle no
- (my/--generate-file-header "System.org" "default.scm") 
+  (my/--generate-file-header "System.org" "default.scm") 
 #+end_src
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
   <<default-header()>>
@@ -269,7 +269,7 @@ config/.config/guix/manifests/default.scm
 :HEADER:
 #+NAME: apps-header
 #+begin_src emacs-lisp :tangle no
- (my/--generate-file-header "System.org" "default.scm") 
+  (my/--generate-file-header "System.org" "default.scm") 
 #+end_src
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
   <<apps-header()>>
@@ -278,13 +278,13 @@ config/.config/guix/manifests/default.scm
 
 config/.config/guix/manifests/apps.scm
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
-
+  
   (specifications->manifest
    (list "alacritty"
          <<applications>>))
 #+end_src
 
-*** Default
+** Default
 
 #+NAME: default
 #+begin_src scheme :tangle no
@@ -301,16 +301,16 @@ config/.config/guix/manifests/apps.scm
   "neovim"
 #+end_src
 
-*** Applications
+** Applications
 
 #+NAME: applications
- #+begin_src scheme :tangle no
+#+begin_src scheme :tangle no
   "neofetch"
   "mpv"
   "mpd"
 #+end_src
 
-** Profiles
+* Profiles
 :PROPERTIES:
 :header-args: :tangle config/.config/guix/active-profiles
 :END:

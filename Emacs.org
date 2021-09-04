@@ -294,7 +294,7 @@ Gives a memeory boost at startup
     (customize-set-variable 'org-timer-default-timer "00:20:00")
     (customize-set-variable 'org-agenda-custom-commands
                             '(("y" alltodo ""
-                               ((org-directory) (org-agenda-files '("Emacs.org"
+                               ((org-directory "~/.dotfiles") (org-agenda-files '("Emacs.org"
                                                                     "System.org" "Desktop.org"
                                                                     "Shells.org")))))))
   ;; (setq org-refile-targets
