@@ -249,20 +249,20 @@ to lock the channels at the current commit run:
                      ;;do some stuff
                      ));;))
 #+end_src
-* Manifests
 
+* Manifests
 :HEADER:
 #+NAME: default-header
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "System.org" "default.scm") 
 #+end_src
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm :mkdirp t
   <<default-header()>>
 #+end_src
 :END:
   
 config/.config/guix/manifests/default.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm :mkdirp t
   (specifications->manifest
    (list "glibc-locales"
          <<default>>))
@@ -273,13 +273,13 @@ config/.config/guix/manifests/default.scm
 #+begin_src emacs-lisp :tangle no
   (my/--generate-file-header "System.org" "default.scm") 
 #+end_src
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm :mkdirp t
   <<apps-header()>>
 #+end_src
 :END:
 
 config/.config/guix/manifests/apps.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm :mkdirp t
   
   (specifications->manifest
    (list "alacritty"

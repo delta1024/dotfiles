@@ -1019,7 +1019,7 @@ Returns the garbage collector to a sane value.
 
 * Manifest
 :PROPERTIES:
-:header-args: :tangle config/.config/guix/manifests/emacs.scm
+:header-args: :tangle config/.config/guix/manifests/emacs.scm :mkdirp t
 :GUIX: test
 :END:
 :HEADER:

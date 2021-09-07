@@ -487,7 +487,7 @@ Here are listed the System level configruation requirments in order for emacs to
 #+end_src
 :END:
 config/.config/guix/manifests/desktop.scm
-#+begin_src scheme :tangle config/.config/guix/manifests/desktop.scm :noweb yes
+#+begin_src scheme :tangle config/.config/guix/manifests/desktop.scm :noweb yes :mkdirp t
   (specifications->manifest
      (list "dunst"
            "brightnessctl"
@@ -504,15 +504,15 @@ config/.config/guix/manifests/desktop.scm
 #+end_src
 :HEADER:
 #+NAME: browser-manifest-header
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no 
   (my/--generate-file-header "Desktop.org" "browsers.scm")
 #+end_src
-#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :noweb yes
+#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :noweb yes :mkdirp t
   <<browser-manifest-header()>>
 #+end_src
 :END:
 config/.config/guix/manifests/browsers.scm
-#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm
+#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :mkdirp
   (specifications->manifest
    (list "qutebrowser"
          "firefox"))
