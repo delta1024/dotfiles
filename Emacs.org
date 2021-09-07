@@ -274,9 +274,10 @@ Gives a memeory boost at startup
     "h z" '((lambda () (interactive)
               (find-file (expand-file-name "Environment.org" "~/.dotfiles")))
             :wk "environment configuration")
-
+  
     "d"     '((lambda () (interactive) (dired "~/")) :wk "Dired home")
-    "a"     '(eshell                                                  :wk "eshell")
+    "a"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty --working-directory ~/"))
+              :wk "eshell")
     ";"     '(execute-extended-command                                :wk "M-x")
     "w f"   '(delete-frame                                            :wk "delete fram")
     "b"     '(consult-buffer                                          :wk "switch buffers with preview")
