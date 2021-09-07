@@ -259,8 +259,8 @@ to lock the channels at the current commit run:
 #+end_src
 :END:
   
-config/.config/guix/manifests/default.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm
+config/.config/guix/manifest.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifest.scm
   (specifications->manifest
    (list "glibc-locales"
          <<default>>))
