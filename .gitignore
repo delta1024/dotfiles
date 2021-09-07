@@ -17,7 +17,7 @@ config/.config/user-dirs.dirs
 config/.config/guix/active-profiles
 config/.config/guix/manifests/apps.scm
 config/.config/guix/manifests/apps.scm
-config/.config/guix/manifests/default.scm
+config/.config/guix/manifest.scm
 config/.config/guix/manifests/default.scm
 config/.config/guix/channels.scm
 config/.config/guix/channels.scm
