@@ -418,8 +418,7 @@ Installes all manifest files ending with =name=.scm in path $HOME/.config/guix/m
   
   for profile in $profiles; do
       # remove the path and file extension, if any
-      local profileName=$(basename $profile)
-      local profileName="${profileName%.*}"
+      local profileName=$(basename -s .scm $profile)
       local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
       local manifestPath=$HOME/.config/guix/manifests/$profileName.scm
   
