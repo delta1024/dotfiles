@@ -12,7 +12,6 @@ config/.bin/guix-activate-profiles
 config/.bin/guix-populate-profiles
 config/.bin/guix-install-profile
 config/.bin/lib/guix
-config/.zprofile
 config/.config/user-dirs.dirs
 config/.config/guix/active-profiles
 config/.config/guix/manifests/apps.scm
@@ -26,10 +25,11 @@ config/.config/guix/manifests/browsers.scm
 config/.config/guix/manifests/browsers.scm
 config/.config/guix/manifests/desktop.scm
 config/.config/guix/manifests/desktop.scm
-config/.Xmodmap
-config/.xsession
 config/.config/redshift.conf
 config/.config/polybar/config
 config/.config/emacs/desktop.el
+config/.Xmodmap
+config/.xsession
+config/.zprofile
 config/.config/zsh/aliasrc
 config/.config/zsh/.zshrc

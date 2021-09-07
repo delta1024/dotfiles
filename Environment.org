@@ -199,3 +199,86 @@ alias sys-up-pretend="emerge -puUD --with-bdeps=y @world| genlop --pretend"
 alias dvmkconf="doas nvim /etc/portage/make.conf"
 #+end_src
 
+** zprofile
+:PROPERTIES:
+:header-args: :tangle config/.zprofile
+:END:
+:HEADER:
+#+NAME: zprofile-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "System.org" ".zprofile" "#")
+#+end_src
+#+begin_src sh :noweb yes 
+  #!/usr/bin/env zsh
+  <<zprofile-header()>>
+#+end_src
+:END:
+#+begin_src sh
+  export ZDOTDIR="$HOME/.config/zsh"
+  . "/etc/profile"
+  . "$HOME/.config/guix/active-profiles"
+  if [[ -d "$HOME/.bin" ]]; then
+      export PATH="$PATH:$HOME/.bin"
+  fi
+  . "$HOME/.bin/guix-activate-profiles"
+  . "$HOME/.bin/guix-activate-xdg-data"
+  xmodmap ~/.Xmodmap
+  export $(dbus-launch)
+  
+  # if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+  #     sleep 1
+  #     startx
+  # fi
+#+end_src
+
+*  Graphical  
+Here are listed the System level configruation requirments in order for emacs to fuction the way I expect it to.
+** Xsession
+:PROPERTIES:
+:header-args: :tangle config/.xsession :shebang "#!/usr/bin/env zsh"
+:END:
+:HEADER:
+#+NAME: xsession-header
+#+begin_src emacs-lisp :tangle no
+(my/--generate-file-header "Desktop.org" ".xsession" "#")
+#+end_src
+#+begin_src sh :noweb yes
+  <<xsession-header()>>
+#+end_src
+:END:
+#+begin_src sh 
+  . $HOME/.bin/guix-activate-profiles
+  . $HOME/.bin/guix-activate-xdg-data
+  redshift&
+  dunst &
+  xclip &
+  $HOME/.scripts/wallpaper.sh draw
+  EMACS_EXIT_CODE=146 #4242
+  
+  while [ $EMACS_EXIT_CODE -eq 146 ];
+  do
+      emacs -mm -exwm --debug-init
+      EMACS_EXIT_CODE="$?"
+      # echo $EMACS_EXIT_CODE
+  done
+#+end_src
+
+** Ctrl and CapsLock Switch
+*** Xmodmap
+#+begin_src conf-space :tangle config/.Xmodmap :noweb yes
+  clear lock
+  clear control
+  keycode 66 = Control_L
+  add control = Control_L
+  add Lock = Control_R
+  keycode  23 = BackSpace BackSpace BackSpace BackSpace
+  keycode  22 = Tab ISO_Left_Tab Tab ISO_Left_Tab
+#+end_src
+*** on arch =/etc/X11/xorg.conf.d/90-custom-kbd.conf=
+#+begin_src conf-space :tangle no
+  Section "InputClass"
+  Identifier "keyboard defaults"
+  MatchIsKeyboard "on"
+  Option "XkbOptions" "ctrl:swapcaps"
+  EndSection
+#+end_src

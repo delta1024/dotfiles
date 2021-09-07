@@ -341,39 +341,6 @@ Set up XDG variables
 #+begin_src sh :tangle config/.config/user-dirs.dirs 
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
-
-** zprofile
-:PROPERTIES:
-:header-args: :tangle config/.zprofile
-:END:
-:HEADER:
-#+NAME: zprofile-header
-#+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" ".zprofile" "#")
-#+end_src
-#+begin_src sh :noweb yes 
-  #!/usr/bin/env zsh
-  <<zprofile-header()>>
-#+end_src
-:END:
-#+begin_src sh
-  export ZDOTDIR="$HOME/.config/zsh"
-  . "/etc/profile"
-  . "$HOME/.config/guix/active-profiles"
-  if [[ -d "$HOME/.bin" ]]; then
-      export PATH="$PATH:$HOME/.bin"
-  fi
-  . "$HOME/.bin/guix-activate-profiles"
-  . "$HOME/.bin/guix-activate-xdg-data"
-  xmodmap ~/.Xmodmap
-  export $(dbus-launch)
-  
-  # if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
-  #     sleep 1
-  #     startx
-  # fi
-#+end_src
-
 ** Profile Managment
 :PROPERTIES:
 :END:
