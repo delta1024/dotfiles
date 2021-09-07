@@ -261,8 +261,8 @@ to lock the channels at the current commit run:
 #+end_src
 :END:
   
-config/.config/guix/manifests/default.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm :mkdirp t
+config/.config/guix/manifest.scm
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifest.scm :mkdirp t
   (specifications->manifest
    (list "glibc-locales"
          <<default>>))
@@ -310,7 +310,7 @@ config/.config/guix/manifests/apps.scm
   "neofetch"
   "mpv"
   "mpd"
-#+end_src
+  #+end_src
 
 * Profiles
 :PROPERTIES:
@@ -332,24 +332,9 @@ config/.config/guix/manifests/apps.scm
   export GUIX_PROFILE="$HOME/.guix-profile"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
-  export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
   
   export XDG_DATA_DIR="$HOME/.guix-profile/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:/var/lib/flatpak/exports/share/applications"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$HOME/.local/share/flatpak/exports/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/browsers/browsers/share"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/apps/apps"; \
-      . "$GUIX_PROFILE/etc/profile"
-      export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/browsers/browsers"; \
-          . "$GUIX_PROFILE/etc/profile"
-          export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
-              . "$GUIX_PROFILE/etc/profile"
-              export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
-                  . "$GUIX_PROFILE/etc/profile"
-  
 #+end_src
 
 Set up XDG variables
@@ -357,5 +342,149 @@ Set up XDG variables
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
 
+** zprofile
+:PROPERTIES:
+:header-args: :tangle config/.zprofile
+:END:
+:HEADER:
+#+NAME: zprofile-header
+#+begin_src emacs-lisp :tangle no
+  (my/--generate-file-header "System.org" ".zprofile" "#")
+#+end_src
+#+begin_src sh :noweb yes 
+  #!/usr/bin/env zsh
+  <<zprofile-header()>>
+#+end_src
+:END:
+#+begin_src sh
+  export ZDOTDIR="$HOME/.config/zsh"
+  . "/etc/profile"
+  . "$HOME/.config/guix/active-profiles"
+  if [[ -d "$HOME/.bin" ]]; then
+      export PATH="$PATH:$HOME/.bin"
+  fi
+  . "$HOME/.bin/guix-activate-profiles"
+  . "$HOME/.bin/guix-activate-xdg-data"
+  xmodmap ~/.Xmodmap
+  export $(dbus-launch)
+  
+  # if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then
+  #     sleep 1
+  #     startx
+  # fi
+#+end_src
+
+** Profile Managment
+:PROPERTIES:
+:END:
+create a library for often used variables.
+
+#+begin_src sh :tangle config/.bin/lib/guix :mkdirp t
+  GREEN='\033[1;32m'
+  RED='\033[1;30m'
+  NC='\033[0m'
+  GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+#+end_src
+
+*** guix-install-profile
+Installs manifest =$HOME=​​/​.config/guix/manifests/​=name=.scm to profile with path =$GUIX_EXTRA_PROFILES=​/​=name=​/​=name=.
+#+begin_src sh :tangle config/.bin/guix-install-profile :shebang "#!/usr/bin/env zsh"
+  source $HOME/.bin/lib/guix
+  
+  local profiles=($@)
+  if [[ $# -eq 0 ]]; then
+      echo "${RED}function requires paramaters${NC}" # profiles="$GUIX_EXTRA_PROFILES/*";
+      return 1
+  fi
+  
+  for profile in $profiles; do
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+  
+      echo
+      echo -e "${GREEN}installing profile:" $profilePath "${NC}"
+      echo
+  
+      guix package --profile="$profilePath/$profileName" --manifest="$HOME/.config/guix/manifests/$profileName.scm"
+  done 
+#+end_src
+ 
+*** guix-populate-profiles
+Installes all manifest files ending with =name=.scm in path $HOME/.config/guix/manifests to the assosiated profile path at $GUIX_EXTRA_PROFILES/​=name=​/​=name= if no argument is given otherwise install only manifest files matching the profided arguments.
+#+begin_src sh :tangle config/.bin/guix-populate-profiles :shebang "#!/usr/bin/env zsh"
+  source $HOME/.bin/lib/guix
+  local profiles=($@)
+  if [[ $# -eq 0 ]]; then
+      local profiles=($HOME/.config/guix/manifests/*.scm)
+  fi
+  
+  for profile in $profiles; do
+      # remove the path and file extension, if any
+      local profileName=$(basename -s .scm $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+      local manifestPath=$HOME/.config/guix/manifests/$profileName.scm
+  
+      if [ -f $manifestPath ]; then
+          echo
+          echo -e "${GREEN}populating profile:" $manifestPath "${NC}"
+          echo
+  
+          mkdir -p $profilePath
+          guix package --manifest="$manifestPath" --profile="$profilePath/$profileName"
+      fi
+  done
+#+end_src
+
+*** guix-activate-profiles 
+sources the given profiles. If none are provided it treats all folders in the =$GUIX_EXTRA_PROFILES= directory as the name of a profile to be activated.
+#+begin_src sh :tangle config/.bin/guix-activate-profiles :shebang "#!/usr/bin/env zsh"
+  source $HOME/.bin/lib/guix
+  
+  local profiles=($@)
+  if [[ $# -eq 0 ]]; then
+      local profiles=($GUIX_EXTRA_PROFILES/*)
+  fi
+  
+  for profile in $profiles; do
+      # Remove the path and file extension, if any
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+  
+  
+      # Source the new profile
+      GUIX_PROFILE="$profilePath/$profileName"
+      if [ -f $GUIX_PROFILE/etc/profile ]; then
+          . "$GUIX_PROFILE"/etc/profile
+      else
+          echo -e "${RED}Couldn't find profile:" $GUIX_PROFILE/etc/profile "${NC}"
+      fi
+  done
+#+end_src
+
+*** guix-activate-xdg-data 
+Does the same thing as =guix-activate-profile= execpt that it exports the profiles share directory to the =$XDG_DATA_DIR= global variable.
+#+begin_src sh :tangle config/.bin/guix-activate-xdg-data :shebang "#!/usr/bin/env zsh"
+  source $HOME/.bin/lib/guix
+  
+  local profiles=($*)
+  if [[ $# -eq 0 ]]; then
+      local profiles=($GUIX_EXTRA_PROFILES/*)
+  fi
+  
+  for profile in $profiles; do
+      # Remove the path, if any
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+  
+      # Export the XDG_DATA_DIR
+      GUIX_PROFILE="$profilePath/$profileName"
+      if [[ -d $GUIX_PROFILE/share ]]; then
+          export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_PROFILE/share"
+      else
+          echo -e "${RED}Couldn't fine share directory:" $GUIX_PROFILE/share "${NC}"
+      fi
+  done
+  #+end_src
 
 
+ 
