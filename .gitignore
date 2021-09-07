@@ -7,6 +7,12 @@ config/.config/guix/manifests/emacs.scm
 config/.config/emacs/early-init.el
 config/.config/emacs/early-init.el
 config/.config/emacs/init.el
+config/.bin/guix-activate-xdg-data
+config/.bin/guix-activate-profiles
+config/.bin/guix-populate-profiles
+config/.bin/guix-install-profile
+config/.bin/lib/guix
+config/.zprofile
 config/.config/user-dirs.dirs
 config/.config/guix/active-profiles
 config/.config/guix/manifests/apps.scm
@@ -25,6 +31,5 @@ config/.xsession
 config/.config/redshift.conf
 config/.config/polybar/config
 config/.config/emacs/desktop.el
-config/.zprofile
 config/.config/zsh/aliasrc
 config/.config/zsh/.zshrc
