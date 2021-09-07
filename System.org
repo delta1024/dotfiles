@@ -330,24 +330,9 @@ config/.config/guix/manifests/apps.scm
   export GUIX_PROFILE="$HOME/.guix-profile"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
-  export GUIX_EXTRA_PROFILES="$HOME/.guix-extra-profiles"
-  
+
   export XDG_DATA_DIR="$HOME/.guix-profile/share"
   export XDG_DATA_DIR="$XDG_DATA_DIR:/var/lib/flatpak/exports/share/applications"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$HOME/.local/share/flatpak/exports/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/emacs/emacs/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/desktop/desktop/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/apps/apps/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_EXTRA_PROFILES/browsers/browsers/share"
-  export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/apps/apps"; \
-      . "$GUIX_PROFILE/etc/profile"
-      export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/browsers/browsers"; \
-          . "$GUIX_PROFILE/etc/profile"
-          export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/desktop/desktop"; \
-              . "$GUIX_PROFILE/etc/profile"
-              export GUIX_PROFILE="$GUIX_EXTRA_PROFILES/emacs/emacs"; \
-                  . "$GUIX_PROFILE/etc/profile"
-  
 #+end_src
 
 Set up XDG variables
@@ -355,5 +340,97 @@ Set up XDG variables
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
 
+** Profile Managment
+GREEN='\033[1;32m'
+RED='\033[1;30m'
+NC='\033[0m'
+GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+
+function guix-install-profile () {
+local profiles=$*
+if [[ $# -eq 0 ]]; then
+    echo "function requires paramaters" # profiles="$GUIX_EXTRA_PROFILES/*";
+    return 1
+fi
+
+for profile in $profiles; do
+    local profileName=$(basename $profile)
+    local profilePath=$GUIX_EXTRA_PROFILES/$profileName
+
+    echo
+    echo -e "${GREEN}installing profile:" $profilePath "${NC}"
+    echo
+
+    guix package --profile="$profilePath/$profileName" --manifest="$HOME/.config/guix/manifests/$profileName.scm"
+done 
+  }
+
+  function guix-populate-profiles () {
+  local profiles=$*
+  if [[ $# -eq 0 ]]; then
+      local profiles="$HOME/.config/guix/manifests/*.scm"
+  fi
+
+  for profile in $profiles; do
+      # Remove the path and file extension, if any
+      local profileName=$(basename $profile)
+      local profileName="${profileName%.*}"
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+      local manifestPath=$HOME/.config/guix/manifests/$profileName.scm
+
+      if [ -f $manifestPath ]; then
+          echo
+          echo -e "${GREEN}Activating profile:" $manifestPath "${NC}"
+          echo
+
+          mkdir -p $profilePath
+          guix package --manifest=$manifestPath --profile="$profilePath/$profileName"
+      fi
+  done
+  }
+
+  function guix-activate-profiles () {
+  local profiles=$*
+  if [[ $# -eq 0 ]]; then
+      local profiles="$GUIX_EXTRA_PROFILES/*"
+  fi
+
+  for profile in $profiles; do
+      # Remove the path and file extension, if any
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+
+      # Source the new profile
+      GUIX_PROFILE="$profilePath/$profileName"
+      if [ -f $GUIX_PROFILE/etc/profile ]; then
+          . "$GUIX_PROFILE"/etc/profile
+      else
+          echo -e "${RED}Couldn't find profile:" $GUIX_PROFILE/etc/profile "${NC}"
+      fi
+      else
+          echo "No profile found at path" $profilePath
+  done
+  }
+
+  function guix-activate-xdg-data () {
+  local profiles=$*
+  if [[ $# -eq 0 ]]; then
+      local profiles="$GUIX_EXTRA_PROFILES/*"
+  fi
+
+  for profile in $profiles; do
+      # Remove the path, if any
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$ProfileName"
+
+      # Export the XDG_DATA_DIR
+      $GUIX_PROFILE="$profilePath/$profileName"
+      if [[ -d $GUIX_PROFILE/share ]]; then
+          export XDG_DATA_DIR="$XDG_DATA_DIR:$GUIX_PROFILE/share"
+      else
+          echo -e "${RED}Couldn't fine share directory:" $GUIX_PROFILE/share "${NC}"
+      fi
+  done
+  }
 
 
