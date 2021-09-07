@@ -341,6 +341,7 @@ Set up XDG variables
 #+begin_src sh :tangle config/.config/user-dirs.dirs 
   XDG_PICTURES_DIR=$HOME/Pictures
 #+end_src
+
 ** Profile Managment
 :PROPERTIES:
 :END:
@@ -451,7 +452,28 @@ Does the same thing as =guix-activate-profile= execpt that it exports the profil
           echo -e "${RED}Couldn't fine share directory:" $GUIX_PROFILE/share "${NC}"
       fi
   done
-  #+end_src
+#+end_src
 
 
  
+*** guix-ugrade-profiels
+#+begin_src sh :tangle config/.bin/guix-upgrade-profiles :shebang "#!/usr/bin/env zsh"
+  source $HOME/.bin/lib/guix
+  
+  local profiles=($@)
+  if [[ $# -eq 0 ]]; then
+      local profiles=($GUIX_EXTRA_PROFILES/*)
+  fi
+  
+  for profile in $profiles; do
+      # Remove the path and file extension, if any
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+  
+  
+      # Upgrade the profiles
+      GUIX_PROFILE="$profilePath/$profileName"
+      echo "${GREEN}Upgrading profile:" $GUIX_PROFILE "${NC}"
+      guix upgrade --profile="$GUIX_PROFILE"
+  done
+#+end_src

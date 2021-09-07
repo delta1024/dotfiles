@@ -7,6 +7,7 @@ config/.config/guix/manifests/emacs.scm
 config/.config/emacs/early-init.el
 config/.config/emacs/early-init.el
 config/.config/emacs/init.el
+config/.bin/guix-upgrade-profiles
 config/.bin/guix-activate-xdg-data
 config/.bin/guix-activate-profiles
 config/.bin/guix-populate-profiles
