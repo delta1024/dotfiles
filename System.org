@@ -11,6 +11,8 @@ My GNU/Guix System Configuration. In this file you will find channels.scm, all m
 *** TODO User auto login
 auto login to gdm by redefinging the service
 *** TODO GPS Local for redshift
+*** TODO set brightness to 50% at login
+
 ** Manifests
 *** Inbox
 ** General
