@@ -1,6 +1,6 @@
 #+TITLE: Shells
 #+AUTHOR: Jacob Stannix
-This is my configuration for all of my shell related applications. 
+This is my configuration for my shell and X environments. 
 
 * Inbox
 ** ZSH
@@ -231,9 +231,9 @@ alias dvmkconf="doas nvim /etc/portage/make.conf"
   # fi
 #+end_src
 
-* Graphical  
-Graphical environment configuratoin
-** Xsession
+* X  
+Graphical environment configuration
+** xsession
 :PROPERTIES:
 :header-args: :tangle config/.xsession :shebang "#!/usr/bin/env zsh"
 :END:
