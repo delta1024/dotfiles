@@ -187,7 +187,7 @@ Gives a memeory boost at startup
 :PROPERTIES:
 :header-args: :tangle config/.config/emacs/user-config/user-config-emacs.el
 :END:
-This section tangles out to =config/.config/emacs/user-config/user-config-emacs.el= unless stated otherwise.
+untill otherwise stated the rest of the code blocks tangle out to =config/.config/emacs/user-config/user-config-emacs.el= unless stated otherwise.
 :HEADER:
 #+NAME: user-config-emacs-header
 #+begin_src emacs-lisp
@@ -1012,6 +1012,7 @@ display correctly:
 #+end_src
 
 * exwm
+Now we return to =init.el= for the rest of the config.
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-exwm"
