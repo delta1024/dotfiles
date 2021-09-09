@@ -1,16 +1,26 @@
-#+TITLE: README
+#+TITLE: GNU/Guix as managed by Emacs
 #+SUBTITLE: modes, modes everywhere
 #+PROPERTY: header-args :tangle config/.config/emacs/user-config/user-config-core.el
 
-My System configuration centers around the concept of minor modes being used to configure your personal functions, settings and configurations for different sections of your system/emacs configuration allowing you load and unload parts of your config on the fly.
+My System Configuration centers around the concept of minor modes being used to configure your personal functions, settings and configurations for different sections of your system/emacs configuration allowing you load and unload parts of your config on the fly.
 
 The idea behind this configuration model is to use to allow the name spacing of various parts of our configuration so it can be loaded using =(require 'FEATURE)= and unloaded with =(unload-feature 'FEATURE)=. For this to work correctly the =provide= declaration must be a top level expression
 
 The directory for your configuration files should be added to your load path very early in your config.
 
-Unless otherwise specified the code blocks in this file export to =config/.config/emacs/user-config/user-config-core.el=
-
-=config/.config/emacs/user-config/user-config.el=
+NOTE: Unless otherwise specified the code blocks in this file export to  the directory =config/.config/emacs/user-config/=.
+* The Basics
+To access a function before it's source file has been loaded it needs an auto-load declaration. We'll place those in =user-config.el= along with the minor mode definition that'll load your config on top of emacs, or unload it, restoring emacs to it's base state.
+:HEADER:
+#+NAME: user-config-header
+#+begin_src emacs-lisp :tangle no
+  (user-config-generate-file-header "README.org" "user-config.el")
+#+end_src
+#+HEADER: :tangle config/.config/emacs/user-config/user-config.el :mkdirp t :noweb yes
+#+begin_src emacs-lisp
+  <<user-config-header()>>
+#+end_src
+:END:
 #+HEADER: :tangle config/.config/emacs/user-config/user-config.el :mkdirp t
 #+begin_src emacs-lisp
   (provide 'user-config)
@@ -28,10 +38,19 @@ Unless otherwise specified the code blocks in this file export to =config/.confi
         #+end_src
 
 * Core
-The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=. 
+:HEADER:
+#+NAME: user-config-header
+#+begin_src emacs-lisp :tangle no
+  (user-config-generate-file-header "README.org" "user-config-core.el")
+#+end_src
+#+HEADER: :tangle config/.config/emacs/user-config/user-config-core.el :mkdirp t :noweb yes
+#+begin_src emacs-lisp
+  <<user-config-header()>>
+#+end_src
+:END:
 
+The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=. 
 #+begin_src emacs-lisp 
-  ;; testing
   (provide 'user-config-core)
   (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
                 by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter"
@@ -41,6 +60,7 @@ The Core of the configuration. This is the place where you should define a minor
 #+end_src
 
 **  Emacs
+#+NAME: user-config-emacs-header
 Define a minor mode to hold our emacs configuration like so.
 #+begin_src emacs-lisp 
   (define-minor-mode config-emacs-mode
@@ -53,7 +73,7 @@ Define a minor mode to hold our emacs configuration like so.
       (unload-feature 'user-config-emacs t)))
   #+end_src
 
-** Org
+** COMMENT Org
 Do the same thing for Org Mode
 #+begin_src emacs-lisp
   (define-minor-mode config-org-mode
@@ -67,14 +87,14 @@ Do the same thing for Org Mode
 #+end_src
 
 ** Desktop 
-And finally we create the mode for our desktop config
+And finally we create the mode for our desktop config. NOTE: If you unload this mode after you start exwm the background does some weird things so you're stuck with a your emacs frame as a background image. The trade of is you can make and test changes on the fly then when your happy restart emacs with the =my/exwm-restart= function which will restart emacs but preserve your xsession.
 #+begin_src emacs-lisp
   (define-minor-mode config-desktop-mode
     "My settings pertaining to EXWM"
     :global t
-    :group 'config-desktop
+    :group 'user-config-desktop
   
     (if config-desktop-mode
         (require 'user-config-desktop)
-      (unload-feature 'user-config-desktop)))
+      (unload-feature 'user-config-desktop t)))
 #+end_src

@@ -16,7 +16,7 @@ This is my Zsh configuration for use on GNU/Guix.
 :HEADER:
 #+NAME: zshrc-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "Shells.org" ".zshrc" "#")
+  (user-config-generate-file-header "Shells.org" ".zshrc" "#")
 #+end_src
 #+begin_src shell-script :noweb yes 
   <<zshrc-header()>>
@@ -110,7 +110,7 @@ config/.config/zsh/.zshrc
 :HEADER:
 #+NAME: aliasrc-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "Shells.org" "aliasrc" "#")
+  (user-config-generate-file-header "Shells.org" "aliasrc" "#")
 #+end_src
 #+begin_src shell-script :noweb yes 
   <<aliasrc-header()>>
@@ -206,7 +206,7 @@ alias dvmkconf="doas nvim /etc/portage/make.conf"
 :HEADER:
 #+NAME: zprofile-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" ".zprofile" "#")
+  (user-config-generate-file-header "System.org" ".zprofile" "#")
 #+end_src
 #+begin_src sh :noweb yes 
   #!/usr/bin/env zsh
@@ -240,7 +240,7 @@ Graphical environment configuration
 :HEADER:
 #+NAME: xsession-header
 #+begin_src emacs-lisp :tangle no
-(my/--generate-file-header "Desktop.org" ".xsession" "#")
+(user-config-generate-file-header "Desktop.org" ".xsession" "#")
 #+end_src
 #+begin_src sh :noweb yes
   <<xsession-header()>>

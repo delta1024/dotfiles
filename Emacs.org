@@ -46,10 +46,11 @@ Description: Graphical front end for org roam
 :PROPERTIES:
 :header-args: :tangle config/.config/emacs/early-init.el
 :END:
+This section tangles out to =early-init.el=
 :HEADER:
 #+NAME: early-init-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "Emacs.org" "early-init.el")
+  (user-config-generate-file-header "Emacs.org" "early-init.el")
 #+end_src
 #+begin_src emacs-lisp :tangle config/.config/emacs/early-init.el :noweb yes
   <<early-init-header()>>
@@ -58,12 +59,14 @@ Description: Graphical front end for org roam
 #+begin_src emacs-lisp 
   (setq package-enable-at-startup nil)
   
-  ;; (add-to-list 'load-path (expand-file-name "user-config" user-emacs-directory))
+  (add-to-list 'load-path (expand-file-name "user-config" user-emacs-directory))
+  (require 'user-config)
+  (user-config-mode 1)
 #+end_src
 
 My custom header string function.
 #+begin_src emacs-lisp 
-  (defun my/--generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
+  (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
       by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
          (let ((delim (or delim ";;")))
            (format "%s NOTE: %s is generated from %s. Please edit that file
@@ -71,6 +74,7 @@ My custom header string function.
 #+end_src
 
 * Startup Optimization
+From now on unless otherwise stated all soruce blocks tangle out to =init.el=
 #+begin_src emacs-lisp 
   (defvar emacs-startup-time 
     (format "%.2f seconds"
@@ -96,50 +100,9 @@ Gives a memeory boost at startup
 :PROPERTIES:
 :header-args: :tangle no
 :END:
+!!NOT ACTIVE!!
 #+begin_src emacs-lisp
   (setq use-package-verbose t)
-#+end_src
-
-* Variables
-#+begin_src emacs-lisp
-  (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
-  (defvar my/user-font "Fira Code" "emacs's fixed width font")
-  (defvar my/font-size 150 "font size for emacs")
-  (defvar my/emacs-file (expand-file-name  ".dotfiles/Emacs.org" (getenv "HOME")) "emacs configuration file name")
-  (defvar my/guix-file (expand-file-name  ".dotfiles/System.org" (getenv "HOME")) "GNU Guix configuration file")
-  (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
-#+end_src
-
-* Basic UI Improvements
-
-#+begin_src emacs-lisp
-  (setq inhibit-startup-message t)
-  
-  ;; Redirect custom output
-  
-  (setq custom-file (expand-file-name "emacs-custom.el" user-emacs-directory))
-  
-  (scroll-bar-mode -1)        ; Disable visible scrollbar
-  (tool-bar-mode -1)          ; Disable the toolbar
-  (tooltip-mode -1)           ; Disable tooltips
-  (set-fringe-mode 10)        ; Give some breathing room
-  
-  (menu-bar-mode -1)          ; Disable the menu bar
-  
-  ;; sets fixed-width font
-  (set-face-attribute 'default nil :font my/user-font :height my/font-size :weight 'regular)
-  
-  
-  ;; Disables the visual bell
-  (setq visible-bell t)
-  (column-number-mode)
-  (global-display-line-numbers-mode t)
-  (dolist (mode '(org-mode-hook
-                  term-mode-hook
-                  markdown-mode
-                  eshell-mode-hook
-                  dired-mode-hook))
-    (add-hook mode (lambda () (display-line-numbers-mode 0))))
 #+end_src
 
 * Straight and Use-Package
@@ -173,6 +136,38 @@ Gives a memeory boost at startup
   (require 'use-package) 
 #+end_src
 
+* Basic UI Improvements
+
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t)
+  
+  ;; Redirect custom output
+  
+  (setq custom-file (expand-file-name "emacs-custom.el" user-emacs-directory))
+  
+  (scroll-bar-mode -1)        ; Disable visible scrollbar
+  (tool-bar-mode -1)          ; Disable the toolbar
+  (tooltip-mode -1)           ; Disable tooltips
+  (set-fringe-mode 10)        ; Give some breathing room
+  
+  (menu-bar-mode -1)          ; Disable the menu bar
+  (config-emacs-mode 1)  
+  ;; sets fixed-width font
+  (set-face-attribute 'default nil :font my/user-font :height my/font-size :weight 'regular)
+  
+  
+  ;; Disables the visual bell
+  (setq visible-bell t)
+  (column-number-mode)
+  (global-display-line-numbers-mode t)
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  markdown-mode
+                  eshell-mode-hook
+                  dired-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
+
 * No Littering
 
 :GUIX:
@@ -188,8 +183,37 @@ Gives a memeory boost at startup
           `((".*" ,(no-littering-expand-var-file-name "auto-save/") t))))
 #+end_src
 
-* Keyboard
-** Evil
+* User Config
+:PROPERTIES:
+:header-args: :tangle config/.config/emacs/user-config/user-config-emacs.el
+:END:
+This section tangles out to =config/.config/emacs/user-config/user-config-emacs.el= unless stated otherwise.
+:HEADER:
+#+NAME: user-config-emacs-header
+#+begin_src emacs-lisp
+  (user-config-generate-file-header "Emacs.org" "user-config-emacs.el")
+#+end_src
+
+#+begin_src emacs-lisp :noweb yes
+  <<user-config-emacs-header()>
+#+end_src
+:END:
+
+#+begin_src emacs-lisp
+  (provide 'user-config-emacs)
+#+end_src
+** Variables
+#+begin_src emacs-lisp
+  (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
+  (defvar my/user-font "Fira Code" "emacs's fixed width font")
+  (defvar my/font-size 150 "font size for emacs")
+  (defvar my/emacs-file (expand-file-name  ".dotfiles/Emacs.org" (getenv "HOME")) "emacs configuration file name")
+  (defvar my/guix-file (expand-file-name  ".dotfiles/System.org" (getenv "HOME")) "GNU Guix configuration file")
+  (defvar my/alpha-value '(90 . 90) "EXWM default alpha value")
+#+end_src
+
+** Keyboard
+*** Evil
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-evil"
@@ -214,7 +238,7 @@ Gives a memeory boost at startup
     ([remap evil-search-backward] . swiper-backward))
 #+end_src
 
-*** Evil Collection
+**** Evil Collection
 
 #+begin_src emacs-lisp
   (use-package evil-collection
@@ -223,7 +247,7 @@ Gives a memeory boost at startup
     (evil-collection-init)) 
 #+end_src
 
-*** Evil God State
+**** Evil God State
 
 #+begin_src emacs-lisp
   (use-package evil-god-state
@@ -235,7 +259,7 @@ Gives a memeory boost at startup
     (evil-define-key 'god global-map [escape] 'evil-god-state-bail))
 #+end_src
 
-** General
+*** General
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-general"
@@ -276,6 +300,9 @@ Gives a memeory boost at startup
     "h z" '((lambda () (interactive)
               (find-file (expand-file-name "Environment.org" "~/.dotfiles")))
             :wk "environment configuration")
+    "h r" '((lambda () (interactive)
+              (find-file (expand-file-name "README.org" "~/.dotfiles")))
+            :wk "README")
   
     "d"     '((lambda () (interactive) (dired "~/")) :wk "Dired home")
     "a"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty --working-directory ~/"))
@@ -291,8 +318,71 @@ Gives a memeory boost at startup
     "c"     '(org-capture                                             :wk "change directory"))
   #+end_src
 
-* Org Mode
-** Org Variables
+** Dired
+:GUIX:
+#+begin_src scheme :noweb-ref packages :tangle no
+  "emacs-all-the-icons-dired"
+#+end_src
+:END:
+#+begin_src emacs-lisp
+  (use-package dired
+    :after evil
+    :demand t
+    :commands (dired dired-jump)
+    :hook (dired-mode . dired-hide-details-mode)
+    :bind (("C-x C-j" . dired-jump))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-up-directory
+      "l" 'dired-find-file)
+    (setq dired-always-read-filesystem t)
+    :custom ((dired-listing-switches "-AGgD --group-directories-first")
+             (dired-kill-when-opening-new-dired-buffer t)))
+#+end_src
+
+*** Dired Single
+
+#+begin_src emacs-lisp
+  (use-package dired-single
+    :straight t)
+  
+  (evil-collection-define-key 'normal 'dired-mode-map
+    "h" 'dired-single-up-directory
+    "l" 'dired-single-buffer)
+#+end_src
+
+*** All the Icons Dired
+#+begin_src emacs-lisp
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
+#+end_src
+
+*** Hide Dotfiles
+#+begin_src emacs-lisp
+  (use-package dired-hide-dotfiles
+    :straight t
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
+#+end_src
+
+*** Dired Open
+
+#+begin_src emacs-lisp
+  (use-package dired-open
+    :straight t
+    :config
+    ;; Doesn't work as expected!
+    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
+    ;; -- OR! --
+    (setq dired-open-extensions '(("png" . "sxiv")
+                                  ("mkv" . "mpv")
+                                  ("webm" . "mpv"))))
+#+end_src
+
+** Org Mode
+*** Org Variables
 
 #+begin_src emacs-lisp
   (customize-set-variable 'org-directory "~/Documents/org/")
@@ -317,7 +407,7 @@ Gives a memeory boost at startup
   ;; (advice-add 'org-refile :after 'org-save-all-org-buffers)
 #+end_src
 
-** Todo Keywords
+*** Todo Keywords
 
 #+begin_src emacs-lisp
   (setq org-todo-keywords
@@ -327,7 +417,7 @@ Gives a memeory boost at startup
           (sequence "MAYBE" "|" "DEAD(@)")))
 #+end_src
 
-** Org Capture Templates
+*** Org Capture Templates
 
 #+begin_src emacs-lisp
   (setq org-capture-templates
@@ -370,7 +460,7 @@ Gives a memeory boost at startup
            "* %^{Issue: }%?")))
 #+end_src
 
-** org-open-file
+*** org-open-file
 
 #+begin_src emacs-lisp
   (defun my/org-open-file (a)  "Opens the file in `org-directory'"
@@ -379,7 +469,7 @@ Gives a memeory boost at startup
          (find-file  a))
 #+end_src
 
-** Use Package
+*** Use Package
 #+begin_src emacs-lisp :noweb yes
   (use-package org
     :straight t
@@ -395,12 +485,12 @@ Gives a memeory boost at startup
     (my/org-font-setup))
 #+end_src
 
-*** Config
+**** Config
 :PROPERTIES:
 :header-args: :noweb-ref config
 :END:
-**** Functions
-***** org-font-setup
+***** Functions
+****** org-font-setup
 
 #+begin_src emacs-lisp
   (defun my/org-font-setup ()
@@ -424,7 +514,7 @@ Gives a memeory boost at startup
     (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
 #+end_src
 
-***** org-mode-setup
+****** org-mode-setup
 
 #+begin_src emacs-lisp
   (defun my/org-mode-setup ()
@@ -437,83 +527,8 @@ Gives a memeory boost at startup
    'org-babel-load-languages
    '((emacs-lisp . t)))
 #+end_src
-
-**** Auto Tangle Config
-
-#+begin_src emacs-lisp
-  (defun my/org-babel-tangle-config ()
-    (when (string-equal (file-name-directory (buffer-file-name))
-                        (expand-file-name "~/.dotfiles/"))
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
-#+end_src
-
-* Dired
-:GUIX:
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-all-the-icons-dired"
-#+end_src
-:END:
-#+begin_src emacs-lisp
-  (use-package dired
-    :after evil
-    :demand t
-    :commands (dired dired-jump)
-    :hook (dired-mode . dired-hide-details-mode)
-    :bind (("C-x C-j" . dired-jump))
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-up-directory
-      "l" 'dired-find-file)
-    (setq dired-always-read-filesystem t)
-    :custom ((dired-listing-switches "-AGgD --group-directories-first")
-             (dired-kill-when-opening-new-dired-buffer t)))
-#+end_src
-
-** Dired Single
-
-#+begin_src emacs-lisp
-  (use-package dired-single
-    :straight t)
-  
-  (evil-collection-define-key 'normal 'dired-mode-map
-    "h" 'dired-single-up-directory
-    "l" 'dired-single-buffer)
-#+end_src
-
-** All the Icons Dired
-#+begin_src emacs-lisp
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
-#+end_src
-
-** Hide Dotfiles
-#+begin_src emacs-lisp
-  (use-package dired-hide-dotfiles
-    :straight t
-    :hook (dired-mode . dired-hide-dotfiles-mode)
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "H" 'dired-hide-dotfiles-mode))
-#+end_src
-
-** Dired Open
-
-#+begin_src emacs-lisp
-  (use-package dired-open
-    :straight t
-    :config
-    ;; Doesn't work as expected!
-    ;;(add-to-list 'dired-open-functions #'dired-open-xdg t)
-    ;; -- OR! --
-    (setq dired-open-extensions '(("png" . "sxiv")
-                                  ("mkv" . "mpv")
-                                  ("webm" . "mpv"))))
-#+end_src
-
-* Misc
-** Visual Fill Colum
+** Misc
+*** Visual Fill Colum
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-visual-fill-column"
@@ -532,7 +547,7 @@ Gives a memeory boost at startup
     (markdown-mode . my/org-mode-visual-fill))
 #+end_src
 
-** Org Bullets
+*** Org Bullets
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-org-bullets"
@@ -547,7 +562,7 @@ Gives a memeory boost at startup
     (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
 #+end_src
 
-** Org Roam
+*** Org Roam
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-org-roam"
@@ -583,7 +598,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   
 #+end_src
 
-** Markdown Mode
+*** Markdown Mode
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-markdown-mode"
@@ -598,7 +613,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :init (setq markdown-command "multimarkdown"))
 #+end_src
 
-** Org Appear
+*** Org Appear
 #+begin_src emacs-lisp
   (use-package org-appear
     :straight '(org-appear
@@ -608,7 +623,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     :hook (org-mode . org-appear-mode))
 #+end_src
 
-** Vertico
+*** Vertico
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-vertico"
@@ -652,7 +667,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     (savehist-mode))
 #+end_src
 
-** Selectrum
+*** Selectrum
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-selectrum"
@@ -662,7 +677,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
   (use-package selectrum)
 #+end_src
 
-** Consult
+*** Consult
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-consult"
@@ -674,7 +689,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     ("C-s" . consult-line))
 #+end_src
 
-** Dotcrafter
+*** Dotcrafter
 
 #+begin_src emacs-lisp
   (use-package dotcrafter
@@ -689,7 +704,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
      '("README.org" "Emacs.org" "System.org" "Desktop.org" "Environment.org")))
 #+end_src
 
-** DEAD Embark
+*** DEAD Embark
 CLOSED: [2021-08-29 Sun 20:58]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-29 Sun 20:58] \\
@@ -717,7 +732,7 @@ CLOSED: [2021-08-29 Sun 20:58]
                    (window-parameters (mode-line-format . none)))))
 #+end_src
 
-** marginalia
+*** marginalia
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-marginalia"
@@ -739,7 +754,7 @@ CLOSED: [2021-08-29 Sun 20:58]
     (marginalia-mode))
 #+end_src
 
-** app-launcher
+*** app-launcher
 
 #+begin_src emacs-lisp
   (use-package app-launcher
@@ -757,7 +772,7 @@ CLOSED: [2021-08-29 Sun 20:58]
     (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications"))
 #+end_src
 
-** DEAD Ivy 
+*** DEAD Ivy 
 CLOSED: [2021-08-28 Sat 16:49]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-28 Sat 16:49] \\
@@ -790,7 +805,7 @@ CLOSED: [2021-08-28 Sat 16:49]
   
 #+end_src
 
-** DEAD Counsel
+*** DEAD Counsel
 CLOSED: [2021-08-28 Sat 16:50]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-28 Sat 16:50] \\
@@ -811,7 +826,7 @@ CLOSED: [2021-08-28 Sat 16:50]
   
 #+end_src
 
-** DEAD Ivy Rich
+*** DEAD Ivy Rich
 CLOSED: [2021-08-28 Sat 16:51]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-28 Sat 16:51] \\
@@ -830,7 +845,7 @@ CLOSED: [2021-08-28 Sat 16:51]
   
 #+end_src
 
-** Projectile
+*** Projectile
 :GUIX:
 #+begin_src scheme :noweb-ref packages
   "emacs-projectile"
@@ -845,7 +860,7 @@ CLOSED: [2021-08-28 Sat 16:51]
   ;; NOTE: Set this to the folder where you keep your Git repos!
 #+end_src
 
-*** DEAD Counsel-Projectile
+**** DEAD Counsel-Projectile
 CLOSED: [2021-08-30 Mon 06:38]
 :LOGBOOK:
 - State "DEAD"       from              [2021-08-30 Mon 06:38] \\
@@ -863,7 +878,7 @@ CLOSED: [2021-08-30 Mon 06:38]
     :config (counsel-projectile-mode))
 #+end_src
 
-** Magit
+*** Magit
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-magit"
@@ -877,7 +892,7 @@ CLOSED: [2021-08-30 Mon 06:38]
                  "g" '(magit :which-key "Status")))
 #+end_src
 
-** Pass
+*** Pass
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-pass"
@@ -891,7 +906,7 @@ CLOSED: [2021-08-30 Mon 06:38]
     (pinentry-start))
 #+end_src
 
-** Helpful
+*** Helpful
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-helpful"
@@ -906,8 +921,8 @@ CLOSED: [2021-08-30 Mon 06:38]
     ([remap describe-key] . helpful-key))
 #+end_src
 
-** Doom
-*** Doom Themes
+*** Doom
+**** Doom Themes
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-doom-themes"
@@ -919,7 +934,7 @@ CLOSED: [2021-08-30 Mon 06:38]
     (load-theme 'doom-henna t))
 #+end_src
 
-*** Doom Modeline 
+**** Doom Modeline 
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-all-the-icons"
@@ -940,7 +955,7 @@ display correctly:
     :custom ((doom-mode-line-height 13)))
 #+end_src
 
-** Rainbow Delimiters
+*** Rainbow Delimiters
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-rainbow-delimiters"
@@ -951,7 +966,7 @@ display correctly:
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
-** Which-Key
+*** Which-Key
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-which-key"
@@ -965,7 +980,7 @@ display correctly:
     (setq which-key-idle-delay 1))
 #+end_src
 
-** Swiper
+*** Swiper
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-swiper"
@@ -975,7 +990,7 @@ display correctly:
   (use-package swiper)
 #+end_src
 
-** PDF view
+*** PDF view
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-pdf-tools"
@@ -984,7 +999,7 @@ display correctly:
 #+begin_src emacs-lisp
 #+end_src
 
-** Perspective
+*** Perspective
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
   "emacs-perspective"
@@ -1006,7 +1021,7 @@ display correctly:
 load in exwm
 #+begin_src emacs-lisp
   (defun my/exwm-load (switch)
-    (load-file (expand-file-name "desktop.el" user-emacs-directory )))
+    (config-desktop-mode 1))
   (add-to-list 'command-switch-alist '("-exwm" . my/exwm-load))
 #+end_src
 
@@ -1038,7 +1053,7 @@ Returns the garbage collector to a sane value.
 :HEADER:
 #+NAME: manifest-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "Emacs.org" "emacs.scm")
+  (user-config-generate-file-header "Emacs.org" "emacs.scm")
 #+end_src
 #+begin_src scheme :noweb yes
   <<manifest-header()>>

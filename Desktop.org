@@ -1,5 +1,5 @@
 #+TITLE: Desktop
-#+PROPERTY: header-args :tangle config/.config/emacs/desktop.el
+#+PROPERTY: header-args :tangle config/.config/emacs/user-config/user-config-desktop.el
 My desktop environment as managed by EXWM. In this file you will also find any desktop configurations required to make emacs into a fully functioning desktop environment as I see it.
 * Inbox
 ** Windows
@@ -13,9 +13,19 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 * Preamble
 [[https://github.com/daviwil/emacs-from-scratch][Emacs From Scratch Repo]]
 #+begin_src emacs-lisp
-  ;; NOTE: desktop.el is now generated from Desktop.org.  Please edit that file
-  ;;       in Emacs and desktop.el will be generated automatically!
-#+end_src
+  ;; NOTE: user-config-desktop.el is now generated from Desktop.org.  Please edit that file
+  ;;       in Emacs and user-config-desktop.el will be generated automatically!
+  (provide 'user-config-desktop)
+  ;; clean up when we leave
+  (defun user-config-desktop-unload-function () "WARNING: Runing this will break things"
+    (when (exwm--confirm-kill-emacs "Emacs will now restart? " 'no-check)
+      (progn
+        (my/kill-picom)
+        (my/kill-polybar)
+        (unload-feature 'desktop-environment t)
+        (unload-feature 'exwm t))))
+  
+      #+end_src
 
 *  EXWM
 #+begin_src emacs-lisp
@@ -51,23 +61,23 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 ** Autostart
 
 #+begin_src emacs-lisp :noweb yes
-    <<picom-integration>>
-    <<polybar-integration>>
-    (defun my/run-in-background (command)
-      (let ((command-parts (split-string command "[ ]+")))
-        (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
-    
-    (defun my/exwm-init-hook ()
-      (my/start-panel)
-      (my/start-picom)
-      (dired "~/")
-      (delete-other-windows)
-      (org-agenda-list)
-  )
-    
-    ;; (my/run-in-background "picom")
-    ;; (my/run-in-background "xclip")
-    ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
+  <<picom-integration>>
+  <<polybar-integration>>
+  (defun my/run-in-background (command)
+    (let ((command-parts (split-string command "[ ]+")))
+      (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
+  
+  (defun my/exwm-init-hook ()
+    (my/start-panel)
+    (my/start-picom)
+    (dired "~/")
+    (delete-other-windows)
+    (org-agenda-list)
+    )
+  
+  ;; (my/run-in-background "picom")
+  ;; (my/run-in-background "xclip")
+  ;; (my/run-in-background (concat (getenv "HOME") "/" ".scripts/wallpaper.sh draw")))
 #+end_src
 
 *** Picom integration
@@ -114,7 +124,12 @@ My desktop environment as managed by EXWM. In this file you will also find any d
     (desktop-environment-mode)
     <<input-prefix-keys>>
     <<global-keys>>
-    (exwm-enable))
+    (defvar config-exwm-first-start nil "has exwm started the session")
+    (if config-exwm-first-start
+        (exwm-init)
+        (exwm-enable)
+        )
+      )
   
 #+end_src
 
@@ -216,7 +231,7 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 :HEADER:
 #+NAME: polybar-header
 #+begin_src emacs-lisp :tangle no
-(my/--generate-file-header "Desktop.org" "config" "#")
+(user-config-generate-file-header "Desktop.org" "config" "#")
 #+end_src
 #+begin_src conf-toml :noweb yes
   <<polybar-header()>>
@@ -427,7 +442,7 @@ Docs: https://github.com/polybar/polybar
 :HEADER:
 #+NAME: desktop-manifest-header
 #+begin_src emacs-lisp :tangle no
- (my/--generate-file-header "Desktop.org" "desktop.scm") 
+ (user-config-generate-file-header "Desktop.org" "desktop.scm") 
 #+end_src
 #+begin_src scheme :tangle config/.config/guix/manifests/desktop.scm :noweb yes
   <<desktop-manifest-header()>>
@@ -452,8 +467,9 @@ config/.config/guix/manifests/desktop.scm
 :HEADER:
 #+NAME: browser-manifest-header
 #+begin_src emacs-lisp :tangle no 
-  (my/--generate-file-header "Desktop.org" "browsers.scm")
+  (user-config-generate-file-header "Desktop.org" "browsers.scm")
 #+end_src
+
 #+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :noweb yes :mkdirp t
   <<browser-manifest-header()>>
 #+end_src

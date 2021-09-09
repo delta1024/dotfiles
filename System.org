@@ -25,7 +25,7 @@ to lock the channels at the current commit run:
 :HEADER:
 #+NAME: channels-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" "channels.scm")
+  (user-config-generate-file-header "System.org" "channels.scm")
 #+end_src
 #+begin_src scheme :tangle config/.config/guix/channels.scm :noweb yes
   <<channels-header()>>
@@ -64,7 +64,7 @@ to lock the channels at the current commit run:
 :HEADER:
 #+NAME: system-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" "system.scm")
+  (user-config-generate-file-header "System.org" "system.scm")
 #+end_src
 #+begin_src scheme :noweb yes
   <<system-header()>>
@@ -254,7 +254,7 @@ to lock the channels at the current commit run:
 :HEADER:
 #+NAME: default-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" "default.scm") 
+  (user-config-generate-file-header "System.org" "default.scm") 
 #+end_src
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm :mkdirp t
   <<default-header()>>
@@ -271,7 +271,7 @@ config/.config/guix/manifest.scm
 :HEADER:
 #+NAME: apps-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" "default.scm") 
+  (user-config-generate-file-header "System.org" "default.scm") 
 #+end_src
 #+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm :mkdirp t
   <<apps-header()>>
@@ -319,7 +319,7 @@ config/.config/guix/manifests/apps.scm
 :HEADER:
 #+NAME: active-profiles-header
 #+begin_src emacs-lisp :tangle no
-  (my/--generate-file-header "System.org" "active-profiles" "#")
+  (user-config-generate-file-header "System.org" "active-profiles" "#")
 #+end_src
 #+begin_src sh :noweb yes
   <<active-profiles-header()>>
