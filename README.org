@@ -87,7 +87,9 @@ Do the same thing for Org Mode
 #+end_src
 
 ** Desktop 
-And finally we create the mode for our desktop config. NOTE: If you unload this mode after you start exwm the background does some weird things so you're stuck with a your emacs frame as a background image. The trade of is you can make and test changes on the fly then when your happy restart emacs with the =my/exwm-restart= function which will restart emacs but preserve your xsession.
+And finally we create the mode for our desktop config.
+
+NOTE: If you unload this mode after you start exwm the background does some weird things so you're stuck with a your emacs frame as a background image. The trade of is you can make and test changes on the fly then when your happy restart emacs with the =my/exwm-restart= function which will restart emacs but preserve your xsession.
 #+begin_src emacs-lisp
   (define-minor-mode config-desktop-mode
     "My settings pertaining to EXWM"
