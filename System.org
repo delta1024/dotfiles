@@ -477,3 +477,27 @@ Does the same thing as =guix-activate-profile= execpt that it exports the profil
       guix upgrade --profile="$GUIX_PROFILE"
   done
 #+end_src
+
+*** guix-check-upgrades
+#+begin_src sh :tangle config/.bin/guix-check-upgrades :shebang "#!/usr/bin/env zsh"
+  source $HOME/.bin/lib/guix
+  
+  if [[ $# -eq 0 ]]; then
+      local profiles=($GUIX_EXTRA_PROFILES/*)
+  fi
+
+  echo "${GREEN}Checking user profile for upgrades${NC}"
+  guix upgrade --dry-run
+  
+  for profile in $profiles; do
+      # Remove the path and file extension, if any
+      local profileName=$(basename $profile)
+      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+  
+  
+      # Upgrade the profiles
+      GUIX_PROFILE="$profilePath/$profileName"
+      echo "${GREEN}Checking profile for upgrades:" $GUIX_PROFILE "${NC}"
+      guix upgrade --dry-run --profile="$GUIX_PROFILE"
+  done
+#+end_src

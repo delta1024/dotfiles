@@ -1,0 +1,80 @@
+#+TITLE: README
+#+SUBTITLE: modes, modes everywhere
+#+PROPERTY: header-args :tangle config/.config/emacs/user-config/user-config-core.el
+
+My System configuration centers around the concept of minor modes being used to configure your personal functions, settings and configurations for different sections of your system/emacs configuration allowing you load and unload parts of your config on the fly.
+
+The idea behind this configuration model is to use to allow the name spacing of various parts of our configuration so it can be loaded using =(require 'FEATURE)= and unloaded with =(unload-feature 'FEATURE)=. For this to work correctly the =provide= declaration must be a top level expression
+
+The directory for your configuration files should be added to your load path very early in your config.
+
+Unless otherwise specified the code blocks in this file export to =config/.config/emacs/user-config/user-config-core.el=
+
+=config/.config/emacs/user-config/user-config.el=
+#+HEADER: :tangle config/.config/emacs/user-config/user-config.el :mkdirp t
+#+begin_src emacs-lisp
+  (provide 'user-config)
+  (define-minor-mode user-config-mode
+    "toggles user-config mode"
+    :global t
+    :group 'user-config
+  
+    (if user-config-mode
+        (require 'user-config-core)
+      (unload-feature 'user-config-core t)))
+  
+  (autoload 'user-config-generate-file-header "user-config-core.el" "generates a heading to say which file a file is generated from.
+  by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter" nil)
+        #+end_src
+
+* Core
+The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=. 
+
+#+begin_src emacs-lisp 
+  ;; testing
+  (provide 'user-config-core)
+  (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
+                by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter"
+         (let ((delim (or delim ";;")))
+           (format "%s NOTE: %s is generated from %s. Please edit that file
+  %s       in emacs and %s will be generated automatically!" delim tangle-file parent-file delim tangle-file)))
+#+end_src
+
+**  Emacs
+Define a minor mode to hold our emacs configuration like so.
+#+begin_src emacs-lisp 
+  (define-minor-mode config-emacs-mode
+    "My settings pertaining to emacs specific things"
+    :global t
+    :group 'config-emacs
+  
+    (if config-emacs-mode
+        (require 'user-config-emacs)
+      (unload-feature 'user-config-emacs t)))
+  #+end_src
+
+** Org
+Do the same thing for Org Mode
+#+begin_src emacs-lisp
+  (define-minor-mode config-org-mode
+    "My settings pertaining to org mode"
+    :global t
+    :group 'config-org
+  
+    (if config-org-mode
+        (require 'user-config-org)
+      (unload-feature 'user-config-org)))
+#+end_src
+
+** Desktop 
+And finally we create the mode for our desktop config
+#+begin_src emacs-lisp
+  (define-minor-mode config-desktop-mode
+    "My settings pertaining to EXWM"
+    :global t
+    :group 'config-desktop
+  
+    (if config-desktop-mode
+        (require 'user-config-desktop)
+      (unload-feature 'user-config-desktop)))
+#+end_src

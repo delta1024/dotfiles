@@ -57,6 +57,8 @@ Description: Graphical front end for org roam
 :END:
 #+begin_src emacs-lisp 
   (setq package-enable-at-startup nil)
+  
+  ;; (add-to-list 'load-path (expand-file-name "user-config" user-emacs-directory))
 #+end_src
 
 My custom header string function.
@@ -684,7 +686,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     (dotcrafter-ensure-output-directories
      '(".gnupg" ".local/share" ".config/emacs" ".bin"))
     (dotcrafter-org-files
-     '("Emacs.org" "System.org" "Desktop.org" "Environment.org")))
+     '("README.org" "Emacs.org" "System.org" "Desktop.org" "Environment.org")))
 #+end_src
 
 ** DEAD Embark

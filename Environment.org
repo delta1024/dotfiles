@@ -25,7 +25,7 @@ This is my Zsh configuration for use on GNU/Guix.
 config/.config/zsh/.zshrc
 #+begin_src shell-script 
   [[ `whoami` == root ]] && source /root/.config/zsh/.zshrc
-  export PATH="$PATH:$HOME/.scripts/:$HOME/.scripts/web:$HOME/.scripts/status-modules:$HOME/.cargo/bin"
+  export PATH="$PATH:$HOME/.scripts/:$HOME/.scripts/web:$HOME/.scripts/status-modules:$HOME/.cargo/bin:$HOME/.bin"
   export EDITOR="/usr/bin/nvim"
   GPG_TTY=$(tty)
   export GPG_TTY
