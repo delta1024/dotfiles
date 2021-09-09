@@ -10,7 +10,7 @@ The directory for your configuration files should be added to your load path ver
 
 NOTE: Unless otherwise specified the code blocks in this file export to  the directory =config/.config/emacs/user-config/=.
 * The Basics
-To access a function before it's source file has been loaded it needs an auto-load declaration. We'll place those in =user-config.el= along with the minor mode definition that'll load your config on top of emacs, or unload it, restoring emacs to it's base state.
+To access a function before it's source file has been loaded it needs an auto-load declaration. We'll place those in =user-config.el= along with the minor mode definition that'll load your config on top of emacs, or unload it, restoring emacs to it's base state (kinda).
 :HEADER:
 #+NAME: user-config-header
 #+begin_src emacs-lisp :tangle no
