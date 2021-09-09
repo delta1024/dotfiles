@@ -38,6 +38,8 @@ To access a function before it's source file has been loaded it needs an auto-lo
         #+end_src
 
 * Core
+The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=. 
+
 :HEADER:
 #+NAME: user-config-header
 #+begin_src emacs-lisp :tangle no
@@ -48,8 +50,6 @@ To access a function before it's source file has been loaded it needs an auto-lo
   <<user-config-header()>>
 #+end_src
 :END:
-
-The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=. 
 #+begin_src emacs-lisp 
   (provide 'user-config-core)
   (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
