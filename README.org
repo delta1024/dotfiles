@@ -51,12 +51,12 @@ The Core of the configuration. This is the place where you should define a minor
 #+end_src
 :END:
 #+begin_src emacs-lisp 
-  (provide 'user-config-core)
-  (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
-                by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter"
-         (let ((delim (or delim ";;")))
-           (format "%s NOTE: %s is generated from %s. Please edit that file
-  %s       in emacs and %s will be generated automatically!" delim tangle-file parent-file delim tangle-file)))
+    (provide 'user-config-core)
+    (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
+		  by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter"
+	   (let ((delim (or delim ";;")))
+	     (format "%s NOTE: %s is generated from %s. Please edit that file
+    %s       in emacs and %s will be generated automatically!" delim tangle-file parent-file delim tangle-file)))
 #+end_src
 
 **  Emacs

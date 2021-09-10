@@ -1,6 +1,6 @@
 #+ITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
-#+PROPERTY: header-args :tangle config/.config/emacs/init.el :dir ~/.config/emacs
+#+PROPERTY: header-args :tangle config/.config/emacs/init.el :mkdirp t
 #+STARTUP: showall
 The following is my emacs config, feel free to take as much or as little as you like.
 For a very comprehensive configuratoin guide please check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
@@ -185,7 +185,7 @@ Gives a memeory boost at startup
 
 * User Config
 :PROPERTIES:
-:header-args: :tangle config/.config/emacs/user-config/user-config-emacs.el
+:header-args: :tangle config/.config/emacs/user-config/user-config-emacs.el :mkdirp t
 :END:
 untill otherwise stated the rest of the code blocks tangle out to =config/.config/emacs/user-config/user-config-emacs.el= unless stated otherwise.
 :HEADER:
