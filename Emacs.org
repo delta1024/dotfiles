@@ -387,7 +387,6 @@ Now we pull in org mode
 #+begin_src emacs-lisp
  (config-org-mode 1) 
 #+end_src
-
 ** Misc
 *** Visual Fill Colum
 :GUIX:
