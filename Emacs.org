@@ -407,57 +407,6 @@ Now we pull in org mode
     (markdown-mode . my/org-mode-visual-fill))
 #+end_src
 
-*** Org Bullets
-:GUIX:
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-org-bullets"
-#+end_src
-:END:
-
-#+begin_src emacs-lisp
-  (use-package org-bullets
-    :after org
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-#+end_src
-
-*** Org Roam
-:GUIX:
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-org-roam"
-#+end_src
-:END:
-
-For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
-#+begin_src emacs-lisp
-  (use-package emacsql
-    :straight t)
-  (use-package emacsql-sqlite
-    :straight t)
-  (use-package org-roam
-    :straight t
-    :init
-    (setq org-roam-v2-ack t)
-    :custom
-    (org-roam-directory (expand-file-name "roam" org-directory))
-    :bind (("C-c n l" . org-roam-buffer-toggle)
-           ("C-c n f" . org-roam-node-find)
-           ("C-c n i" . org-roam-node-insert)
-           :map org-mode-map
-           ("C-M-i" . completion-at-point)
-           :map org-roam-dailies-map
-           ("Y" . org-roam-dailies-capture-yesterday)
-           ("T" . org-roam-dailies-capture-tomorrow))
-    :bind-keymap
-    ("C-c n d" . org-roam-dailies-map)
-    ("C-c n d" . org-roam-dailies-map)
-    :config
-    (require 'org-roam-dailies)
-    (org-roam-db-autosync-mode))
-  
-#+end_src
-
 *** Markdown Mode
 :GUIX:
 #+begin_src scheme :noweb-ref packages :tangle no
@@ -471,16 +420,6 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
            ("\\.md\\'" . markdown-mode)
            ("\\.markdown\\'" . markdown-mode))
     :init (setq markdown-command "multimarkdown"))
-#+end_src
-
-*** Org Appear
-#+begin_src emacs-lisp
-  (use-package org-appear
-    :straight '(org-appear
-                :type git
-                :host github
-                :repo "awth13/org-appear")
-    :hook (org-mode . org-appear-mode))
 #+end_src
 
 *** Vertico
@@ -561,7 +500,7 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
     (dotcrafter-ensure-output-directories
      '(".gnupg" ".local/share" ".config/emacs" ".bin"))
     (dotcrafter-org-files
-     '("README.org" "Emacs.org" "System.org" "Desktop.org" "Environment.org")))
+     '("README.org" "Emacs.org" "Workflow.org" "System.org" "Desktop.org" "Environment.org")))
 #+end_src
 
 *** DEAD Embark
