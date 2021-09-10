@@ -8,6 +8,7 @@ config/.config/emacs/user-config/user-config.el
 config/.config/emacs/user-config/user-config.el
 config/.config/emacs/user-config/user-config-core.el
 config/.config/guix/manifests/emacs.scm
+config/.config/emacs/user-config/user-config-org.el
 config/.config/emacs/user-config/user-config-emacs.el
 config/.config/emacs/early-init.el
 config/.config/emacs/early-init.el

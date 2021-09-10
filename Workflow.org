@@ -1,0 +1,150 @@
+
+#+PROPERTY: header-args :tangle config/.config/emacs/user-config/user-config-org.el :mkdirp t
+#+begin_src emacs-lisp
+  (provide 'user-config-org)
+#+end_src
+* Org Variables
+
+#+begin_src emacs-lisp
+  (customize-set-variable 'org-directory "~/Documents/org/")
+  (setq org-default-notes-file (expand-file-name "Notes.org" org-directory))
+  (setq org-agenda-files '("Task.org" "Appointment.org" "Work.org" "Habits.org"))
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+  (with-eval-after-load 'org
+    (customize-set-variable 'org-structure-template-alist (cons '("S" . "src emacs-lisp") org-structure-template-alist))
+    (customize-set-variable 'org-archive-location ".archive::")
+    (customize-set-variable 'org-babel-load-languages '((emacs-lisp . t) (scheme . t)))
+    (customize-set-variable 'org-timer-default-timer "00:20:00")
+    (customize-set-variable 'org-agenda-custom-commands
+                            '(("y" alltodo ""
+                               ((org-directory "~/.dotfiles") (org-agenda-files '("Emacs.org"
+                                                                                  "System.org" "Desktop.org"
+                                                                                  "Environment.org")))))))
+  ;; (setq org-refile-targets
+  ;;       '((("Appointments.org" :maxlevel . 1))))
+  
+  ;; ;; Save Org buffers after refilling!
+  ;; (advice-add 'org-refile :after 'org-save-all-org-buffers)
+#+end_src
+
+* Todo Keywords
+
+#+begin_src emacs-lisp
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "STARTED(s)" "|" "DONE(d)")
+          (sequence "HOLD(h@)" "|" "COMPLETED(c)" "DROED(D@)")
+          (sequence "NOT_BOOKED" "|" "BOOKED(@)")
+          (sequence "MAYBE" "|" "DEAD(@)")))
+#+end_src
+
+* Org Capture Templates
+
+#+begin_src emacs-lisp
+  (setq org-capture-templates
+        '(("t" "TODO")
+          ("tg" "General" entry (file+olp "~/Documents/org/Task.org" "General")
+           "* TODO %^{Title}\n %?")
+          ("th" "House" entry (file+olp "~/Documents/org/Task.org" "Household")
+           "* TODO %^{Title}\n")
+          ("tm" "Medical" entry (file+olp "~/Documents/org/Task.org" "Medical")
+           "* %^{Status|NOT_BOOKED|BOOKED} %?\nDoctor: %^{Doctor|Mc'G|Lewis|Shell}\nDate: ")
+  
+          ("c" "Configs")
+          ("ce" "Emacs")
+          ("ceo" "Org" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "Org")
+           "* TODO %^{Title}\nDescription: %?")
+          ("cee" "Emacs" entry (file+olp "~/.dotfiles/Emacs.org" "Inbox" "General")
+           "* %^{Title}\n%?")
+  
+          ("cd" "Desktop")
+          ("cdk" "Keybindings" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Keybindings")
+           "* TODO %^{Function: }\nBinding: =%^{Binding}=\nMap: %^{Keymap: }")
+          ("cdw" "Windows" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "Windows")
+           "* TODO %^{Window}\nDesired Behaviour:%?")
+          ("cdg" "General" entry (file+olp "~/.dotfiles/Desktop.org" "Inbox" "General")
+           "* TODO %?")
+  
+          ("cs" "System")
+          ("cso" "Os" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Os")
+           "* TODO %^{Title}\n%?")
+          ("csm" "Manifests" entry (file+olp "~/.dotfiles/System.org" "Inbox" "Manifests" "Inbox")
+           "* %^{Package name: }\nManifest: %^{Manifest: }")
+          ("csg" "General" entry (file+olp "~/.dotfiles/System.org" "Inbox" "General")
+           "* TODO %^{Title}")
+  
+          ("cz" "Shells")
+          ("czz" "Zsh" entry (file+olp "~/.dotfiles/Environment.org" "Inbox" "ZSH")
+           "* TODO %^{Title}")
+  
+          ("i" "issues" entry (file "~/Documents/org/Issue.org")
+           "* %^{Issue: }%?")))
+#+end_src
+
+* org-open-file
+
+#+begin_src emacs-lisp
+  (defun my/org-open-file (a)  "Opens the file in `org-directory'"
+         (interactive (list (read-file-name "What File? " org-directory)))
+         ;; (find-file (expand-file-name (concat a ".org") org-directory)))
+         (find-file  a))
+#+end_src
+
+* Use Package
+#+begin_src emacs-lisp :noweb yes
+  (use-package org
+    :straight t
+    :no-require t
+    :init
+    (require 'org-habit)
+    :bind ((:map org-mode-map
+                 ("C-c o" . consult-outline)))
+    ([remap evil-jump-forward] . org-cycle)
+    :hook (org-mode . my/org-mode-setup)
+    :config
+    <<config>>
+    (my/org-font-setup))
+#+end_src
+
+** Config
+:PROPERTIES:
+:header-args: :noweb-ref config
+:END:
+*** Functions
+**** org-font-setup
+
+#+begin_src emacs-lisp
+  (defun my/org-font-setup ()
+    (dolist (face '((org-level-1 . 1.2)
+                    (org-level-2 . 1.1)
+                    (org-level-3 . 1.05)
+                    (org-level-4 . 1.0)
+                    (org-level-5 . 1.1)
+                    (org-level-6 . 1.1)
+                    (org-level-7 . 1.1)
+                    (org-level-8 . 1.1)))
+      (set-face-attribute (car face) nil :font my/org-font :weight 'regular :height (cdr face)))
+  
+    ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+    (set-face-attribute 'org-block nil :foreground nil :inherit 'fixed-pitch)
+    (set-face-attribute 'org-code nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil   :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+    (set-face-attribute 'org-checkbox nil :inherit 'fixed-pitch))
+#+end_src
+
+*** org-mode-setup
+
+#+begin_src emacs-lisp
+  (defun my/org-mode-setup ()
+    (org-indent-mode)
+    (visual-line-mode 1))
+  (setq org-ellipsis " ▾")
+  (setq org-hide-emphasis-markers t)
+  (setq org-confirm-babel-evaluate nil)
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)))
+#+end_src

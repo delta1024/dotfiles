@@ -73,7 +73,7 @@ Define a minor mode to hold our emacs configuration like so.
       (unload-feature 'user-config-emacs t)))
   #+end_src
 
-** COMMENT Org
+** Org
 Do the same thing for Org Mode
 #+begin_src emacs-lisp
   (define-minor-mode config-org-mode
