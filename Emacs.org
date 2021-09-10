@@ -195,7 +195,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
 #+end_src
 
 #+begin_src emacs-lisp :noweb yes
-  <<user-config-emacs-header()>
+  <<user-config-emacs-header()>>
 #+end_src
 :END:
 
