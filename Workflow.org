@@ -1,4 +1,5 @@
-
+#+TITLE: Workflow Configuration
+Mhy emacs workflow relies heavily on org mode. As such I have extracted all org mode settings to this document called =Workflow.org=.
 #+PROPERTY: header-args :tangle config/.config/emacs/user-config/user-config-org.el :mkdirp t
 #+begin_src emacs-lisp
   (provide 'user-config-org)
@@ -19,7 +20,9 @@
     (customize-set-variable 'org-agenda-custom-commands
                             '(("y" alltodo ""
                                ((org-directory "~/.dotfiles") (org-agenda-files '("Emacs.org"
-                                                                                  "System.org" "Desktop.org"
+                                                                                  "System.org"
+                                                                                  "Desktop.org"
+                                                                                  "Workflow.org"
                                                                                   "Environment.org")))))))
   ;; (setq org-refile-targets
   ;;       '((("Appointments.org" :maxlevel . 1))))

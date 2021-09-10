@@ -12,6 +12,7 @@ config/.config/emacs/user-config/user-config-emacs.el
 config/.config/emacs/early-init.el
 config/.config/emacs/early-init.el
 config/.config/emacs/init.el
+config/.config/emacs/user-config/user-config-org.el
 config/.bin/guix-check-upgrades
 config/.bin/guix-upgrade-profiles
 config/.bin/guix-activate-xdg-data
