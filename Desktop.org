@@ -27,7 +27,7 @@ My desktop environment as managed by EXWM. In this file you will also find any d
   
       #+end_src
 
-*  EXWM
+* EXWM
 #+begin_src emacs-lisp
   (defvar exwm-gcs-start-var gcs-done "numer of gc's done at the begining of destkop.el")
   (server-start)
@@ -418,8 +418,36 @@ Docs: https://github.com/polybar/polybar
   
 #+end_src
 
-** GUIX
-
+* Themeing
+** Wallpaper and Emacs themes
+:GUIX:
+Manifest: desktop.scm
+#+NAME: packages
+#+begin_src scheme
+  "xwallpaper"
+  "sxiv"
+ #+end_src
+:END:
+=config/.bin/exwm-wallpaper=
+#+begin_src sh :tangle config/.bin/exwm-wallpaper :shebang "#!/usr/bin/env zsh"
+  # Dependencies
+  # - xrandr
+  # - xwallpaper
+  # - sxiv
+  
+  if [[ $1 == "draw" ]]; then
+      cd /home/jake/Pictures/Wallpapers
+      leftDisplay=$(xrandr | grep " connected" | cut -d" " -f1 | sed -n '1p')
+      leftImage=$(< .background)
+      xwallpaper --output ${leftDisplay} --stretch ${leftImage} 
+  fi
+  
+  if [[ $1 == "set" ]]; then
+      cd $HOME/Pictures/Wallpapers
+      sxiv -rqot * > .background
+      $HOME/.scripts/wallpaper.sh draw
+  fi
+#+end_src
 * Misc
 ** Redshift
 :GUIX:
@@ -427,15 +455,24 @@ Docs: https://github.com/polybar/polybar
   "redshift"
 #+end_src
 :END:
-#+begin_src conf-unix  :tangle config/.config/redshift.conf
+#+NAME: location
+  #+begin_src emacs-lisp
+  
+  (with-temp-buffer
+  (insert-file-contents "lat_long")
+  (buffer-string))
+  #+end_src
+
+#+RESULTS: location
+
+#+begin_src conf-unix  :tangle config/.config/redshift.conf :noweb yes
   [redshift]
   dawn-time=07:00
   dusk-time=20:00
   location-provider=manual
   
   [manual]
-  lat=53.544388
-  lon=-113.490929
+  <<location()>>
 #+end_src
 
 * Manifest
@@ -451,32 +488,36 @@ Docs: https://github.com/polybar/polybar
 config/.config/guix/manifests/desktop.scm
 #+begin_src scheme :tangle config/.config/guix/manifests/desktop.scm :noweb yes :mkdirp t
   (specifications->manifest
-     (list "dunst"
-           "brightnessctl"
-           "libreoffice"
-           "perl-file-mimeinfo"
-           "network-manager"
-           "flatpak"
-           "picom"
-           "pavucontrol"
-           "xclip"
-           <<packages>>
-           "xwallpaper"
-           "sxiv"))
+   (list "dunst"
+         "brightnessctl"
+         "perl-file-mimeinfo"
+         "network-manager"
+         "flatpak"
+         "picom"
+         "mpv"
+         "alacritty"
+         "xmodmap"
+         "mpd"
+         "pavucontrol"
+         "xclip"
+         <<packages>>
+         ))
 #+end_src
 :HEADER:
 #+NAME: browser-manifest-header
 #+begin_src emacs-lisp :tangle no 
-  (user-config-generate-file-header "Desktop.org" "browsers.scm")
+  (user-config-generate-file-header "Desktop.org" "largenlong.scm")
 #+end_src
 
-#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :noweb yes :mkdirp t
+#+begin_src scheme :tangle config/.config/guix/manifests/large&long.scm :noweb yes :mkdirp t
   <<browser-manifest-header()>>
 #+end_src
 :END:
-config/.config/guix/manifests/browsers.scm
-#+begin_src scheme :tangle config/.config/guix/manifests/browsers.scm :mkdirp
+config/.config/guix/manifests/largenlong.scm
+#+begin_src scheme :tangle config/.config/guix/manifests/largenlong.scm :mkdirp
   (specifications->manifest
    (list "qutebrowser"
+         "libreoffice"
          "firefox"))
 #+end_src
+

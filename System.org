@@ -254,9 +254,9 @@ to lock the channels at the current commit run:
 :HEADER:
 #+NAME: default-header
 #+begin_src emacs-lisp :tangle no
-  (user-config-generate-file-header "System.org" "default.scm") 
+  (user-config-generate-file-header "System.org" "manifest.scm") 
 #+end_src
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/default.scm :mkdirp t
+#+begin_src scheme :noweb yes :tangle config/.config/guix/manifest.scm :mkdirp t
   <<default-header()>>
 #+end_src
 :END:
@@ -268,33 +268,15 @@ config/.config/guix/manifest.scm
          <<default>>))
 #+end_src
 
-:HEADER:
-#+NAME: apps-header
-#+begin_src emacs-lisp :tangle no
-  (user-config-generate-file-header "System.org" "default.scm") 
-#+end_src
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm :mkdirp t
-  <<apps-header()>>
-#+end_src
-:END:
-
-config/.config/guix/manifests/apps.scm
-#+begin_src scheme :noweb yes :tangle config/.config/guix/manifests/apps.scm :mkdirp t
-  
-  (specifications->manifest
-   (list "alacritty"
-         <<applications>>))
-#+end_src
-
 ** Default
 
 #+NAME: default
 #+begin_src scheme :tangle no
   "font-abattis-cantarell"
   "font-fira-code"
+  "neofetch"
   "xrandr"
   "zsh"
-  "xmodmap"
   "ispell"
   "password-store"
   "pinentry"
@@ -302,15 +284,6 @@ config/.config/guix/manifests/apps.scm
   "fontconfig"
   "neovim"
 #+end_src
-
-** Applications
-
-#+NAME: applications
-#+begin_src scheme :tangle no
-  "neofetch"
-  "mpv"
-  "mpd"
-  #+end_src
 
 * Profiles
 :PROPERTIES:
@@ -455,7 +428,6 @@ Does the same thing as =guix-activate-profile= execpt that it exports the profil
 #+end_src
 
 
- 
 *** guix-ugrade-profiels
 #+begin_src sh :tangle config/.bin/guix-upgrade-profiles :shebang "#!/usr/bin/env zsh"
   source $HOME/.bin/lib/guix
@@ -485,7 +457,9 @@ Does the same thing as =guix-activate-profile= execpt that it exports the profil
   if [[ $# -eq 0 ]]; then
       local profiles=($GUIX_EXTRA_PROFILES/*)
   fi
-
+  
+  echo "${GREEN}Checking system profile for upgrades${NC}"
+  guix system --dry-run reconfigure ~/.config/guix/system.scm
   echo "${GREEN}Checking user profile for upgrades${NC}"
   guix upgrade --dry-run
   
@@ -498,6 +472,6 @@ Does the same thing as =guix-activate-profile= execpt that it exports the profil
       # Upgrade the profiles
       GUIX_PROFILE="$profilePath/$profileName"
       echo "${GREEN}Checking profile for upgrades:" $GUIX_PROFILE "${NC}"
-      guix upgrade --dry-run --profile="$GUIX_PROFILE"
+      guix upgrade --dry-run --profile="$GUIX_PROFIE"
   done
 #+end_src

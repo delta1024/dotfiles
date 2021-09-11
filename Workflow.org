@@ -4,6 +4,7 @@ Mhy emacs workflow relies heavily on org mode. As such I have extracted all org 
 #+begin_src emacs-lisp
   (provide 'user-config-org)
 #+end_src
+* TODO Add file header
 * Org Variables
 
 #+begin_src emacs-lisp
@@ -153,11 +154,6 @@ Mhy emacs workflow relies heavily on org mode. As such I have extracted all org 
 #+end_src
 
 * Org Bullets
-:GUIX:
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-org-bullets"
-#+end_src
-:END:
 
 #+begin_src emacs-lisp
   (use-package org-bullets
@@ -168,11 +164,6 @@ Mhy emacs workflow relies heavily on org mode. As such I have extracted all org 
 #+end_src
 
 * Org Roam
-:GUIX:
-#+begin_src scheme :noweb-ref packages :tangle no
-  "emacs-org-roam"
-#+end_src
-:END:
 
 For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Crafters video]] as well as the project [[https://github.com/org-roam/org-roam][github]] and [[https://www.orgroam.com/][website]].
 #+begin_src emacs-lisp

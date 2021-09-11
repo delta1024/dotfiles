@@ -64,14 +64,6 @@ This section tangles out to =early-init.el=
   (user-config-mode 1)
 #+end_src
 
-# My custom header string function.
-# #+begin_src emacs-lisp 
-#   (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
-#       by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifing a third paramiter"
-#          (let ((delim (or delim ";;")))
-#            (format "%s NOTE: %s is generated from %s. Please edit that file
-#   %s       in emacs and %s will be generated automatially!" delim tangle-file parent-file delim tangle-file)))
-# #+end_src
 
 * Startup Optimization
 From now on unless otherwise stated all soruce blocks tangle out to =init.el=
@@ -868,8 +860,10 @@ config/.config/guix/manifests/emacs.scm
 #+begin_src scheme :noweb yes
   (specifications->manifest
    (list "emacs-native-comp"
-         "emacs-guix"
-         <<packages>>))
+	 "emacs-guix"
+	 "emacs-org-bullets"
+	 "emacs-org-roam"
+	 <<packages>>))
 #+end_src
 
 

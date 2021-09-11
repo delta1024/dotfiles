@@ -8,6 +8,13 @@ The idea behind this configuration model is to use to allow the name spacing of 
 
 The directory for your configuration files should be added to your load path very early in your config.
 
+If you wish to use these dotfiles currently you need =GNU stow= to deploy them but once you have them depolyed emacs will manage your dotfiles for you. To deploy the dotfiles run:
+#+begin_src sh :tangle no
+  stow config
+#+end_src
+
+If you wish to install my gnu guix system you can check out the installation section I havn't made yet over in Systems.org.
+
 NOTE: Unless otherwise specified the code blocks in this file export to  the directory =config/.config/emacs/user-config/=.
 * The Basics
 To access a function before it's source file has been loaded it needs an auto-load declaration. We'll place those in =user-config.el= along with the minor mode definition that'll load your config on top of emacs, or unload it, restoring emacs to it's base state (kinda).
@@ -38,7 +45,9 @@ To access a function before it's source file has been loaded it needs an auto-lo
         #+end_src
 
 * Core
-The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=. 
+The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=.
+
+Unless otherwise stated all code blocks form here on out export to =config/.config/emacs/user-conifg/user-config-core.el=
 
 :HEADER:
 #+NAME: user-config-header
