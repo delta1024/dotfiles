@@ -15,7 +15,6 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 #+begin_src emacs-lisp
   ;; NOTE: user-config-desktop.el is now generated from Desktop.org.  Please edit that file
   ;;       in Emacs and user-config-desktop.el will be generated automatically!
-  (provide 'user-config-desktop)
   ;; clean up when we leave
   (defun user-config-desktop-unload-function () "WARNING: Runing this will break things"
     (when (exwm--confirm-kill-emacs "Emacs will now restart? " 'no-check)
@@ -105,31 +104,33 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 ** WM
 
 #+begin_src emacs-lisp :noweb yes
-  (defun my/exwm-update-class ()
-    (exwm-workspace-rename-buffer exwm-class-name))
+   (defun my/exwm-update-class ()
+     (exwm-workspace-rename-buffer exwm-class-name))
   
-  (use-package desktop-environment
-    :defer t)
-  (use-package exwm
-    :config
-    ;; Set the default number of workspaces
-    (setq exwm-workspace-number 5)
-    (add-hook 'exwm-init-hook #'my/exwm-init-hook)
-    ;; When window "class" updates, use it to set the buffer name
-    (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
-    ;; Update panel indicator when workspace changes
-    (add-hook 'exwm-workspace-switch-hook #'my/send-polybar-exwm-workspace)
-    (add-hook 'exwm-init-hook #'my/post-config)
+  <<wallpaper-integration>> 
+
+   (use-package desktop-environment
+     :defer t)
+   (use-package exwm
+     :config
+     ;; Set the default number of workspaces
+     (setq exwm-workspace-number 5)
+     (add-hook 'exwm-init-hook #'my/exwm-init-hook)
+     ;; When window "class" updates, use it to set the buffer name
+     (add-hook 'exwm-update-class-hook #'my/exwm-update-class)
+     ;; Update panel indicator when workspace changes
+     (add-hook 'exwm-workspace-switch-hook #'my/send-polybar-exwm-workspace)
+     (add-hook 'exwm-init-hook #'my/post-config)
   
-    (desktop-environment-mode)
-    <<input-prefix-keys>>
-    <<global-keys>>
-    (defvar config-exwm-first-start nil "has exwm started the session")
-    (if config-exwm-first-start
-        (exwm-init)
-        (exwm-enable)
-        )
-      )
+     (desktop-environment-mode)
+     <<input-prefix-keys>>
+     <<global-keys>>
+     (defvar config-exwm-first-start nil "has exwm started the session")
+     (if config-exwm-first-start
+         (exwm-init)
+         (exwm-enable)
+         )
+       )
   
 #+end_src
 
@@ -218,6 +219,11 @@ My desktop environment as managed by EXWM. In this file you will also find any d
                                      (interactive)
                                      (start-process-shell-command "firefox" nil "firefox youtube.com")))
 #+end_src
+
+** Provide package
+  #+begin_src emacs-lisp
+    (provide 'user-config-desktop)
+  #+end_src
 
 * Polybar
 :PROPERTIES:
@@ -448,6 +454,13 @@ Manifest: desktop.scm
       $HOME/.scripts/wallpaper.sh draw
   fi
 #+end_src
+** EXWM integration
+#+NAME: wallpaper-integration
+#+begin_src emacs-lisp
+  (defvar exwm-update-wallpaper-hook '() "Hook to be run when wallpaper is changed")
+  ;; create a hook to check what the wallpaper that has been set is and
+  ;; check it aginst a alist of settings for that image.
+#+end_src
 * Misc
 ** Redshift
 :GUIX:
@@ -459,7 +472,7 @@ Manifest: desktop.scm
   #+begin_src emacs-lisp
   
   (with-temp-buffer
-  (insert-file-contents "lat_long")
+  (insert-file-contents (expand-file-name "lat_long" "~/.dotfiles"))
   (buffer-string))
   #+end_src
 
@@ -509,7 +522,7 @@ config/.config/guix/manifests/desktop.scm
   (user-config-generate-file-header "Desktop.org" "largenlong.scm")
 #+end_src
 
-#+begin_src scheme :tangle config/.config/guix/manifests/large&long.scm :noweb yes :mkdirp t
+#+begin_src scheme :tangle config/.config/guix/manifests/largenlong.scm :noweb yes :mkdirp t
   <<browser-manifest-header()>>
 #+end_src
 :END:

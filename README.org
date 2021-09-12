@@ -30,7 +30,7 @@ To access a function before it's source file has been loaded it needs an auto-lo
 :END:
 #+HEADER: :tangle config/.config/emacs/user-config/user-config.el :mkdirp t
 #+begin_src emacs-lisp
-  (provide 'user-config)
+  
   (define-minor-mode user-config-mode
     "toggles user-config mode"
     :global t
@@ -42,7 +42,9 @@ To access a function before it's source file has been loaded it needs an auto-lo
   
   (autoload 'user-config-generate-file-header "user-config-core.el" "generates a heading to say which file a file is generated from.
   by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter" nil)
-        #+end_src
+   (provide 'user-config)
+   #+end_src
+
 
 * Core
 The Core of the configuration. This is the place where you should define a minor mode that you wish to show up once you turn on =user-config-mode=.
@@ -60,7 +62,6 @@ Unless otherwise stated all code blocks form here on out export to =config/.conf
 #+end_src
 :END:
 #+begin_src emacs-lisp 
-    (provide 'user-config-core)
     (defun user-config-generate-file-header (parent-file tangle-file &optional delim) "generates a heading to say which file a file is generated from.
 		  by default it will us emacs-lisp comment symbols `;;' but this can be changed by specifying a third parameter"
 	   (let ((delim (or delim ";;")))
@@ -108,4 +109,9 @@ NOTE: If you unload this mode after you start exwm the background does some weir
     (if config-desktop-mode
         (require 'user-config-desktop)
       (unload-feature 'user-config-desktop t)))
+#+end_src
+
+** provide the package
+#+begin_src emacs-lisp
+  (provide 'user-config-core)
 #+end_src

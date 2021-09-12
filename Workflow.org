@@ -1,9 +1,6 @@
 #+TITLE: Workflow Configuration
 Mhy emacs workflow relies heavily on org mode. As such I have extracted all org mode settings to this document called =Workflow.org=.
 #+PROPERTY: header-args :tangle config/.config/emacs/user-config/user-config-org.el :mkdirp t
-#+begin_src emacs-lisp
-  (provide 'user-config-org)
-#+end_src
 * TODO Add file header
 * Org Variables
 
@@ -202,4 +199,9 @@ For details checkout [[https://www.youtube.com/watch?v=AyhPmypHDEw][System Craft
                 :host github
                 :repo "awth13/org-appear")
     :hook (org-mode . org-appear-mode))
+#+end_src
+
+* Provide Package
+#+begin_src emacs-lisp
+  (provide 'user-config-org)
 #+end_src
