@@ -28,6 +28,8 @@ My desktop environment as managed by EXWM. In this file you will also find any d
 
 * EXWM
 #+begin_src emacs-lisp
+  (disable-theme (car emacs-theme))
+  (load-theme (cadr emacs-theme) t)
   (defvar exwm-gcs-start-var gcs-done "numer of gc's done at the begining of destkop.el")
   (server-start)
   (add-to-list 'default-frame-alist '(alpha 90 90))

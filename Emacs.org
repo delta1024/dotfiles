@@ -29,6 +29,7 @@ find a way to remove duplicate .gitignore entries
 ** Development
 *** MAYBE LSP Mode
 [[https://github.com/emacs-lsp/lsp-mode][github]]
+*** MAYBE DAP Mode
 *** MAYBE Rustic Mode
 [[https://github.com/brotzeit/rustic][github]]
 ** Org
@@ -57,10 +58,12 @@ This section tangles out to =early-init.el=
 :END:
 #+begin_src emacs-lisp 
   (setq package-enable-at-startup nil)
+  (user-config-mode 1)
+  (tool-bar-mode -1)          ; Disable the toolbar
+  (load-theme 'deeper-blue)
   
   (add-to-list 'load-path (expand-file-name "user-config" user-emacs-directory))
   (require 'user-config)
-  (user-config-mode 1)
 #+end_src
 
 * Init.el
@@ -137,12 +140,12 @@ Gives a memeory boost at startup
   (setq custom-file (expand-file-name "emacs-custom.el" user-emacs-directory))
   
   (scroll-bar-mode -1)        ; Disable visible scrollbar
-  (tool-bar-mode -1)          ; Disable the toolbar
   (tooltip-mode -1)           ; Disable tooltips
   (set-fringe-mode 10)        ; Give some breathing room
   
   (menu-bar-mode -1)          ; Disable the menu bar
-  (add-hook 'config-emacs-mode-hook #'config-org-mode) ;; load our org mode settings with our emacs settings
+  
+  (setq emacs-theme '(doom-one doom-henna))
   (config-emacs-mode 1) 
   ;; sets fixed-width font
   (set-face-attribute 'default nil :font my/user-font :height my/font-size :weight 'regular)
@@ -374,7 +377,31 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
 #+end_src
 #+begin_src emacs-lisp
 #+end_src
+** Org
+#+begin_src emacs-lisp
+  (require 'user-config-org)
+#+end_src
 
+** Development
+**** LSP mode
+:GUIX:
+#+begin_src scheme :noweb-ref packages
+"emacs-lsp-mode"
+#+end_src
+:END:
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :commands (lsp lsp-defered)
+    :init
+    (setq lsp-keymap-prefix "C-SPC m")
+    :config
+    (lsp-enable-which-key-integration t))
+#+end_src
+**** Rustic mode
+- [[https://robert.kra.hn/posts/2021-02-07_rust-with-emacs/#additional-packages][Configuring Emacs for Rust Development]]
+- Set up emacs with a Rust Environment
+   - [[info:guix#Invoking guix environment][Invoking guix environment]]
 ** Misc
 *** Visual Fill Colum
 :GUIX:
@@ -718,7 +745,8 @@ CLOSED: [2021-08-30 Mon 06:38]
 #+begin_src emacs-lisp
   (use-package doom-themes
     :init
-    (load-theme 'doom-henna t))
+    (disable-theme 'deeper-blue)
+    (load-theme (car emacs-theme) t))
 #+end_src
 
 **** Doom Modeline 
@@ -802,6 +830,7 @@ display correctly:
 #+begin_src emacs-lisp
   (provide 'user-config-emacs)
 #+end_src
+
 * exwm
 Now we return to =init.el= for the rest of the config.
 :GUIX:
