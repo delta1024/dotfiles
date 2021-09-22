@@ -1,6 +1,7 @@
 #+TITLE: Jake's Emacs Config
 #+AUTHOR: Jacob Stannix
 #+PROPERTY: header-args :tangle config/.config/emacs/init.el
+#+PROPERTY: MANIFEST config/.config/guix/manifests/emacs.scm
 
 check out the [[https://www.youtube.com/watch?v=74zOY-vgkyw&list=PLEoMzSkcN8oPH1au7H6B7bBJ4ZO7BXjSZ][Emacs From Scratch playlist]] on the [[https://www.youtube.com/c/SystemCrafters][System Crafters Youtube Channel]] or check out the [[https://github.com/daviwil/emacs-from-scratch][github]] repo. 
 * Inbox
@@ -58,12 +59,13 @@ This section tangles out to =early-init.el=
 :END:
 #+begin_src emacs-lisp 
   (setq package-enable-at-startup nil)
-  (user-config-mode 1)
   (tool-bar-mode -1)          ; Disable the toolbar
   (load-theme 'deeper-blue)
   
   (add-to-list 'load-path (expand-file-name "user-config" user-emacs-directory))
   (require 'user-config)
+  (user-config-mode 1)
+  
 #+end_src
 
 * Init.el
@@ -300,8 +302,10 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
             :wk "Org Configruation")
   
     "d"     '((lambda () (interactive) (dired "~/")) :wk "Dired home")
-    "a"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty --working-directory ~/"))
-              :wk "eshell")
+    "a"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty --working-directory ~/ -e nu"))
+             :wk "nu ~")
+    "A"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty -e nu"))
+             :wk "nu")
     ";"     '(execute-extended-command                                :wk "M-x")
     "w f"   '(delete-frame                                            :wk "delete fram")
     "b"     '(consult-buffer                                          :wk "switch buffers with preview")
@@ -363,7 +367,6 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
 #+end_src
 
 *** Dired Open
-
 #+begin_src emacs-lisp
   (use-package dired-open
     :straight t
@@ -375,8 +378,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
                                   ("mkv" . "mpv")
                                   ("webm" . "mpv"))))
 #+end_src
-#+begin_src emacs-lisp
-#+end_src
+
 ** Org
 #+begin_src emacs-lisp
   (require 'user-config-org)
@@ -395,10 +397,24 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
     :commands (lsp lsp-defered)
     :init
     (setq lsp-keymap-prefix "C-SPC m")
+    :custom
+    (lsp-rust-analyzer-store-path "/home/jake/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rust-analyzer")
     :config
     (lsp-enable-which-key-integration t))
+  
 #+end_src
 **** Rustic mode
+:GUIX:
+#+begin_src scheme :tangle no :noweb-ref packages
+  "emacs-rustic"
+#+end_src
+:END:
+#+begin_src emacs-lisp
+  (use-package rustic
+    :custom
+    (rustic-analyzer-command '("exec $(rustup +nightly which rust-analyzer)"))
+    (rustic-rustfmt-bin '("exec $(rustup +nightly which rustfmt)")))
+#+end_src
 - [[https://robert.kra.hn/posts/2021-02-07_rust-with-emacs/#additional-packages][Configuring Emacs for Rust Development]]
 - Set up emacs with a Rust Environment
    - [[info:guix#Invoking guix environment][Invoking guix environment]]
@@ -826,7 +842,7 @@ display correctly:
     (persp-mode))
 #+end_src
 
-** Provede package
+** Provide package
 #+begin_src emacs-lisp
   (provide 'user-config-emacs)
 #+end_src

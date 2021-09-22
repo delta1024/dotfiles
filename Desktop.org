@@ -474,7 +474,7 @@ Manifest: desktop.scm
   #+begin_src emacs-lisp
   
   (with-temp-buffer
-  (insert-file-contents (expand-file-name "lat_long" "~/.dotfiles"))
+  (insert-file-contents (expand-file-name ".lat_long" "~/.dotfiles"))
   (buffer-string))
   #+end_src
 
