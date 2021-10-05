@@ -430,8 +430,7 @@ Docs: https://github.com/polybar/polybar
 ** Wallpaper and Emacs themes
 :GUIX:
 Manifest: desktop.scm
-#+NAME: packages
-#+begin_src scheme
+#+begin_src scheme :tangle no :noweb-ref packages
   "xwallpaper"
   "sxiv"
  #+end_src

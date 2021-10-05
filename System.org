@@ -34,7 +34,7 @@ to lock the channels at the current commit run:
 :END:
 
 #+begin_src scheme :tangle config/.config/guix/channels.scm
-
+  
   (list (channel
          (name 'guix)
          (url "https://git.savannah.gnu.org/git/guix.git")
@@ -76,14 +76,16 @@ to lock the channels at the current commit run:
                (gnu packages shells)
                (gnu services dbus)
                (gnu services pm)
+               (srfi srfi-1)
                (nongnu packages linux))
   (use-service-modules
    cups
    desktop
    networking
+   nix
    ssh
    xorg)
-#+end_src
+   #+end_src
 
 * OS
 
@@ -104,7 +106,7 @@ to lock the channels at the current commit run:
    <<mapped-devices>>
    <<file-system>>
    <<swap-devices>>)
-  #+end_src
+#+end_src
 
 ** Bootloader
 
@@ -113,7 +115,7 @@ to lock the channels at the current commit run:
   (bootloader
    (bootloader-configuration
     (bootloader grub-efi-bootloader)
-    (target "/boot/efi")
+    (targets '("/boot/efi"))
     (timeout 3)
     (keyboard-layout keyboard-layout)))
 #+end_src
@@ -189,8 +191,8 @@ to lock the channels at the current commit run:
           (specification->package "emacs-exwm")
           (specification->package "git")
           (specification->package "stow")
-          (specification->package "wesnoth")
           (specification->package "neovim")
+          (specification->package "sx")
           (specification->package "gcc-toolchain")
           (specification->package "gnupg")
           (specification->package "xauth")
@@ -205,10 +207,10 @@ to lock the channels at the current commit run:
 #+NAME: services
 #+begin_src scheme :tangle no :noweb yes
   (services
-   (append
-    (list (service xfce-desktop-service-type)
+   (cons* (service xfce-desktop-service-type)
           (service cups-service-type)
           (service openssh-service-type)
+          (service nix-service-type)
           (service tlp-service-type
                    (tlp-configuration
                     (cpu-scaling-governor-on-ac (list "performance"))
@@ -217,8 +219,8 @@ to lock the channels at the current commit run:
            (xorg-configuration
             (keyboard-layout keyboard-layout)))
           (extra-special-file "/usr/bin/env"
-                              (file-append coreutils "/bin/env")))
-    %my-desktop-services))
+                              (file-append coreutils "/bin/env"))
+          %my-desktop-services))
 #+end_src
 
 ** Desktop Configuration
@@ -281,6 +283,7 @@ config/.config/guix/manifest.scm
   "password-store"
   "pinentry"
   "htop"
+  "nushell"
   "fontconfig"
   "neovim"
 #+end_src
