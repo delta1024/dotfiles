@@ -69,6 +69,10 @@ This section tangles out to =early-init.el=
 #+end_src
 
 * Init.el
+** Native Comp
+#+begin_src emacs-lisp
+  (customize-set-variable 'native-comp-async-report-warnings-errors nil)
+#+end_src
 ** Startup Optimization
 From now on unless otherwise stated all soruce blocks tangle out to =init.el=
 #+begin_src emacs-lisp 
@@ -90,7 +94,7 @@ Gives a memeory boost at startup
 #+begin_src emacs-lisp
   (setq gc-cons-threshold (* 50 1000 1000))
   (defvar my/post-config nil "Weither or not my/post-config has run")
-#+end_src
+  #+end_src
 
 *** Debugging
 :PROPERTIES:
@@ -303,9 +307,9 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
   
     "d"     '((lambda () (interactive) (dired "~/")) :wk "Dired home")
     "a"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty --working-directory ~/ -e nu"))
-             :wk "nu ~")
+              :wk "nu ~")
     "A"     '((lambda () (interactive) (start-process-shell-command "alacritty" nil "alacritty -e nu"))
-             :wk "nu")
+              :wk "nu")
     ";"     '(execute-extended-command                                :wk "M-x")
     "w f"   '(delete-frame                                            :wk "delete fram")
     "b"     '(consult-buffer                                          :wk "switch buffers with preview")
@@ -315,7 +319,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
     "o f"   '(my/org-open-file                                        :wk "open org file")
     "o a"   '(org-agenda                                              :wk "org agenda")
     "c"     '(org-capture                                             :wk "change directory"))
-  #+end_src
+#+end_src
 
 ** Dired
 :GUIX:
@@ -388,7 +392,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
 **** LSP mode
 :GUIX:
 #+begin_src scheme :noweb-ref packages
-"emacs-lsp-mode"
+  "emacs-lsp-mode"
 #+end_src
 :END:
 
@@ -417,7 +421,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
 #+end_src
 - [[https://robert.kra.hn/posts/2021-02-07_rust-with-emacs/#additional-packages][Configuring Emacs for Rust Development]]
 - Set up emacs with a Rust Environment
-   - [[info:guix#Invoking guix environment][Invoking guix environment]]
+  - [[info:guix#Invoking guix environment][Invoking guix environment]]
 ** Misc
 *** Visual Fill Colum
 :GUIX:
@@ -592,14 +596,14 @@ CLOSED: [2021-08-29 Sun 20:58]
                 :host github
                 :repo "SebastienWae/app-launcher")
     :config
-    (dolist (profiles '("browsers/browsers"
+    (dolist (profiles '("largenlong/largenlong"
                         "apps/apps"
                         "desktop/desktop"
                         "emacs/emacs"))
       (add-to-list 'app-launcher-apps-directories (concat (getenv "HOME") "/.guix-extra-profiles"
                                                           "/" profiles
                                                           "/share/applications")))
-    (add-to-list 'app-launcher-apps-directories "/var/lib/flatpak/exports/share/applications"))
+    (add-to-list 'app-launcher-apps-directories (concat (getenv "HOME") "/.local/share/flatpak/exports/share")))
 #+end_src
 
 *** DEAD Ivy 

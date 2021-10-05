@@ -182,7 +182,6 @@ to lock the channels at the current commit run:
 #+end_src
 
 ** Packages
-
 #+NAME: packages
 #+begin_src scheme :tangle no
   (packages
@@ -197,17 +196,38 @@ to lock the channels at the current commit run:
           (specification->package "gnupg")
           (specification->package "xauth")
           (specification->package "zsh")
+          (specification->package "flatpak")
+          (specification->package "curl")
           (specification->package
            "emacs-desktop-environment")
           (specification->package "nss-certs"))
     %base-packages))
+          #+end_src
+
+*** Nix Package Manager
+In order to use the rustup toolchain I require the Nix Package manager to set it up run the following commands to update the channels befor you install rustup
+#+begin_src sh :tangle no
+  nix-channel --update
+  
+  nix-env -i rustup
 #+end_src
 
+*** Flatpak
+The easiest way to use Discord on GNU/Guix is to use Flatpak.
+
+To install Discord run the following commands:
+
+#+begin_src sh :tangle no
+  curl https://dl.flathub.org/repo/appstream/com.discordapp.Discord.flatpakref > /tmp/dicord.flatpakref
+  
+  flatpak install --user /tmp/discord.flatpakref
+#+end_src
 ** Services
 #+NAME: services
 #+begin_src scheme :tangle no :noweb yes
   (services
-   (cons* (service xfce-desktop-service-type)
+   (cons* (service slim-service-type)
+          (service xfce-desktop-service-type)
           (service cups-service-type)
           (service openssh-service-type)
           (service nix-service-type)
@@ -215,12 +235,13 @@ to lock the channels at the current commit run:
                    (tlp-configuration
                     (cpu-scaling-governor-on-ac (list "performance"))
                     (sched-powersave-on-bat? #t)))
-          (set-xorg-configuration
-           (xorg-configuration
-            (keyboard-layout keyboard-layout)))
+          ;; (set-xorg-configuration
+          ;;  (xorg-configuration
+          ;;   (keyboard-layout keyboard-layout)))
           (extra-special-file "/usr/bin/env"
                               (file-append coreutils "/bin/env"))
-          %my-desktop-services))
+          (modify-services %my-desktop-services
+                           (delete gdm-service-type))))
 #+end_src
 
 ** Desktop Configuration
