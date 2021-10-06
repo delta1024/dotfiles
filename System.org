@@ -212,6 +212,12 @@ In order to use the rustup toolchain I require the Nix Package manager to set it
   nix-env -i rustup
 #+end_src
 
+After installing rustup run the following
+#+begin_src sh
+rustup toolchain install stable
+rustup toolchain install nightly
+#+end_src
+
 *** Flatpak
 The easiest way to use Discord on GNU/Guix is to use Flatpak.
 
@@ -222,11 +228,14 @@ To install Discord run the following commands:
   
   flatpak install --user /tmp/discord.flatpakref
 #+end_src
+
 ** Services
 #+NAME: services
 #+begin_src scheme :tangle no :noweb yes
   (services
-   (cons* (service slim-service-type)
+   (cons* (service slim-service-type (slim-configuration
+                                      (auto-login? #t)
+                                      (default-user "jake")))
           (service xfce-desktop-service-type)
           (service cups-service-type)
           (service openssh-service-type)

@@ -395,7 +395,6 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
   "emacs-lsp-mode"
 #+end_src
 :END:
-
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :commands (lsp lsp-defered)
@@ -407,6 +406,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
     (lsp-enable-which-key-integration t))
   
 #+end_src
+
 **** Rustic mode
 :GUIX:
 #+begin_src scheme :tangle no :noweb-ref packages
