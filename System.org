@@ -208,14 +208,15 @@ to lock the channels at the current commit run:
 In order to use the rustup toolchain I require the Nix Package manager to set it up run the following commands to update the channels befor you install rustup
 #+begin_src sh :tangle no
   nix-channel --update
-  
   nix-env -i rustup
+  nix-env -i rust-analyzer
 #+end_src
 
 After installing rustup run the following
-#+begin_src sh
-rustup toolchain install stable
-rustup toolchain install nightly
+#+begin_src sh :tangle no
+  rustup toolchain install stable
+  rustup toolchain install nightly
+  rustup component add clippy-preview
 #+end_src
 
 *** Flatpak
