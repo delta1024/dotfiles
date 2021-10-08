@@ -319,7 +319,7 @@ config/.config/guix/manifest.scm
   "neovim"
 #+end_src
 
-* Profiles
+* Profile Sourcing
 :PROPERTIES:
 :header-args: :tangle config/.config/guix/active-profiles
 :END:
@@ -339,99 +339,16 @@ config/.config/guix/manifest.scm
   export GUIX_PROFILE="$HOME/.guix-profile"
   . "$GUIX_PROFILE/etc/profile"
   export GUIX_LOCPATH="$GUIX_PROFILE/lib/locale"
+#+end_src
+*** guix-activate-profiles 
+sources the given profiles. If none are provided it treats all folders in the =$GUIX_EXTRA_PROFILES= directory as the name of a profile to be activated.
+#+begin_src sh :tangle config/.bin/guix-activate-profiles :shebang "#!/usr/bin/env zsh"
   
-  export XDG_DATA_DIR="$HOME/.guix-profile/share"
-  export XDG_DATA_DIR="$XDG_DATA_DIR:/var/lib/flatpak/exports/share/applications"
-#+end_src
-
-Set up XDG variables
-#+begin_src sh :tangle config/.config/user-dirs.dirs 
-  XDG_PICTURES_DIR=$HOME/Pictures
-#+end_src
-
-** Profile Managment
-:PROPERTIES:
-:header-args: :tangle config/.bin/lib/guix :mkdirp t :shebang "#!/usr/bin/env zsh"
-:END:
-create a library for managing the system.
-#+begin_src sh 
   GREEN='\033[1;32m'
   RED='\033[1;30m'
   NC='\033[0m'
   GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
-  
-#+end_src
 
-guix-user-profile
-#+begin_src sh :tangle config/.bin/guix-user-profile :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
-  
-  if [[ $1 == "install" ]]; then
-      echo "${GREEN}Installing user mainfest${NC}"
-      guix package --manifest=$HOME/.config/guix/manifest.scm
-  fi
-  
-  if [[ $1 == "system" ]]; then
-      echo "${GREEN}Reconfiguring OS${NC}"
-      sudo -E guix system reconfigure $HOME/.config/guix/system.scm
-  fi
-  # Add os checks and upgrade
-#+end_src
-
-*** Extra Profiles 
-**** guix-install-profile
-Installs manifest =$HOME=​​/​.config/guix/manifests/​=name=.scm to profile with path =$GUIX_EXTRA_PROFILES=​/​=name=​/​=name=.
-#+begin_src sh :tangle config/.bin/guix-install-profile :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
-  local profiles=($@)
-  if [[ $# -eq 0 ]]; then
-      echo "${RED}function requires paramaters${NC}" # profiles="$GUIX_EXTRA_PROFILES/*";
-      return 1
-  fi
-  
-  for profile in $profiles; do
-      local profileName=$(basename $profile)
-      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
-  
-      echo
-      echo -e "${GREEN}installing profile:" $profilePath "${NC}"
-      echo
-  
-      guix package --profile="$profilePath/$profileName" --manifest="$HOME/.config/guix/manifests/$profileName.scm"
-  done 
-#+end_src
- 
-**** guix-populate-profiles
-Installes all manifest files ending with =name=.scm in path $HOME/.config/guix/manifests to the assosiated profile path at $GUIX_EXTRA_PROFILES/​=name=​/​=name= if no argument is given otherwise install only manifest files matching the profided arguments.
-#+begin_src sh :tangle config/.bin/guix-populate-profiles :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
-  local profiles=($@)
-  if [[ $# -eq 0 ]]; then
-      local profiles=($HOME/.config/guix/manifests/*.scm)
-  fi
-  
-  for profile in $profiles; do
-      # remove the path and file extension, if any
-      local profileName=$(basename -s .scm $profile)
-      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
-      local manifestPath=$HOME/.config/guix/manifests/$profileName.scm
-  
-      if [ -f $manifestPath ]; then
-          echo
-          echo -e "${GREEN}populating profile:" $manifestPath "${NC}"
-          echo
-  
-          mkdir -p $profilePath
-          guix package --manifest="$manifestPath" --profile="$profilePath/$profileName"
-      fi
-  done
-#+end_src
-
-**** guix-activate-profiles 
-sources the given profiles. If none are provided it treats all folders in the =$GUIX_EXTRA_PROFILES= directory as the name of a profile to be activated.
-#+begin_src sh :tangle config/.bin/guix-activate-profiles :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
-  
   local profiles=($@)
   if [[ $# -eq 0 ]]; then
       local profiles=($GUIX_EXTRA_PROFILES/*)
@@ -453,12 +370,17 @@ sources the given profiles. If none are provided it treats all folders in the =$
   done
 #+end_src
 
-**** guix-activate-xdg-data 
+*** guix-activate-xdg-data 
 Does the same thing as =guix-activate-profile= execpt that it exports the profiles share directory to the =$XDG_DATA_DIR= global variable.
 #+begin_src sh :tangle config/.bin/guix-activate-xdg-data :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
   
+  GREEN='\033[1;32m'
+  RED='\033[1;30m'
+  NC='\033[0m'
+  GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+
   local profiles=($*)
+  
   if [[ $# -eq 0 ]]; then
       local profiles=($GUIX_EXTRA_PROFILES/*)
   fi
@@ -478,49 +400,3 @@ Does the same thing as =guix-activate-profile= execpt that it exports the profil
   done
 #+end_src
 
-**** guix-ugrade-profiels
-#+begin_src sh :tangle config/.bin/guix-upgrade-profiles :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
-  
-  local profiles=($@)
-  if [[ $# -eq 0 ]]; then
-      local profiles=($GUIX_EXTRA_PROFILES/*)
-  fi
-  
-  for profile in $profiles; do
-      # Remove the path and file extension, if any
-      local profileName=$(basename $profile)
-      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
-  
-  
-      # Upgrade the profiles
-      GUIX_PROFILE="$profilePath/$profileName"
-      echo "${GREEN}Upgrading profile:" $GUIX_PROFILE "${NC}"
-      guix upgrade --profile="$GUIX_PROFILE"
-  done
-#+end_src
-
-**** guix-check-upgrades
-#+begin_src sh  :tangle config/.bin/guix-check-upgrades :shebang "#!/usr/bin/env zsh"
-  source $HOME/.bin/lib/guix
-  if [[ $# -eq 0 ]]; then
-      local profiles=($GUIX_EXTRA_PROFILES/*)
-  fi
-  
-  echo "${GREEN}Checking system profile for upgrades${NC}"
-  guix system --dry-run reconfigure ~/.config/guix/system.scm
-  echo "${GREEN}Checking user profile for upgrades${NC}"
-  guix upgrade --dry-run
-  
-  for profile in $profiles; do
-      # Remove the path and file extension, if any
-      local profileName=$(basename $profile)
-      local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
-  
-  
-      # Upgrade the profiles
-      GUIX_PROFILE="$profilePath/$profileName"
-      echo "${GREEN}Checking profile for upgrades:" $GUIX_PROFILE "${NC}"
-      guix upgrade --dry-run --profile="$GUIX_PROFIE"
-  done
-#+end_src

@@ -200,7 +200,6 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
   <<user-config-emacs-header()>>
 #+end_src
 :END:
-
 ** Variables
 #+begin_src emacs-lisp
   (defvar my/org-font "Cantarell" "org-mode's variable pitched font name")
@@ -422,7 +421,7 @@ untill otherwise stated the rest of the code blocks tangle out to =config/.confi
     (rustic-cargo-bin (concat (getenv "HOME") "/.nix-profile/bin/cargo")))
 #+end_src
 
-In order for emacs to see the cargo bin we need to add the =$HOME/.nix-profile/bin/= to our load path
+In order for emacs to see the cargo binary we need to add =$HOME/.nix-profile/bin/= to our load path
 #+begin_src emacs-lisp
   (customize-set-variable 'exec-path (add-to-list
                                       'exec-path

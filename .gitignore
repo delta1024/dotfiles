@@ -13,15 +13,8 @@ config/.config/emacs/early-init.el
 config/.config/emacs/early-init.el
 config/.config/emacs/init.el
 config/.config/emacs/user-config/user-config-org.el
-config/.bin/guix-check-upgrades
-config/.bin/guix-upgrade-profiles
 config/.bin/guix-activate-xdg-data
 config/.bin/guix-activate-profiles
-config/.bin/guix-populate-profiles
-config/.bin/guix-install-profile
-config/.bin/guix-user-profile
-config/.bin/lib/guix
-config/.config/user-dirs.dirs
 config/.config/guix/active-profiles
 config/.config/guix/manifest.scm
 config/.config/guix/manifest.scm

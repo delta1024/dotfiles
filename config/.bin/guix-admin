@@ -1,0 +1,180 @@
+#!/usr/bin/env zsh
+## -*- mode: sh; -*-
+###################################################
+#################### VARIABLES  ###################
+###################################################
+GREEN='\033[1;32m'
+RED='\033[1;30m'
+NC='\033[0m'
+GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+
+###################################################
+##################### HELP ########################
+###################################################
+print_help () {
+    #### upgrade ###
+    ## ##
+    ## system ##
+    ## profiles ##
+
+    ### populate ###
+    ## ##
+    ## extra ##
+
+    ### check ###
+
+    echo "Guix Administration Assistant"
+    echo -e "  Usage:\n"
+    echo -e "    guix-admin [option] [sub-option] (optional) profiles\n"
+    echo -e "  Option:\n"
+    echo -e "    upgrade          upgrade the system
+                     if no sub-option is specified upgrades the user profile\n"
+    echo -e "    Sub-Options:\n"
+    echo -e "     system          reconfigure the OS\n"
+    echo -e "     profiles        upgrade extra profiels; takes profile names as an optional paramater\n"
+    echo -e "  Option:\n"
+    echo -e "    populate         install packages in assosiated manifest
+                     if no sub-option is specified populates user profile\n"
+    echo -e "    Sub-Option:\n"
+    echo -e "     extra           populates extra profiles; takes the profile name as an optional paramater\n"
+    echo -e "  Option:\n"
+    echo -e "    check            check for upgrades
+                      if no profile name is passed to this option it will check the system, user, and extra profiles
+                      if a profile(s) name(s) is provided it will skip the system and user profiles and will only check the provided extra profile"
+                                
+}
+
+###################################################
+#################### FUNCTIONS ####################
+###################################################
+
+##########################
+######## UPGRADES ########
+##########################
+upgrade_profiles () {
+    local profiles=($@)
+    if [[ $# -eq 0 ]]; then
+        local profiles=($GUIX_EXTRA_PROFILES/*)
+    fi
+
+    for profile in $profiles; do
+        # Remove the path and file extension, if any
+        local profileName=$(basename $profile)
+        local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+
+
+        # Upgrade the profiles
+        GUIX_PROFILE="$profilePath/$profileName"
+        echo "${GREEN}Upgrading profile:" $GUIX_PROFILE "${NC}"
+        guix upgrade --profile="$GUIX_PROFILE"
+    done
+}
+
+upgrade_system () {
+
+    if [[ $# -eq 0 ]]; then
+	echo "${GREEN}Upgrading Main Profile${NC}"
+	guix upgrade
+    fi
+
+    if [[ $1 == "system" ]]; then
+	echo "${GREEN}Reconfiguring OS${NC}"
+	sudo -E guix system reconfigure $HOME/.config/guix/system.scm
+    fi
+
+    if [[ $1 == "profiles" ]]; then
+        local args=($@)
+	
+        local option=${args[1]}
+        args[1]=()
+        upgrade_profiles $args
+    fi
+}
+
+check_upgrades () {
+
+    local profiles=($@)
+
+    if [[ $# -eq 0 ]]; then
+	local profiles=($GUIX_EXTRA_PROFILES/*)
+
+	echo "${GREEN}Checking System Profile for upgrades${NC}"
+	guix system --dry-run reconfigure ~/.config/guix/system.scm
+
+	echo "${GREEN}Checking Main Profile for upgrades${NC}"
+	guix upgrade --dry-run
+    fi
+
+
+    for profile in $profiles; do
+	# Remove the path and file extension, if any
+	local profileName=$(basename $profile)
+	local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+
+
+	# Upgrade the profiles
+	GUIX_PROFILE="$profilePath/$profileName"
+	echo "${GREEN}Checking profile for upgrades:" $GUIX_PROFILE "${NC}"
+	guix upgrade --dry-run --profile="$GUIX_PROFIE"
+    done
+}
+############################
+######## POPULATION ########
+############################
+
+populate_extra_profiles () {
+    local profiles=($@)
+    if [[ $# -eq 0 ]]; then
+	local profiles=($HOME/.config/guix/manifests/*.scm)
+    fi
+
+    for profile in $profiles; do
+	# remove the path and file extension, if any
+	local profileName=$(basename -s .scm $profile)
+	local profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+	local manifestPath=$HOME/.config/guix/manifests/$profileName.scm
+
+	if [ -f $manifestPath ]; then
+	    echo
+	    echo -e "${GREEN}populating profile:" $manifestPath "${NC}"
+	    echo
+
+	    mkdir -p $profilePath
+	    guix package --manifest="$manifestPath" --profile="$profilePath/$profileName"
+	fi
+    done
+}
+
+populate_system () {
+    if [[ $# -eq 0 ]]; then
+	echo "${GREEN}Populating Main Profile${NC}"
+	guix package --manifest=$HOME/.config/guix/manifest.scm
+    fi
+
+    if [[ $1 == "extra" ]]; then
+        local args=($@)
+	
+        local option=${args[1]}
+        args[1]=()
+        populate_extra_profiles $args
+    fi
+}
+
+
+###################################################
+###################### MAIN #######################
+###################################################
+main () {
+    local args=($@)
+    
+    local option=${args[1]}
+    args[1]=()
+
+    case $option in
+	 upgrade) upgrade_system $args ;;
+         populate) populate_system $args ;;
+	 check) check_upgrades $args ;;
+	 help | * ) print_help ;;
+    esac
+}
+ main $@
